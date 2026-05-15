@@ -1,10 +1,21 @@
 import pygame
 from src.core.settings import PLAYER_SIZE, PLAYER_SPEED
 
-class Player:
-    def __init__(self, x: int, y: int):
+class Entity:
+    def __init__(self, x: int, y: int, colour: tuple):
         self.x = x
         self.y = y
+        self.colour
+    
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, self.size, self.size)
+
+
+class Player(Entity):
+    def __init__(self, x: int, y: int, colour: tuple):
+        self.x = x
+        self.y = y
+        self.colour = colour
         self.size = PLAYER_SIZE
         self.speed = PLAYER_SPEED
 
@@ -18,7 +29,3 @@ class Player:
             self.y -= PLAYER_SPEED
         if keys[pygame.K_DOWN]:
             self.y += PLAYER_SPEED
-
-    def get_rect(self):
-        "Return the player's rectangle for rendering."
-        return pygame.Rect(self.x, self.y, self.size, self.size)
