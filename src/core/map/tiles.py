@@ -1,10 +1,10 @@
-from src.core.settings import BLACK, RED, BLUE, GREEN
+from src.core.settings import WHITE, BLACK, RED, BLUE, GREEN
 
 class Tile:
     "Defines the base tile on the map. No effects or interactions."
     is_passable: bool = True
     speed_modifier: float = 1.0
-    colour: tuple = BLACK
+    colour: tuple = WHITE
 
     @property
     def has_action(self):
@@ -27,9 +27,15 @@ class ActionTile(Tile):
     def action(self):
         print("Action triggered! This could be a battle, item pickup, etc.")
 
+class SolidTile(Tile):
+    "Solid Tile which is not passable"
+    is_passable: bool = False
+    colour: tuple = BLACK
+
 TILE_REGISTRY = {
     0: Tile(),
     1: GrassTile(),
     2: WaterTile(),
-    3: ActionTile()
+    3: ActionTile(),
+    4: SolidTile()
 }

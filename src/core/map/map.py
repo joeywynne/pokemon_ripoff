@@ -27,9 +27,15 @@ class TileMap:
             return TILE_REGISTRY[self.tiles[y][x]]
         else:
             raise IndexError("Tile coordinates out of bounds.")
-    
+   
 
 def generate_random_map(width: int, height: int, tile_probabilities: dict[int, float]) -> TileMap:
     """Generates a random map based on the provided tile probabilities."""
     tiles = [[random.choices(list(tile_probabilities.keys()), weights=tile_probabilities.values())[0] for _ in range(width)] for _ in range(height)]
-    return TileMap(tiles, tile_size=settings.TILE_SIZE)  # Assuming a default tile size of 32
+    # replace boundary tiles with Solid tiles
+    tiles[0] = [4 for _ in range(width)]
+    tiles[height - 1] = [4 for _ in range(width)]
+    for i in range(height):
+        tiles[i][0] = 4
+        tiles[i][-1] = 4
+    return TileMap(tiles, tile_size=settings.TILE_SIZE)
