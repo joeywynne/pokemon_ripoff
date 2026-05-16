@@ -8,6 +8,7 @@ from src.display.renderer import Renderer
 from src.display.entities_renderer import EntitiesRenderer
 from src.core.settings import PURPLE, BLUE_GREEN
 from src.core.camera import Camera
+from src.display.assets import AssetStore
 
 class Game:
     def __init__(self, tile_map: TileMap):
@@ -16,7 +17,8 @@ class Game:
         pygame.display.set_caption("Pokemon Ripoff")
         self.clock = pygame.time.Clock()
         self.running = True
-        map_renderer = MapRenderer(tile_map)
+        assets = AssetStore(tile_map)
+        map_renderer = MapRenderer(tile_map, assets)
 
         map_width = tile_map.width * tile_map.tile_size
         map_height = tile_map.height * tile_map.tile_size
@@ -27,7 +29,7 @@ class Game:
         self.npcs =  npcs
 
         entities = npcs + [self.player]
-        entities_renderer = EntitiesRenderer(entities)
+        entities_renderer = EntitiesRenderer(entities, assets)
         self.renderer = Renderer(self.screen, map_renderer, entities_renderer)
         self.last_log_time = pygame.time.get_ticks()
     

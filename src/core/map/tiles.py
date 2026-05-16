@@ -1,28 +1,43 @@
-from src.core.settings import WHITE, BLACK, RED, BLUE, GREEN
+from src.core.settings import WHITE, BLACK, RED, BLUE, GREEN, BROWN
+from typing import Tuple, Optional
+
+
+Colour = Tuple[int, int, int]
 
 class Tile:
     "Defines the base tile on the map. No effects or interactions."
     is_passable: bool = True
     speed_modifier: float = 1.0
-    colour: tuple = WHITE
+    colour: Colour = WHITE
+    texture: Optional[str] = None
 
     @property
     def has_action(self):
         return hasattr(self, 'action') and callable(getattr(self, 'action'))
 
 class GrassTile(Tile):
-    "Adds green colour and slows movement speed by 20%."
+    "Grass textured tile with speed modifier."
     speed_modifier: float = 0.8
-    colour: tuple = GREEN
+    colour: Colour = GREEN
+    texture: Optional[str] = "tiles/grass.png"
+
 
 class WaterTile(Tile):
-    "Adds blue colour and increases movement speed by 20%."
+    "Water textured tile with speed modifier."
     speed_modifier: float = 1.2
-    colour: tuple = BLUE
+    colour: Colour = BLUE
+    texture: Optional[str] = "tiles/water.png"
+
+class GroundTile(Tile):
+    "Ground textured tile with speed modifier."
+    colour: Colour = BROWN
+    texture: Optional[str] = "tiles/ground.png"
+
 
 class ActionTile(Tile):
     "Adds red colour and triggers an event when stepped on."
-    colour: tuple = RED
+    colour: Colour = RED
+    texture: Optional[str] = "tiles/action.png"
 
     def action(self):
         print("Action triggered! This could be a battle, item pickup, etc.")
@@ -30,12 +45,14 @@ class ActionTile(Tile):
 class SolidTile(Tile):
     "Solid Tile which is not passable"
     is_passable: bool = False
-    colour: tuple = BLACK
+    colour: Colour = BLACK
+
 
 TILE_REGISTRY = {
     0: Tile(),
     1: GrassTile(),
     2: WaterTile(),
     3: ActionTile(),
-    4: SolidTile()
+    4: SolidTile(),
+    5: GroundTile()
 }

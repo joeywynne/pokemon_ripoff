@@ -1,11 +1,13 @@
 import pygame
 from src.core.settings import PLAYER_SIZE, PLAYER_SPEED
+from typing import Optional
 
 class Entity:
     def __init__(self, x: int, y: int, colour: tuple):
         self.x = x
         self.y = y
-        self.colour
+        self.colour = colour
+        self.sprite: Optional[str] = None
     
     def get_rect(self):
         return pygame.Rect(self.x, self.y, self.size, self.size)
@@ -18,6 +20,7 @@ class Player(Entity):
         self.colour = colour
         self.size = PLAYER_SIZE
         self.speed = PLAYER_SPEED
+        self.sprite: Optional[str] = "entities/player.png"
 
     def update(self, keys):
         "Update the player's position based on the pressed keys."

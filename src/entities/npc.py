@@ -1,3 +1,4 @@
+from typing import Optional
 from src.entities.player import Entity
 from src.core.settings import PLAYER_SIZE, NPC_SPEED
 import random
@@ -10,6 +11,7 @@ class NPC(Entity):
         self.colour = colour
         self.size = PLAYER_SIZE
         self.speed = NPC_SPEED
+        self.sprite: Optional[str] = "entities/npc.png"
 
     def update(self):
         "Update the NPC's position."
