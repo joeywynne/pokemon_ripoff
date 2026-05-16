@@ -12,7 +12,6 @@ class AssetStore:
         key = f"{relative_path}_{alpha}_{self.tile_size}"
         if key in self._cache:
             return self._cache[key]
-
         full_path = self.base_dir / relative_path
         if not full_path.exists():
             raise FileNotFoundError(f"Asset not found: {full_path}")
@@ -23,5 +22,5 @@ class AssetStore:
         if image.get_width() != self.tile_size or image.get_height() != self.tile_size:
             image = pygame.transform.scale(image, (self.tile_size, self.tile_size))
 
-        self._cache[relative_path] = image
+        self._cache[key] = image
         return image

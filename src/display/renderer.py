@@ -16,9 +16,18 @@ class Renderer:
         self.entities_renderer = entities_renderer
         self.map_renderer = map_renderer
 
-    def render(self, player: Player, camera: Camera):
+    def render(self, player: Player, camera: Camera, fps_text: pygame.Surface):
         self.screen.fill(BLACK)
         camera.follow(player.get_rect())
-        self.entities_renderer.draw(self.screen, camera)
+        # Draw map first, then entities on top so the player is visible.
         self.map_renderer.draw(self.screen, camera)
+        self.entities_renderer.draw(self.screen, camera)
+        
+        text_width = fps_text.get_width()
+        text_height = fps_text.get_height()
+        padding = 8
+        box_rect = pygame.Rect(8, 8, text_width + padding * 2, text_height + padding)
+        pygame.draw.rect(self.screen, (0, 0, 0), box_rect)
+        self.screen.blit(fps_text, (8 + padding, 8 + padding))
+
         pygame.display.flip()

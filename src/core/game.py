@@ -30,7 +30,7 @@ class Game:
 
         entities = npcs + [self.player]
         entities_renderer = EntitiesRenderer(entities, assets)
-        self.renderer = Renderer(self.screen, map_renderer, entities_renderer)
+        self.renderer = Renderer(self.screen, entities_renderer, map_renderer)
         self.last_log_time = pygame.time.get_ticks()
     
     def handle_events(self):
@@ -51,7 +51,10 @@ class Game:
             self.last_log_time = current_time
 
     def render(self):
-        self.renderer.render(self.player, self.camera)
+        fps = self.clock.get_fps()
+        font = pygame.font.SysFont("consolas", 24)
+        fps_text = font.render(f"FPS: {fps:.1f}", True, (255, 255, 0))
+        self.renderer.render(self.player, self.camera, fps_text)
 
     def run(self):
         while self.running:
