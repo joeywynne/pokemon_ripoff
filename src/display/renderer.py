@@ -1,8 +1,9 @@
 import pygame
-from src.core.settings import BLACK, RED
+from src.core.settings import BLACK
 from src.display.map_renderer import MapRenderer
 from src.display.entities_renderer import EntitiesRenderer
-from src.entities.player import Entity
+from src.entities.player import Player
+from src.core.camera import Camera
 
 class Renderer:
     def __init__(
@@ -15,8 +16,9 @@ class Renderer:
         self.entities_renderer = entities_renderer
         self.map_renderer = map_renderer
 
-    def render(self):
+    def render(self, player: Player, camera: Camera):
         self.screen.fill(BLACK)
-        self.entities_renderer.draw(self.screen)
-        self.map_renderer.draw(self.screen)
+        camera.follow(player.get_rect())
+        self.entities_renderer.draw(self.screen, camera)
+        self.map_renderer.draw(self.screen, camera)
         pygame.display.flip()

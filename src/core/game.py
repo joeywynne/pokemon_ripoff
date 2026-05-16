@@ -7,6 +7,7 @@ from src.entities.npc import NPC
 from src.display.renderer import Renderer
 from src.display.entities_renderer import EntitiesRenderer
 from src.core.settings import PURPLE, BLUE_GREEN
+from src.core.camera import Camera
 
 class Game:
     def __init__(self, tile_map: TileMap):
@@ -16,9 +17,12 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
         map_renderer = MapRenderer(tile_map)
-        
+
+        map_width = tile_map.width * tile_map.tile_size
+        map_height = tile_map.height * tile_map.tile_size
+        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map_width, map_height)
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
-        num_npcs = 3
+        num_npcs = 0
         npcs = [NPC(1, 1, BLUE_GREEN) for _ in range(num_npcs)]
         self.npcs =  npcs
 
@@ -45,7 +49,7 @@ class Game:
             self.last_log_time = current_time
 
     def render(self):
-        self.renderer.render()
+        self.renderer.render(self.player, self.camera)
 
     def run(self):
         while self.running:
