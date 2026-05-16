@@ -1,3 +1,4 @@
+import logging
 import pygame
 from src.core.map.map import TileMap
 from src.core.settings import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
@@ -10,13 +11,18 @@ from src.core.settings import PURPLE, BLUE_GREEN
 from src.core.camera import Camera
 from src.display.assets import AssetStore
 
+logger = logging.getLogger(__name__)
+
 class Game:
-    def __init__(self, tile_map: TileMap):
+    def __init__(self, tile_map: TileMap, debug: bool = False):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon Ripoff")
         self.clock = pygame.time.Clock()
         self.running = True
+        self.debug = debug
+        self.font = pygame.font.SysFont("consolas", 24) if self.debug else None
+
         assets = AssetStore(tile_map.tile_size)
         map_renderer = MapRenderer(tile_map, assets)
 
@@ -26,12 +32,14 @@ class Game:
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
         num_npcs = 1
         npcs = [NPC(1, 1, BLUE_GREEN) for _ in range(num_npcs)]
-        self.npcs =  npcs
+        self.npcs = npcs
 
         entities = npcs + [self.player]
         entities_renderer = EntitiesRenderer(entities, assets)
         self.renderer = Renderer(self.screen, entities_renderer, map_renderer)
         self.last_log_time = pygame.time.get_ticks()
+
+        logger.debug("Game initialized with debug=%s", self.debug)
     
     def handle_events(self):
         for event in pygame.event.get():
@@ -44,19 +52,22 @@ class Game:
         for n in self.npcs:
             n.update()
         
-        # Log player position
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_log_time > 1000:  # Log every second
-            print(f"Player position: ({self.player.x}, {self.player.y})")
-            self.last_log_time = current_time
+        if self.debug:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_log_time > 1000:  # Log every second
+                logger.debug("Player position: (%s, %s)", self.player.x, self.player.y)
+                self.last_log_time = current_time
 
     def render(self):
-        fps = self.clock.get_fps()
-        font = pygame.font.SysFont("consolas", 24)
-        fps_text = font.render(f"FPS: {fps:.1f}", True, (255, 255, 0))
+        fps_text = None
+        if self.debug and self.font:
+            fps = self.clock.get_fps()
+            fps_text = self.font.render(f"FPS: {fps:.1f}", True, (255, 255, 0))
+
         self.renderer.render(self.player, self.camera, fps_text)
 
     def run(self):
+        logger.info("Starting game loop")
         while self.running:
             self.handle_events()
             self.update()
@@ -64,3 +75,4 @@ class Game:
             self.clock.tick(FPS)
         
         pygame.quit()
+        logger.info("Game shut down")
