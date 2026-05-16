@@ -11,7 +11,7 @@ class NPC(Entity):
         self.colour = colour
         self.size = PLAYER_SIZE
         self.speed = NPC_SPEED
-        self.sprite: Optional[str] = "entities/npc.png"
+        self.sprite: Optional[str] = "entities/drowzee.png"
 
     def update(self):
         "Update the NPC's position."

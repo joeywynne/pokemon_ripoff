@@ -17,14 +17,14 @@ class Game:
         pygame.display.set_caption("Pokemon Ripoff")
         self.clock = pygame.time.Clock()
         self.running = True
-        assets = AssetStore(tile_map)
+        assets = AssetStore(tile_map.tile_size)
         map_renderer = MapRenderer(tile_map, assets)
 
         map_width = tile_map.width * tile_map.tile_size
         map_height = tile_map.height * tile_map.tile_size
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map_width, map_height)
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
-        num_npcs = 0
+        num_npcs = 1
         npcs = [NPC(1, 1, BLUE_GREEN) for _ in range(num_npcs)]
         self.npcs =  npcs
 

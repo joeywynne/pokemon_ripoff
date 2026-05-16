@@ -2,7 +2,7 @@ import pygame
 from pathlib import Path
 
 class AssetStore:
-    def __intit__(self, tile_size: int, base_dir: str = "assets"):
+    def __init__(self, tile_size: int, base_dir: str = "assets"):
         self.tile_size = tile_size
         self.base_dir = Path(base_dir)
         self._cache: dict[str, pygame.Surface] = {}

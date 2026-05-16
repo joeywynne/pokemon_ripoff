@@ -19,7 +19,7 @@ class GrassTile(Tile):
     "Grass textured tile with speed modifier."
     speed_modifier: float = 0.8
     colour: Colour = GREEN
-    texture: Optional[str] = "tiles/grass.png"
+    texture: Optional[str] = "tiles/highland.png"
 
 
 class WaterTile(Tile):
@@ -31,13 +31,12 @@ class WaterTile(Tile):
 class GroundTile(Tile):
     "Ground textured tile with speed modifier."
     colour: Colour = BROWN
-    texture: Optional[str] = "tiles/ground.png"
+    texture: Optional[str] = "tiles/path.png"
 
 
 class ActionTile(Tile):
     "Adds red colour and triggers an event when stepped on."
     colour: Colour = RED
-    texture: Optional[str] = "tiles/action.png"
 
     def action(self):
         print("Action triggered! This could be a battle, item pickup, etc.")

@@ -20,7 +20,7 @@ class Player(Entity):
         self.colour = colour
         self.size = PLAYER_SIZE
         self.speed = PLAYER_SPEED
-        self.sprite: Optional[str] = "entities/player.png"
+        self.sprite: Optional[str] = "entities/ditto.png"
 
     def update(self, keys):
         "Update the player's position based on the pressed keys."

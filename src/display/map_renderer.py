@@ -23,7 +23,7 @@ class MapRenderer:
 
                 dest = pygame.Rect(screen_x, screen_y, tile_size, tile_size)
                 if tile.texture:
-                    texture = self.assets.get(tile.texture, alpha=True)
+                    texture = self.assets.image(tile.texture, alpha=True)
                     surface.blit(texture, dest)
                 else:
                     pygame.draw.rect(surface, tile.colour, dest)
