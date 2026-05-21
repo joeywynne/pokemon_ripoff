@@ -1,5 +1,5 @@
 import pygame
-from src.core.map.map import TileMap
+from src.core.map.tile_map import TileMap
 from src.core.settings import WHITE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
@@ -10,7 +10,7 @@ class MapRenderer:
         self.assets = assets
 
     def draw(self, surface: pygame.Surface, camera: Camera):
-        tile_size = self.tile_map.tile_size
+        tile_size = self.tile_map.grid_size
 
         for ty in range(self.tile_map.height):
             for tx in range(self.tile_map.width):

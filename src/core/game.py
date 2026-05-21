@@ -1,6 +1,7 @@
 import logging
 import pygame
-from src.core.map.map import TileMap
+from src.core.map.collision_map import CollisionMap
+from src.core.map.tile_map import TileMap
 from src.core.settings import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 from src.display.map_renderer import MapRenderer
 from src.entities.player import Player
@@ -14,20 +15,21 @@ from src.display.assets import AssetStore
 logger = logging.getLogger(__name__)
 
 class Game:
-    def __init__(self, tile_map: TileMap, debug: bool = False):
+    def __init__(self, tile_map: TileMap, collision_map: CollisionMap, debug: bool = False):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon Ripoff")
         self.clock = pygame.time.Clock()
         self.running = True
         self.debug = debug
+        self.collision_map = collision_map
         self.font = pygame.font.SysFont("consolas", 24) if self.debug else None
 
-        assets = AssetStore(tile_map.tile_size)
+        assets = AssetStore(tile_map.grid_size)
         map_renderer = MapRenderer(tile_map, assets)
 
-        map_width = tile_map.width * tile_map.tile_size
-        map_height = tile_map.height * tile_map.tile_size
+        map_width = tile_map.width * tile_map.grid_size
+        map_height = tile_map.height * tile_map.grid_size
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map_width, map_height)
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
         num_npcs = 1
@@ -48,7 +50,7 @@ class Game:
     
     def update(self):
         keys = pygame.key.get_pressed()
-        self.player.update(keys)
+        self.player.update(keys, self.collision_map)
         for n in self.npcs:
             n.update()
         
@@ -64,7 +66,7 @@ class Game:
             fps = self.clock.get_fps()
             fps_text = self.font.render(f"FPS: {fps:.1f}", True, (255, 255, 0))
 
-        self.renderer.render(self.player, self.camera, fps_text)
+        self.renderer.render(self.player, self.camera, fps_text, self.debug)
 
     def run(self):
         logger.info("Starting game loop")

@@ -17,12 +17,12 @@ class Renderer:
         self.entities_renderer = entities_renderer
         self.map_renderer = map_renderer
 
-    def render(self, player: Player, camera: Camera, fps_text: Optional[pygame.Surface] = None):
+    def render(self, player: Player, camera: Camera, fps_text: Optional[pygame.Surface] = None, debug: Optional[bool] = False):
         self.screen.fill(BLACK)
         camera.follow(player.get_rect())
         # Draw map first, then entities on top so the player is visible.
         self.map_renderer.draw(self.screen, camera)
-        self.entities_renderer.draw(self.screen, camera)
+        self.entities_renderer.draw(self.screen, camera, debug)
 
         if fps_text is not None:
             text_width = fps_text.get_width()

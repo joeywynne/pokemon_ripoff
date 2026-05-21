@@ -1,4 +1,5 @@
 import pygame
+from src.core.map.collision_map import CollisionMap
 from src.core.settings import PLAYER_SIZE, PLAYER_SPEED
 from typing import Optional
 
@@ -22,13 +23,23 @@ class Player(Entity):
         self.speed = PLAYER_SPEED
         self.sprite: Optional[str] = "entities/ditto.png"
 
-    def update(self, keys):
+    def update(self, keys, collision_map: CollisionMap):
         "Update the player's position based on the pressed keys."
+        dy, dx = 0, 0  # Default to no movement if no movement keys are pressed
         if keys[pygame.K_LEFT]:
-            self.x -= PLAYER_SPEED
+            dx -= self.speed
         if keys[pygame.K_RIGHT]:
-            self.x += PLAYER_SPEED
+            dx += self.speed
         if keys[pygame.K_UP]:
-            self.y -= PLAYER_SPEED
-        if keys[pygame.K_DOWN]:
-            self.y += PLAYER_SPEED
+            dy -= self.speed
+        if keys[pygame.K_DOWN]: 
+            dy += self.speed
+
+        target_pos = (self.x + dx, self.y + dy)
+        negative_pos = (self.x - dx, self.y - dy)
+        target_rect = pygame.Rect(self.x + dx, self.y + dy, self.size, self.size)
+        final_pos = target_pos if can_move_to(target_rect, collision_map) else negative_pos
+        self.x, self.y = final_pos
+
+def can_move_to(target_rect: pygame.Rect, collision_map: CollisionMap) -> bool:
+    return not collision_map.collides(target_rect)
