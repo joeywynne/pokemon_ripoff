@@ -14,11 +14,15 @@ class EntitiesRenderer:
         screen_rect = rect.move(-int(camera.x), -int(camera.y))
         if getattr(entity, "sprite", None):
             sprite = self.assets.image(entity.sprite, alpha=True)
-            surface.blit(sprite, screen_rect)
+            sprite_rect = sprite.get_rect()
+            sprite_rect.center = screen_rect.center
+            surface.blit(sprite, sprite_rect)
         else:
             pygame.draw.rect(surface, entity.colour, screen_rect)
 
         if debug:
+            pygame.draw.circle(surface, (0, 0, 255), (int(entity.x - camera.x), int(entity.y - camera.y)), 3)
+
             pygame.draw.rect(surface, (255, 0, 0), screen_rect, 1)  # Red outline for debugging
         
     
