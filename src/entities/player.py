@@ -7,18 +7,20 @@ class Entity:
     def __init__(self, x: int, y: int, colour: tuple):
         self.x = x
         self.y = y
+        self.velocity = [0, 0]
         self.colour = colour
         self.sprite: Optional[str] = None
     
     def get_rect(self):
         return pygame.Rect(self.x, self.y, self.size, self.size)
+    
+    def update(self, dx: float, dy: float, collision_map: CollisionMap):
+        pass
 
 
 class Player(Entity):
     def __init__(self, x: int, y: int, colour: tuple):
-        self.x = x
-        self.y = y
-        self.colour = colour
+        super().__init__(x, y, colour)
         self.size = PLAYER_SIZE
         self.speed = PLAYER_SPEED
         self.sprite: Optional[str] = "entities/ditto.png"
@@ -35,11 +37,17 @@ class Player(Entity):
         if keys[pygame.K_DOWN]: 
             dy += self.speed
 
-        target_pos = (self.x + dx, self.y + dy)
-        negative_pos = (self.x - dx, self.y - dy)
-        target_rect = pygame.Rect(self.x + dx, self.y + dy, self.size, self.size)
-        final_pos = target_pos if can_move_to(target_rect, collision_map) else negative_pos
-        self.x, self.y = final_pos
+        target_x = self.x + dx
+        target_rect = pygame.Rect(target_x, self.y, self.size, self.size)
+        if can_move_to(target_rect, collision_map):
+            self.x = target_x
+            self.velocity[0] = dx
+        
+        target_y = self.y + dy
+        target_rect = pygame.Rect(self.x, target_y, self.size, self.size)
+        if can_move_to(target_rect, collision_map):
+            self.y = target_y
+            self.velocity[1] = dy
 
 def can_move_to(target_rect: pygame.Rect, collision_map: CollisionMap) -> bool:
     return not collision_map.collides(target_rect)

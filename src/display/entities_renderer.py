@@ -21,8 +21,6 @@ class EntitiesRenderer:
             pygame.draw.rect(surface, entity.colour, screen_rect)
 
         if debug:
-            pygame.draw.circle(surface, (0, 0, 255), (int(entity.x - camera.x), int(entity.y - camera.y)), 3)
-
             pygame.draw.rect(surface, (255, 0, 0), screen_rect, 1)  # Red outline for debugging
         
     
