@@ -1,7 +1,7 @@
 from typing import Optional
 import pygame
 from src.display.assets import AssetStore
-from src.entities.player import Entity
+from src.entities.entity import Entity
 from src.core.camera import Camera
 
 class EntitiesRenderer:

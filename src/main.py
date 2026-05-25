@@ -22,9 +22,9 @@ def main() -> None:
 
     setup_logging(args.debug)
     probs = {5: 0.5, 1: 0.3, 2: 0.15, 3: 0.05}
-    tile_map = generate_random_map(64, 64, probs)
+    tile_map = generate_random_map(16, 16, probs)
     collision_map = generate_collision_map(tile_map)
-    game = Game(tile_map, collision_map,debug=args.debug)
+    game = Game(tile_map, collision_map, debug=args.debug)
     game.run()
 
 
