@@ -34,8 +34,8 @@ class Game:
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
         self.npcs = generate_npcs(4, map_width, map_height)
 
-        entities = self.npcs + [self.player]
-        entities_renderer = EntitiesRenderer(entities, assets)
+        self.entities = self.npcs + [self.player]
+        entities_renderer = EntitiesRenderer(self.entities, assets)
         self.renderer = Renderer(self.screen, entities_renderer, map_renderer)
         self.last_log_time = pygame.time.get_ticks()
 
@@ -48,14 +48,15 @@ class Game:
     
     def update(self):
         keys = pygame.key.get_pressed()
-        self.player.update(self.collision_map, keys=keys)
+        self.player.update(self.collision_map, keys=keys, entities=self.entities)
         for n in self.npcs:
-            n.update(self.collision_map)
+            n.update(self.collision_map, entities=self.entities)
         
         if self.debug:
             current_time = pygame.time.get_ticks()
             if current_time - self.last_log_time > 1000:  # Log every second
                 logger.debug("Player position: (%s, %s)", self.player.x, self.player.y)
+                logger.debug("Player velocity: %s", self.player.velocity)
                 self.last_log_time = current_time
 
     def render(self):

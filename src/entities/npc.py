@@ -22,6 +22,7 @@ class NPC(Entity):
         self.speed = NPC_SPEED
         self.sprite: Optional[str] = "entities/drowzee.png"
         self.movement_type: MovementType = movement_type
+        self.mass = 200.0
 
         self.pace_direction = 1
         self.pace_distance = 180
