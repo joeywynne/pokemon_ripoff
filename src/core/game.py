@@ -1,5 +1,6 @@
 import logging
 import pygame
+from src.core.collision_resolution import resolve_all_collisions
 from src.core.map.collision_map import CollisionMap
 from src.core.map.tile_map import TileMap
 from src.core.settings import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
@@ -48,9 +49,10 @@ class Game:
     
     def update(self):
         keys = pygame.key.get_pressed()
-        self.player.update(self.collision_map, keys=keys, entities=self.entities)
+        self.player.update(keys=keys)
         for n in self.npcs:
-            n.update(self.collision_map, entities=self.entities)
+            n.update()
+        resolve_all_collisions(self.entities, self.collision_map)
         
         if self.debug:
             current_time = pygame.time.get_ticks()

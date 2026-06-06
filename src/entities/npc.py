@@ -22,7 +22,7 @@ class NPC(Entity):
         self.speed = NPC_SPEED
         self.sprite: Optional[str] = "entities/drowzee.png"
         self.movement_type: MovementType = movement_type
-        self.mass = 200.0
+        self.mass = 2.0
 
         self.pace_direction = 1
         self.pace_distance = 180
@@ -35,7 +35,7 @@ class NPC(Entity):
     def set_movement_type(self, movement_type: MovementType):
         self.movement_type = movement_type
 
-    def get_move(self) -> tuple[float, float]:
+    def get_intended_move(self) -> tuple[float, float]:
         if self.movement_type == MovementType.STATIONARY:
             return 0, 0
         

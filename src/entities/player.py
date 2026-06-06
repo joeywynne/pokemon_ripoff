@@ -10,7 +10,7 @@ class Player(Entity):
         self.speed = PLAYER_SPEED
         self.sprite: Optional[str] = "entities/ditto.png"
 
-    def get_move(self, keys: dict) -> tuple[float, float]:
+    def get_intended_move(self, keys: dict) -> tuple[float, float]:
         dy, dx = 0, 0  # Default to no movement if no movement keys are pressed
         if keys[pygame.K_LEFT]:
             dx -= self.speed

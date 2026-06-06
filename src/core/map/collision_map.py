@@ -1,6 +1,7 @@
 from src.core.map.tile_map import TileMap
 from src.core.map.grid_map import GridMap
 
+
 class CollisionMap(GridMap):
     def is_cell_solid(self, idx_x: int, idx_y: int) -> bool:
         if 0 <= idx_y < self.height and 0 <= idx_x < self.width:
@@ -16,7 +17,6 @@ class CollisionMap(GridMap):
                 if rect.colliderect(tile_rect):
                     return True
         return False
-
 
 
 def generate_collision_map(tile_map: TileMap) -> CollisionMap:
