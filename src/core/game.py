@@ -58,6 +58,8 @@ class Game:
         for n in self.entities:
             if n is not self.player:
                 n.update()
+                if not n.is_active:
+                    self.entities.remove(n)
         resolve_all_collisions(self.entities, self.collision_map)
 
         if self.debug:

@@ -22,6 +22,7 @@ class Entity:
         self.colour = colour
         self.sprite_info: Optional[SpriteInfo] = None
         self.facing = (1, 0)
+        self.is_active = True
 
     @property
     def momentum(self) -> tuple[float, float]:

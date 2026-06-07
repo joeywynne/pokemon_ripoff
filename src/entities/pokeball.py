@@ -1,16 +1,24 @@
 from src.entities.entity import Entity, SpriteInfo
 from pathlib import Path
 from src.core.settings import POKEBALL_SIZE
+from typing import Optional
 
 
 class Projectile(Entity):
-    def __init__(self, x, y, colour):
+    def __init__(self, x, y, colour, lifetime: Optional[int]=300):
         super().__init__(x, y, colour)
+        self.lifetime = lifetime
+    
+    def update(self, **kwargs) -> Optional[Entity]:
+        self.lifetime -= 1
+        if self.lifetime <= 0:
+            self.is_active = False  # Signal that this projectile should be removed
+        return super().update(**kwargs)
 
 
 class Pokeball(Projectile):
-    def __init__(self, x, y, colour, direction: tuple = (1, 0), throw_power: float = 5.0):
-        super().__init__(x, y, colour)
+    def __init__(self, x, y, colour, lifetime=150, direction: tuple = (1, 0), throw_power: float = 5.0):
+        super().__init__(x, y, colour, lifetime)
         self.size = POKEBALL_SIZE
         self.speed = 5.0
         self.mass = 0.5
