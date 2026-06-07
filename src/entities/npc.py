@@ -11,7 +11,7 @@ class MovementType(Enum):
     PACING_HORIZONTAL = 2
     WANDERING = 3
     # Add move as necessary
-    #FOLLOWING = 4
+    # FOLLOWING = 4
 
 
 class NPC(Entity):
@@ -39,7 +39,7 @@ class NPC(Entity):
     def get_intended_move(self) -> tuple[float, float]:
         if self.movement_type == MovementType.STATIONARY:
             return 0, 0
-        
+
         elif self.movement_type == MovementType.PACING_VERTICAL:
             return self._pacing(axis=0)
 
@@ -48,7 +48,7 @@ class NPC(Entity):
 
         elif self.movement_type == MovementType.WANDERING:
             return self._wandering()
-        
+
     def _pacing(self, axis: int) -> tuple[float, float]:
         if axis == 0:
             dx = 0
@@ -62,18 +62,25 @@ class NPC(Entity):
             self.pace_direction *= -1
             self.pace_travelled = 0
 
-        return dx, dy   
-    
+        return dx, dy
+
     def _wandering(self) -> tuple[float, float]:
         self.wander_timer += 1
-        if self.wander_timer >= self.change_direction_interval or self.wander_direction == (0, 0):
+        if (
+            self.wander_timer >= self.change_direction_interval
+            or self.wander_direction == (0, 0)
+        ):
             self.wander_timer = 0
             self.change_direction_interval = random.randint(60, 120)
-            self.wander_direction = (round(random.uniform(-1, 1)), round(random.uniform(-1, 1)))
+            self.wander_direction = (
+                round(random.uniform(-1, 1)),
+                round(random.uniform(-1, 1)),
+            )
 
         dx = self.speed * self.wander_direction[0]
         dy = self.speed * self.wander_direction[1]
         return dx, dy
+
 
 def generate_npcs(num_npcs: int, map_width: int, map_height: int) -> list[NPC]:
     return [
@@ -81,6 +88,7 @@ def generate_npcs(num_npcs: int, map_width: int, map_height: int) -> list[NPC]:
             random.randint(TILE_SIZE, map_width - TILE_SIZE),
             random.randint(TILE_SIZE, map_height - TILE_SIZE),
             BLUE_GREEN,
-            list(MovementType)[i]
-        ) for i in range(num_npcs)
+            list(MovementType)[i],
+        )
+        for i in range(num_npcs)
     ]

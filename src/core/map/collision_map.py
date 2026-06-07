@@ -25,5 +25,5 @@ def generate_collision_map(tile_map: TileMap) -> CollisionMap:
             [tile == 4 for tile in row]  # Only tile type 4 (Solid) is considered solid
             for row in tile_map.grid
         ],
-        tile_map.grid_size
+        tile_map.grid_size,
     )

@@ -4,6 +4,7 @@ from src.core.settings import WHITE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
 
+
 class MapRenderer:
     def __init__(self, tile_map: TileMap, assets: AssetStore):
         self.tile_map = tile_map
@@ -15,7 +16,7 @@ class MapRenderer:
         for ty in range(self.tile_map.height):
             for tx in range(self.tile_map.width):
                 tile = self.tile_map.get_tile_at(tx, ty)
-                
+
                 world_x = tx * tile_size
                 world_y = ty * tile_size
                 screen_x = world_x - camera.x

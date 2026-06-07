@@ -5,7 +5,7 @@ import src.core.settings as settings
 
 
 class TileMap(GridMap):
-        
+
     def set_tile(self, x: int, y: int, tile_type: int):
         if tile_type in TILE_REGISTRY:
             self.grid[y][x] = tile_type
@@ -17,11 +17,21 @@ class TileMap(GridMap):
             return TILE_REGISTRY[self.grid[y][x]]
         else:
             raise IndexError("Tile coordinates out of bounds.")
-   
 
-def generate_random_map(width: int, height: int, tile_probabilities: dict[int, float]) -> TileMap:
+
+def generate_random_map(
+    width: int, height: int, tile_probabilities: dict[int, float]
+) -> TileMap:
     """Generates a random map based on the provided tile probabilities."""
-    tiles = [[random.choices(list(tile_probabilities.keys()), weights=tile_probabilities.values())[0] for _ in range(width)] for _ in range(height)]
+    tiles = [
+        [
+            random.choices(
+                list(tile_probabilities.keys()), weights=tile_probabilities.values()
+            )[0]
+            for _ in range(width)
+        ]
+        for _ in range(height)
+    ]
     # replace boundary tiles with Solid tiles
     tiles[0] = [4 for _ in range(width)]
     tiles[height - 1] = [4 for _ in range(width)]

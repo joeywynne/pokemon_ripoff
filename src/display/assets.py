@@ -10,14 +10,14 @@ class AssetStore:
         self._cache: dict[str, pygame.Surface] = {}
 
     def get_sprite(
-            self,
-            relative_path: str,
-            position: Optional[tuple[int, int]] = None,
-            size: Optional[tuple[int, int]] = None,
-            alpha: bool = True
-        ) -> pygame.Surface:
+        self,
+        relative_path: str,
+        position: Optional[tuple[int, int]] = None,
+        size: Optional[tuple[int, int]] = None,
+        alpha: bool = True,
+    ) -> pygame.Surface:
         """Load a sprite from the assets directory.
-        
+
         If position and size provied then we obtain from the spritesheet.
         Otherwise we take the whole image.
         With optional alpha transparency.
@@ -42,7 +42,7 @@ class AssetStore:
         self._cache[key] = image
         return image
 
-        
+
 def get_image_at(image, position, size, colourkey=None):
     """Loads image from x, y, x+offset, y+offset"""
     rect = pygame.Rect(position + size)

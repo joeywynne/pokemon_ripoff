@@ -1,5 +1,6 @@
 import pygame
 
+
 class GridMap:
     def __init__(self, grid: list[list], grid_size: int):
         self.grid_size = grid_size
@@ -11,7 +12,7 @@ class GridMap:
     def grid_rect(self, tx: int, ty: int) -> pygame.Rect:
         gs = self.grid_size
         return pygame.Rect(tx * gs, ty * gs, gs, gs)
-    
+
     def world_to_grid(self, x: int, y: int) -> tuple[int, int]:
         return (x // self.grid_size, y // self.grid_size)
 

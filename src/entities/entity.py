@@ -25,10 +25,13 @@ class Entity:
     @property
     def momentum(self) -> tuple[float, float]:
         return self.mass * self.velocity[0], self.mass * self.velocity[1]
-    
+
     @property
     def desired_momentum(self) -> tuple[float, float]:
-        return self.mass * self.desired_velocity[0], self.mass * self.desired_velocity[1]
+        return (
+            self.mass * self.desired_velocity[0],
+            self.mass * self.desired_velocity[1],
+        )
 
     @property
     def facing(self) -> tuple[int, int]:
@@ -36,24 +39,24 @@ class Entity:
         if self.velocity[0] > 0:
             return (1, 0)  # Facing right
         elif self.velocity[0] < 0:
-            return (-1, 0) # Facing left
+            return (-1, 0)  # Facing left
         else:
             return (1, 0)
 
     def get_rect(self):
         return pygame.Rect(self.x, self.y, self.size, self.size)
-    
+
     def get_intended_move(self, **kwargs) -> tuple[float, float]:
         # Default to no movement
         return 0, 0
-    
+
     def update(self, **kwargs):
         dx, dy = self.get_intended_move(**kwargs)
-        
+
         if dx != 0 and dy != 0:
-            dx *= 0.7071   # ≈ 1/sqrt(2)
+            dx *= 0.7071  # ≈ 1/sqrt(2)
             dy *= 0.7071
-        
+
         self.desired_velocity = [dx, dy]
 
     def _apply_desired_move(self, collision_map: CollisionMap):
@@ -81,13 +84,13 @@ class Entity:
             # Push back along last movement
             self.x -= self.desired_velocity[0] * 2.5
             self.y -= self.desired_velocity[1] * 2.5
-            
+
             # Last resort: snap to integer position
             if not can_move_to(self.get_rect(), collision_map):
                 self.x = round(self.x)
                 self.y = round(self.y)
                 self.desired_velocity = [0.0, 0.0]
-        
+
         self.velocity = self.desired_velocity
 
 

@@ -9,9 +9,7 @@ class Player(Entity):
         super().__init__(x, y, colour)
         self.size = PLAYER_SIZE
         self.speed = PLAYER_SPEED
-        ditto_info = SpriteInfo(
-            relative_path=Path("entities/ditto.png")
-        )
+        ditto_info = SpriteInfo(relative_path=Path("entities/ditto.png"))
         self.sprite_info = ditto_info
 
     def get_intended_move(self, keys: dict) -> tuple[float, float]:
@@ -22,7 +20,7 @@ class Player(Entity):
             dx += self.speed
         if keys[pygame.K_UP]:
             dy -= self.speed
-        if keys[pygame.K_DOWN]: 
+        if keys[pygame.K_DOWN]:
             dy += self.speed
 
         return dx, dy

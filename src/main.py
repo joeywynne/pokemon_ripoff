@@ -17,7 +17,9 @@ def setup_logging(debug: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the Pokemon Ripoff game.")
-    parser.add_argument("--debug", action="store_true", help="Enable debug logging and FPS display")
+    parser.add_argument(
+        "--debug", action="store_true", help="Enable debug logging and FPS display"
+    )
     args = parser.parse_args()
 
     setup_logging(args.debug)

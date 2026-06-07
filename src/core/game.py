@@ -15,8 +15,11 @@ from src.display.assets import AssetStore
 
 logger = logging.getLogger(__name__)
 
+
 class Game:
-    def __init__(self, tile_map: TileMap, collision_map: CollisionMap, debug: bool = False):
+    def __init__(
+        self, tile_map: TileMap, collision_map: CollisionMap, debug: bool = False
+    ):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon Ripoff")
@@ -41,19 +44,19 @@ class Game:
         self.last_log_time = pygame.time.get_ticks()
 
         logger.debug("Game initialized with debug=%s", self.debug)
-    
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-    
+
     def update(self):
         keys = pygame.key.get_pressed()
         self.player.update(keys=keys)
         for n in self.npcs:
             n.update()
         resolve_all_collisions(self.entities, self.collision_map)
-        
+
         if self.debug:
             current_time = pygame.time.get_ticks()
             if current_time - self.last_log_time > 1000:  # Log every second
@@ -76,6 +79,6 @@ class Game:
             self.update()
             self.render()
             self.clock.tick(FPS)
-        
+
         pygame.quit()
         logger.info("Game shut down")
