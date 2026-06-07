@@ -21,6 +21,7 @@ class Entity:
         self.mass = 1.0
         self.colour = colour
         self.sprite_info: Optional[SpriteInfo] = None
+        self.facing = (1, 0)
 
     @property
     def momentum(self) -> tuple[float, float]:
@@ -32,16 +33,6 @@ class Entity:
             self.mass * self.desired_velocity[0],
             self.mass * self.desired_velocity[1],
         )
-
-    @property
-    def facing(self) -> tuple[int, int]:
-        # Determine facing direction based on velocity
-        if self.velocity[0] > 0:
-            return (1, 0)  # Facing right
-        elif self.velocity[0] < 0:
-            return (-1, 0)  # Facing left
-        else:
-            return (1, 0)
 
     def get_rect(self):
         return pygame.Rect(self.x, self.y, self.size, self.size)
@@ -96,6 +87,11 @@ class Entity:
                 self.x = round(self.x)
                 self.y = round(self.y)
                 self.desired_velocity = [0.0, 0.0]
+        
+        if self.desired_velocity[0] != 0:
+            self.facing = (1, 0) if self.desired_velocity[0] > 0 else (-1, 0)
+        if self.desired_velocity[1] != 0:
+            self.facing = (0, 1) if self.desired_velocity[1] > 0 else (0, -1)
 
         self.velocity = self.desired_velocity
 

@@ -51,7 +51,7 @@ class Player(Entity):
         power = self.throw_charge
         # Create a pokeball entity with speed based on charge
         # and direction based on facing
-        pokeball = Pokeball(self.x, self.y, RED)  # self.facing, power)
+        pokeball = Pokeball(self.x, self.y, RED, direction=self.facing, throw_power=power)
 
         self.throwing = False
         self.throw_charge = 0
