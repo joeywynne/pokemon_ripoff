@@ -12,8 +12,12 @@ class EntitiesRenderer:
     def draw_entity(self, surface: pygame.Surface, entity: Entity, camera: Camera, debug: Optional[bool] = False):
         rect = entity.get_rect()
         screen_rect = rect.move(-int(camera.x), -int(camera.y))
-        if getattr(entity, "sprite", None):
-            sprite = self.assets.image(entity.sprite, alpha=True)
+        if getattr(entity, "sprite_info", None):
+            sprite = self.assets.get_sprite(
+                entity.sprite_info.relative_path,
+                position=entity.sprite_info.position,
+                size=entity.sprite_info.size
+            )
             sprite_rect = sprite.get_rect()
             sprite_rect.center = screen_rect.center
             surface.blit(sprite, sprite_rect)

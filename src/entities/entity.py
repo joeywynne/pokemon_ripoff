@@ -1,6 +1,16 @@
+from dataclasses import dataclass
 import pygame
 from src.core.map.collision_map import CollisionMap
 from typing import Optional
+from pathlib import Path
+
+
+@dataclass
+class SpriteInfo:
+    relative_path: Path
+    position: Optional[tuple] = None
+    size: Optional[tuple] = None
+
 
 class Entity:
     def __init__(self, x: float, y: float, colour: tuple):
@@ -10,7 +20,7 @@ class Entity:
         self.desired_velocity = [0.0, 0.0]
         self.mass = 1.0
         self.colour = colour
-        self.sprite: Optional[str] = None
+        self.sprite_info: Optional[SpriteInfo] = None
 
     @property
     def momentum(self) -> tuple[float, float]:

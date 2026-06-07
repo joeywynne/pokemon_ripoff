@@ -1,6 +1,5 @@
-from typing import Optional
-from src.core.map.collision_map import CollisionMap
-from src.entities.entity import Entity
+from pathlib import Path
+from src.entities.entity import Entity, SpriteInfo
 from src.core.settings import PLAYER_SIZE, NPC_SPEED, BLUE_GREEN, TILE_SIZE
 import random
 from enum import Enum
@@ -20,7 +19,9 @@ class NPC(Entity):
         super().__init__(x, y, colour)
         self.size = PLAYER_SIZE
         self.speed = NPC_SPEED
-        self.sprite: Optional[str] = "entities/drowzee.png"
+
+        drowzee_info = SpriteInfo(Path("entities/drowzee.png"))
+        self.sprite_info = drowzee_info
         self.movement_type: MovementType = movement_type
         self.mass = 2.0
 

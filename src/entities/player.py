@@ -1,14 +1,18 @@
-from src.entities.entity import Entity
+from src.entities.entity import Entity, SpriteInfo
 from src.core.settings import PLAYER_SIZE, PLAYER_SPEED
-from typing import Optional
 import pygame
+from pathlib import Path
+
 
 class Player(Entity):
     def __init__(self, x: int, y: int, colour: tuple):
         super().__init__(x, y, colour)
         self.size = PLAYER_SIZE
         self.speed = PLAYER_SPEED
-        self.sprite: Optional[str] = "entities/ditto.png"
+        ditto_info = SpriteInfo(
+            relative_path=Path("entities/ditto.png")
+        )
+        self.sprite_info = ditto_info
 
     def get_intended_move(self, keys: dict) -> tuple[float, float]:
         dy, dx = 0, 0  # Default to no movement if no movement keys are pressed
