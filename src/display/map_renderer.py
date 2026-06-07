@@ -1,6 +1,6 @@
 import pygame
 from src.core.map.tile_map import TileMap
-from src.core.settings import WHITE
+from src.core.settings import WHITE, TILE_SIZE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
 
@@ -24,7 +24,9 @@ class MapRenderer:
 
                 dest = pygame.Rect(screen_x, screen_y, tile_size, tile_size)
                 if tile.texture:
-                    texture = self.assets.get_sprite(tile.texture, alpha=True)
+                    texture = self.assets.get_sprite(
+                        tile.texture, TILE_SIZE, alpha=True
+                    )
                     surface.blit(texture, dest)
                 else:
                     pygame.draw.rect(surface, tile.colour, dest)

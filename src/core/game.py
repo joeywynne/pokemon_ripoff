@@ -29,7 +29,7 @@ class Game:
         self.collision_map = collision_map
         self.font = pygame.font.SysFont("consolas", 24) if self.debug else None
 
-        assets = AssetStore(tile_map.grid_size)
+        assets = AssetStore()
         map_renderer = MapRenderer(tile_map, assets)
 
         map_width = tile_map.width * tile_map.grid_size
@@ -52,9 +52,12 @@ class Game:
 
     def update(self):
         keys = pygame.key.get_pressed()
-        self.player.update(keys=keys)
-        for n in self.npcs:
-            n.update()
+        pokeball = self.player.update(keys=keys)
+        if pokeball is not None:
+            self.entities.append(pokeball)
+        for n in self.entities:
+            if n is not self.player:
+                n.update()
         resolve_all_collisions(self.entities, self.collision_map)
 
         if self.debug:

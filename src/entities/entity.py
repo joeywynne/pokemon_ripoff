@@ -9,7 +9,7 @@ from pathlib import Path
 class SpriteInfo:
     relative_path: Path
     position: Optional[tuple] = None
-    size: Optional[tuple] = None
+    sheet_size: Optional[tuple] = None
 
 
 class Entity:
@@ -50,14 +50,20 @@ class Entity:
         # Default to no movement
         return 0, 0
 
-    def update(self, **kwargs):
-        dx, dy = self.get_intended_move(**kwargs)
+    def update(self, **kwargs) -> Optional[Entity]:
+        intended_move = self.get_intended_move(**kwargs)
+        new_entity = None
+        if len(intended_move) == 3:
+            dx, dy, new_entity = intended_move
+        else:
+            dx, dy = intended_move
 
         if dx != 0 and dy != 0:
             dx *= 0.7071  # ≈ 1/sqrt(2)
             dy *= 0.7071
 
         self.desired_velocity = [dx, dy]
+        return new_entity
 
     def _apply_desired_move(self, collision_map: CollisionMap):
         dx, dy = self.desired_velocity

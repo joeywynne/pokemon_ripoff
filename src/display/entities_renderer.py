@@ -22,8 +22,9 @@ class EntitiesRenderer:
         if getattr(entity, "sprite_info", None):
             sprite = self.assets.get_sprite(
                 entity.sprite_info.relative_path,
+                entity.size,
                 position=entity.sprite_info.position,
-                size=entity.sprite_info.size,
+                sheet_size=entity.sprite_info.sheet_size,
             )
             sprite_rect = sprite.get_rect()
             sprite_rect.center = screen_rect.center
