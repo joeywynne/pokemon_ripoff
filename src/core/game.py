@@ -67,6 +67,7 @@ class Game:
             if current_time - self.last_log_time > 1000:  # Log every second
                 logger.debug("Player position: (%s, %s)", self.player.x, self.player.y)
                 logger.debug("Player velocity: %s", self.player.velocity)
+                logger.debug("Player facing: %s", self.player.facing)
                 self.last_log_time = current_time
 
     def render(self):

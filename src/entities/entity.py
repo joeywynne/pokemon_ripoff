@@ -16,6 +16,7 @@ class Entity:
     def __init__(self, x: float, y: float, colour: tuple):
         self.x = x
         self.y = y
+        self.z = 0
         self.velocity = [0.0, 0.0]
         self.desired_velocity = [0.0, 0.0]
         self.mass = 1.0
@@ -78,6 +79,10 @@ class Entity:
 
     def _final_safety(self, collision_map: CollisionMap):
         """Emergency correction if entity ends up in invalid position."""
+        # Determine facing direction based on desired velocity
+        if self.desired_velocity != [0.0, 0.0]:
+            self.facing = normalise_vector(self.desired_velocity)
+
         if not can_move_to(self.get_rect(), collision_map):
             # Push back along last movement
             self.x -= self.desired_velocity[0] * 2.5
@@ -88,11 +93,6 @@ class Entity:
                 self.x = round(self.x)
                 self.y = round(self.y)
                 self.desired_velocity = [0.0, 0.0]
-        
-        if self.desired_velocity[0] != 0:
-            self.facing = (1, 0) if self.desired_velocity[0] > 0 else (-1, 0)
-        if self.desired_velocity[1] != 0:
-            self.facing = (0, 1) if self.desired_velocity[1] > 0 else (0, -1)
 
         self.velocity = self.desired_velocity
 
@@ -104,3 +104,11 @@ def can_move_to(target_rect: pygame.Rect, collision_map: CollisionMap) -> bool:
 def entities_collide(a: Entity, b: Entity) -> bool:
     """Check if two entities are overlapping"""
     return a.get_rect().colliderect(b.get_rect())
+
+def normalise_vector(vector: tuple[float, float]) -> tuple[float, float]:
+    """Return a normalized version of the vector."""
+    x, y = vector
+    magnitude = (x**2 + y**2) ** 0.5
+    if magnitude == 0:
+        return (0, 0)
+    return (x / magnitude, y / magnitude)

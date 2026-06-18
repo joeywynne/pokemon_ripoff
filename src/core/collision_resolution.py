@@ -23,7 +23,7 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
                 a = entities[i]
                 b = entities[j]
 
-                if entities_collide(a, b):
+                if entities_collide(a, b) and abs(a.z - b.z) < 5.0:
                     _resolve_entity_collision(a, b)
                     any_collisions_resolved = True
 
@@ -31,9 +31,9 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
         if not any_collisions_resolved:
             break
 
-        # Run the final safety checks for our entities
-        for entity in entities:
-            entity._final_safety(collision_map)
+    # Run the final safety checks for our entities
+    for entity in entities:
+        entity._final_safety(collision_map)
 
 
 def _resolve_entity_collision(a: Entity, b: Entity):
