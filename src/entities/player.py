@@ -4,32 +4,23 @@ import pygame
 from pathlib import Path
 
 from src.entities.pokeball import Pokeball
+from src.movement.behaviour import PlayerBehaviour
 
 
 class Player(Entity):
+
     def __init__(self, x: int, y: int, colour: tuple):
-        super().__init__(x, y, colour)
+        super().__init__(x, y, colour, movement_controller=PlayerBehaviour())
         self.size = PLAYER_SIZE
         self.speed = PLAYER_SPEED
-        ditto_info = SpriteInfo(relative_path=Path("entities/ditto.png"))
-        self.sprite_info = ditto_info
+
+        self.sprite_info = get_player_sprite_info()
 
         self.throw_charge = 0
         self.throwing = False
         self.cool_down = 0  # todo
 
-    def get_intended_move(self, keys: dict) -> tuple[float, float]:
-        dy, dx = 0, 0  # Default to no movement if no movement keys are pressed
-        if keys[pygame.K_LEFT]:
-            dx -= self.speed
-        if keys[pygame.K_RIGHT]:
-            dx += self.speed
-        if keys[pygame.K_UP]:
-            dy -= self.speed
-        if keys[pygame.K_DOWN]:
-            dy += self.speed
-
-        pokeball = None
+    def update(self, keys: dict) -> Pokeball | None:
         if keys[pygame.K_SPACE]:
             # Pokeball time!
             self.charge_pokeball()
@@ -37,7 +28,11 @@ class Player(Entity):
             # Need to check if we can now throw a ball
             pokeball = self.throw_pokeball()
 
-        return dx, dy, pokeball
+        if self.cool_down > 0:
+            self.cool_down -= 1
+
+        super().update(keys=keys)
+        return pokeball
 
     def charge_pokeball(self):
         if not self.throwing:
@@ -56,3 +51,7 @@ class Player(Entity):
         self.throwing = False
         self.throw_charge = 0
         return pokeball
+
+
+def get_player_sprite_info() -> SpriteInfo:
+    return SpriteInfo(relative_path=Path("entities/ditto.png"))

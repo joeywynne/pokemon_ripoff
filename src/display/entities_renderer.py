@@ -17,7 +17,7 @@ class EntitiesRenderer:
         entity: Entity,
         camera: Camera,
         debug: Optional[bool] = False,
-    ):  
+    ):
         scale_y = 1
         if isinstance(entity, Projectile):
             if entity.z < 0.5:
@@ -26,7 +26,9 @@ class EntitiesRenderer:
                 int(entity.x - camera.x + entity.size * 0.5),
                 int(entity.y - camera.y + entity.size),
             )
-            pygame.draw.circle(surface, (50, 50, 50), shadow_pos, entity.size // 2)  # Draw shadow as a circle
+            pygame.draw.circle(
+                surface, (50, 50, 50), shadow_pos, entity.size // 2
+            )  # Draw shadow as a circle
 
         rect = entity.get_rect()
         screen_rect = rect.move(-int(camera.x), -int(camera.y))
@@ -37,10 +39,15 @@ class EntitiesRenderer:
                 position=entity.sprite_info.position,
                 sheet_size=entity.sprite_info.sheet_size,
             )
-            sprite = pygame.transform.scale(sprite, (entity.size, int(entity.size * scale_y)))
+            sprite = pygame.transform.scale(
+                sprite, (entity.size, int(entity.size * scale_y))
+            )
             sprite_rect = sprite.get_rect()
-            sprite_rect.center = (screen_rect.centerx, screen_rect.centery - int(entity.z * 1.0))
-    
+            sprite_rect.center = (
+                screen_rect.centerx,
+                screen_rect.centery - int(entity.z * 1.0),
+            )
+
             surface.blit(sprite, sprite_rect)
         else:
             pygame.draw.rect(surface, entity.colour, screen_rect)

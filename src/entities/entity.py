@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import pygame
-from src.core.map.collision_map import CollisionMap
+from src.movement.behaviour import MovementBehaviour
 from typing import Optional
 from pathlib import Path
 
@@ -13,7 +13,9 @@ class SpriteInfo:
 
 
 class Entity:
-    def __init__(self, x: float, y: float, colour: tuple):
+    def __init__(
+        self, x: float, y: float, colour: tuple, movement_controller: MovementBehaviour
+    ):
         self.x = x
         self.y = y
         self.z = 0
@@ -24,6 +26,7 @@ class Entity:
         self.sprite_info: Optional[SpriteInfo] = None
         self.facing = (1, 0)
         self.is_active = True
+        self.movement_controller = movement_controller
 
     @property
     def momentum(self) -> tuple[float, float]:
@@ -40,75 +43,14 @@ class Entity:
         return pygame.Rect(self.x, self.y, self.size, self.size)
 
     def get_intended_move(self, **kwargs) -> tuple[float, float]:
-        # Default to no movement
-        return 0, 0
+        return self.movement_controller.get_intended_move(self, **kwargs)
 
-    def update(self, **kwargs) -> Optional[Entity]:
+    def update(self, **kwargs) -> None:
         intended_move = self.get_intended_move(**kwargs)
-        new_entity = None
-        if len(intended_move) == 3:
-            dx, dy, new_entity = intended_move
-        else:
-            dx, dy = intended_move
+        dx, dy = intended_move
 
         if dx != 0 and dy != 0:
             dx *= 0.7071  # ≈ 1/sqrt(2)
             dy *= 0.7071
 
         self.desired_velocity = [dx, dy]
-        return new_entity
-
-    def _apply_desired_move(self, collision_map: CollisionMap):
-        dx, dy = self.desired_velocity
-        if dx != 0:
-            target_x = self.x + dx
-            target_rect = pygame.Rect(target_x, self.y, self.size, self.size)
-            if can_move_to(target_rect, collision_map):
-                self.x = target_x
-                self.desired_velocity[0] = dx
-        else:
-            self.desired_velocity[0] = 0
-
-        if dy != 0:
-            target_y = self.y + dy
-            target_rect = pygame.Rect(self.x, target_y, self.size, self.size)
-            if can_move_to(target_rect, collision_map):
-                self.y = target_y
-        else:
-            self.desired_velocity[1] = 0
-
-    def _final_safety(self, collision_map: CollisionMap):
-        """Emergency correction if entity ends up in invalid position."""
-        # Determine facing direction based on desired velocity
-        if self.desired_velocity != [0.0, 0.0]:
-            self.facing = normalise_vector(self.desired_velocity)
-
-        if not can_move_to(self.get_rect(), collision_map):
-            # Push back along last movement
-            self.x -= self.desired_velocity[0] * 2.5
-            self.y -= self.desired_velocity[1] * 2.5
-
-            # Last resort: snap to integer position
-            if not can_move_to(self.get_rect(), collision_map):
-                self.x = round(self.x)
-                self.y = round(self.y)
-                self.desired_velocity = [0.0, 0.0]
-
-        self.velocity = self.desired_velocity
-
-
-def can_move_to(target_rect: pygame.Rect, collision_map: CollisionMap) -> bool:
-    return not collision_map.collides(target_rect)
-
-
-def entities_collide(a: Entity, b: Entity) -> bool:
-    """Check if two entities are overlapping"""
-    return a.get_rect().colliderect(b.get_rect())
-
-def normalise_vector(vector: tuple[float, float]) -> tuple[float, float]:
-    """Return a normalized version of the vector."""
-    x, y = vector
-    magnitude = (x**2 + y**2) ** 0.5
-    if magnitude == 0:
-        return (0, 0)
-    return (x / magnitude, y / magnitude)

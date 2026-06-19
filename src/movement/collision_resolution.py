@@ -1,4 +1,4 @@
-from src.entities.entity import Entity, entities_collide
+from src.entities.entity import Entity
 from src.core.map.collision_map import CollisionMap
 
 
@@ -10,9 +10,6 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
       2. Resolve entity vs entity collisions
       3. Final safety check
     """
-    # Try to apply the moves
-    for entity in entities:
-        entity._apply_desired_move(collision_map)
 
     for _ in range(5):  # Multiple passes to resolve entity collisions
         any_collisions_resolved = False
@@ -24,19 +21,15 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
                 b = entities[j]
 
                 if entities_collide(a, b) and abs(a.z - b.z) < 5.0:
-                    _resolve_entity_collision(a, b)
+                    resolve_entity_collision(a, b)
                     any_collisions_resolved = True
 
         # No more collisions, we can stop early
         if not any_collisions_resolved:
             break
 
-    # Run the final safety checks for our entities
-    for entity in entities:
-        entity._final_safety(collision_map)
 
-
-def _resolve_entity_collision(a: Entity, b: Entity):
+def resolve_entity_collision(a: Entity, b: Entity):
     """Use momentum to push two colliding entities apart."""
     # Calculate the direction from a to b
     dx = b.x - a.x
@@ -62,3 +55,8 @@ def _resolve_entity_collision(a: Entity, b: Entity):
     a.y -= ny * push_distance * a_push
     b.x += nx * push_distance * b_push
     b.y += ny * push_distance * b_push
+
+
+def entities_collide(a: Entity, b: Entity) -> bool:
+    """Check if two entities are overlapping"""
+    return a.get_rect().colliderect(b.get_rect())

@@ -1,6 +1,6 @@
 import logging
 import pygame
-from src.core.collision_resolution import resolve_all_collisions
+from src.movement.collision_resolution import resolve_all_collisions
 from src.core.map.collision_map import CollisionMap
 from src.core.map.tile_map import TileMap
 from src.core.settings import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
@@ -12,6 +12,8 @@ from src.display.entities_renderer import EntitiesRenderer
 from src.core.settings import PURPLE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
+from src.movement.system import MovementSystem
+
 
 logger = logging.getLogger(__name__)
 
@@ -52,15 +54,21 @@ class Game:
 
     def update(self):
         keys = pygame.key.get_pressed()
+
         pokeball = self.player.update(keys=keys)
         if pokeball is not None:
             self.entities.append(pokeball)
-        for n in self.entities:
-            if n is not self.player:
-                n.update()
-                if not n.is_active:
-                    self.entities.remove(n)
+
+        for entity in self.entities:
+            if entity is not self.player:
+                entity.update()
+                MovementSystem.move_entity(entity, self.collision_map)
+                if not entity.is_active:
+                    self.entities.remove(entity)
         resolve_all_collisions(self.entities, self.collision_map)
+        
+        for entity in self.entities:
+            MovementSystem.final_safety(entity, self.collision_map)
 
         if self.debug:
             current_time = pygame.time.get_ticks()
