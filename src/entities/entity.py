@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 import pygame
-from src.movement.behaviour import MovementBehaviour
 from typing import Optional
 from pathlib import Path
+from src.movement.behaviour import MovementBehaviour
 
 
 @dataclass
@@ -14,16 +14,24 @@ class SpriteInfo:
 
 class Entity:
     def __init__(
-        self, x: float, y: float, colour: tuple, movement_controller: MovementBehaviour
+        self,
+        x: float,
+        y: float,
+        size: float,
+        mass: float,
+        speed: float,
+        sprite_info: SpriteInfo,
+        movement_controller: MovementBehaviour
     ):
         self.x = x
         self.y = y
         self.z = 0
+        self.size = size
+        self.mass = mass
+        self.speed = speed
+        self.sprite_info = sprite_info
         self.velocity = [0.0, 0.0]
         self.desired_velocity = [0.0, 0.0]
-        self.mass = 1.0
-        self.colour = colour
-        self.sprite_info = self.get_sprite_info()
         self.facing = (1, 0)
         self.rotation = 0.0
         self.is_active = True
@@ -41,7 +49,7 @@ class Entity:
         )
     
     def get_sprite_info(self) -> SpriteInfo:
-        pass
+        return self.sprite_info
 
     def get_rect(self):
         return pygame.Rect(self.x, self.y, self.size, self.size)

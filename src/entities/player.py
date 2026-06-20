@@ -10,11 +10,15 @@ from src.movement.behaviour import PlayerBehaviour
 class Player(Entity):
 
     def __init__(self, x: int, y: int, colour: tuple):
-        super().__init__(x, y, colour, movement_controller=PlayerBehaviour())
-        self.size = PLAYER_SIZE
-        self.speed = PLAYER_SPEED
-
-        self.sprite_info = get_player_sprite_info()
+        super().__init__(
+            x,
+            y,
+            PLAYER_SIZE,
+            1.0,
+            PLAYER_SPEED,
+            get_player_sprite_info(),
+            movement_controller=PlayerBehaviour()
+        )
 
         self.throw_charge = 0
         self.throwing = False
@@ -47,7 +51,7 @@ class Player(Entity):
         power = self.throw_charge
         # Create a pokeball entity with speed based on charge
         # and direction based on facing
-        pokeball = Pokeball(self.x, self.y, RED, facing=self.facing, throw_power=power)
+        pokeball = Pokeball(self.x, self.y, facing=self.facing, throw_power=power)
 
         self.throwing = False
         self.throw_charge = 0

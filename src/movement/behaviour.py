@@ -1,5 +1,3 @@
-import re
-
 import pygame
 
 from src.core import settings

@@ -5,7 +5,7 @@ from src.core.map.tile_map import TileMap
 from src.core.settings import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 from src.display.map_renderer import MapRenderer
 from src.entities.player import Player
-from src.entities.npc import generate_npcs
+from src.entities.pokemon import generate_pokemon
 from src.display.renderer import Renderer
 from src.display.entities_renderer import EntitiesRenderer
 from src.core.settings import PURPLE
@@ -36,9 +36,9 @@ class Game:
         map_height = tile_map.height * tile_map.grid_size
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map_width, map_height)
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
-        self.npcs = generate_npcs(4, map_width, map_height)
+        self.pokemon = generate_pokemon(4, map_width, map_height)
 
-        self.entities = self.npcs + [self.player]
+        self.entities = self.pokemon + [self.player]
         entities_renderer = EntitiesRenderer(self.entities, assets)
         self.renderer = Renderer(self.screen, entities_renderer, map_renderer)
         self.last_log_time = pygame.time.get_ticks()

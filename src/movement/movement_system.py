@@ -163,7 +163,6 @@ def resolve_entity_collision(a: Entity, b: Entity, collision_map: CollisionMap):
         return
 
 
-
 def entities_collide(a: Entity, b: Entity) -> bool:
     """Check if two entities are overlapping"""
     return a.get_rect().colliderect(b.get_rect())
