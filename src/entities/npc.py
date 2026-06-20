@@ -17,15 +17,20 @@ class NPC(Entity):
         super().__init__(x, y, colour, movement_controller=movement_controller)
         self.size = PLAYER_SIZE
         self.speed = NPC_SPEED
-
         self.movement_controller: MovementBehaviour = movement_controller
-        self.mass = 2.0
 
     def set_movement_behavior(self, movement_controller: MovementBehaviour):
         self.movement_controller = movement_controller
 
 
 class Drowzee(NPC):
+
+    def __init__(
+        self, x: int, y: int, colour: tuple, movement_controller: MovementBehaviour
+        ):
+        super().__init__(x, y, colour, movement_controller=movement_controller)
+        self.mass = 2.0
+
     def get_sprite_info(self) -> SpriteInfo:
         return SpriteInfo(relative_path=Path("entities/drowzee.png"))
 

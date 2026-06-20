@@ -93,7 +93,7 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
                 b = entities[j]
 
                 if entities_collide(a, b) and abs(a.z - b.z) < 5.0:
-                    resolve_entity_collision(a, b)
+                    resolve_entity_collision(a, b, collision_map)
                     any_collisions_resolved = True
 
         # No more collisions, we can stop early
@@ -101,7 +101,7 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
             break
 
 
-def resolve_entity_collision(a: Entity, b: Entity):
+def resolve_entity_collision(a: Entity, b: Entity, collision_map: CollisionMap):
     """Use momentum to push two colliding entities apart."""
     # Calculate the direction from a to b
     dx = b.x - a.x
@@ -123,10 +123,45 @@ def resolve_entity_collision(a: Entity, b: Entity):
     push_distance = overlap * 0.65
 
     # Apply the push
-    a.x -= nx * push_distance * a_push
-    a.y -= ny * push_distance * a_push
-    b.x += nx * push_distance * b_push
-    b.y += ny * push_distance * b_push
+    a_target_x = a.x - nx * push_distance * a_push
+    a_target_y = a.y - ny * push_distance * a_push
+    b_target_x = b.x + nx * push_distance * b_push
+    b_target_y = b.y + ny * push_distance * b_push
+
+    a_target = a.get_rect().move(a_target_x - a.x, a_target_y - a.y)
+    a_can_move = can_move_to(a_target, collision_map)
+    b_target = b.get_rect().move(b_target_x - b.x, b_target_y - b.y)
+    b_can_move = can_move_to(b_target, collision_map)
+
+    if a_can_move and b_can_move:
+        a.x = a_target_x
+        a.y = a_target_y
+        b.x = b_target_x
+        b.y = b_target_y
+        return
+    
+    if a_can_move:
+        # b is blocked by wall/map edge, so a takes more of the separation.
+        a_new_x = a.x - nx * push_distance
+        a_new_y = a.y - ny * push_distance
+
+        target = a.get_rect().move(a_new_x - a.x, a_new_y - a.y)
+        if can_move_to(target, collision_map):
+            a.x = a_new_x
+            a.y = a_new_y
+        return
+    
+    if b_can_move:
+        # a is blocked by wall/map edge, so b takes more of the separation.
+        b_new_x = b.x + nx * push_distance
+        b_new_y = b.y + ny * push_distance
+
+        target = b.get_rect().move(b_new_x - b.x, b_new_y - b.y)
+        if can_move_to(target, collision_map):
+            b.x = b_new_x
+            b.y = b_new_y
+        return
+
 
 
 def entities_collide(a: Entity, b: Entity) -> bool:
