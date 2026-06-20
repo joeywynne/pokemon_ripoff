@@ -216,3 +216,18 @@ class FleeBehaviour(MovementBehaviour):
             dy = 0
 
         return dx, dy
+
+class TeleportBehaviour(MovementBehaviour):
+    def get_intended_move(self, entity, map_size, teleport_frac=1.0, **kwargs) -> tuple[float, float]:
+        print(teleport_frac)
+        if teleport_frac <= 0.0:
+            # Calculate a random teleport destination within the map boundaries
+            target_x = random.randint(settings.TILE_SIZE, map_size[0] - settings.TILE_SIZE)
+            target_y = random.randint(settings.TILE_SIZE, map_size[1] - settings.TILE_SIZE)
+
+            dx = target_x - entity.x
+            dy = target_y - entity.y
+            return dx, dy
+        else:
+            entity.size = entity.species.size * teleport_frac
+            return 0, 0

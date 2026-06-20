@@ -3,7 +3,7 @@ from src.pokemon.base import PokemonSpecies
 
 from src.core.settings import TILE_SIZE
 import random
-from src.pokemon.base import DROWZEE, GHASTLY, NIDORAN
+from src.pokemon.base import DROWZEE, GHASTLY, NIDORAN, ABRA
 
 
 class Pokemon(Entity):
@@ -31,7 +31,7 @@ def generate_pokemon(num_pokemon: int, map_width: int, map_height: int) -> list[
         Pokemon(
             random.randint(TILE_SIZE, map_width - TILE_SIZE),
             random.randint(TILE_SIZE, map_height - TILE_SIZE),
-            random.choice([DROWZEE, GHASTLY, NIDORAN]),
+            random.choice([DROWZEE, GHASTLY, NIDORAN, ABRA]),
         )
         for _ in range(num_pokemon)
     ]

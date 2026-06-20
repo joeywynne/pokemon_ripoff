@@ -4,6 +4,7 @@ from src.movement.behaviour import (
     StationaryBehaviour,
     FleeBehaviour,
     FollowBehaviour,
+    TeleportBehaviour,
 )
 import random
 
@@ -49,7 +50,7 @@ class WanderFollowBehaviour(MovementBehaviour):
         self.start_follow_distance = start_follow_distance
         self.stop_follow_distance = stop_follow_distance
 
-    def get_intended_move(self, entity, player_position: tuple[float, float]):
+    def get_intended_move(self, entity, player_position: tuple[float, float], **kwargs):
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5
@@ -76,7 +77,7 @@ class WanderFleeBehaviour(MovementBehaviour):
         self.start_flee_distance = start_flee_distance
         self.stop_flee_distance = stop_flee_distance
 
-    def get_intended_move(self, entity, player_position: tuple[float, float]):
+    def get_intended_move(self, entity, player_position: tuple[float, float], **kwargs):
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5
@@ -89,3 +90,42 @@ class WanderFleeBehaviour(MovementBehaviour):
         if self.state == "wander":
             return self.wander.get_intended_move(entity)
         return self.flee.get_intended_move(entity, player_position, speed_multiplier=3)
+    
+class StationaryTeleportBehaviour(MovementBehaviour):
+
+    def __init__(self, teleport_distance=150):
+        self.state = "stationary"
+        self.idle = StationaryBehaviour()
+        self.teleport = TeleportBehaviour()
+        self.teleport_frac = 1.0
+        self.teleport_distance = teleport_distance
+
+    def get_intended_move(self, entity, player_position: tuple[float, float], map_size, **kwargs):
+        dx = player_position[0] - entity.x
+        dy = player_position[1] - entity.y
+        distance = (dx**2 + dy**2) ** 0.5
+
+        if distance < self.teleport_distance or self.state == "teleport":
+            self.state = "teleport"
+            self.teleport_frac -= 0.01
+        else:
+            self.state = "stationary"
+
+        if self.state == "teleport":
+            dx, dy = self.teleport.get_intended_move(
+                entity,
+                map_size,
+                teleport_frac=self.teleport_frac,
+                **kwargs,
+            )
+
+        else:
+            dx, dy = self.idle.get_intended_move(
+                entity,
+                **kwargs,
+            )
+        if self.teleport_frac <= 0:
+            self.teleport_frac = 1.0
+            self.state = "stationary"
+
+        return dx, dy

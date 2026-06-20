@@ -4,6 +4,7 @@ from src.entities.entity import SpriteInfo
 from src.movement.behaviour import MovementBehaviour
 from src.movement.composite_behaviours import (
     StationaryWanderBehaviour,
+    StationaryTeleportBehaviour,
     WanderFollowBehaviour,
     WanderFleeBehaviour,
 )
@@ -61,4 +62,14 @@ NIDORAN = PokemonSpecies(
     size=20,
     behaviour_factory=WanderFleeBehaviour,
     sprite_info=SpriteInfo(relative_path="entities/nidoran.png"),
+)
+
+ABRA = PokemonSpecies(
+    name="Abra",
+    types=[PokemonType.PSYCHIC],
+    speed=1.8,
+    mass=1.5,
+    size=36,
+    behaviour_factory=StationaryTeleportBehaviour,
+    sprite_info=SpriteInfo(relative_path="entities/abra.png"),
 )

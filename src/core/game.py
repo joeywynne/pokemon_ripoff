@@ -32,11 +32,11 @@ class Game:
         assets = AssetStore()
         map_renderer = MapRenderer(tile_map, assets)
 
-        map_width = tile_map.width * tile_map.grid_size
-        map_height = tile_map.height * tile_map.grid_size
-        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map_width, map_height)
+        self.map_width = tile_map.width * tile_map.grid_size
+        self.map_height = tile_map.height * tile_map.grid_size
+        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map_width, self.map_height)
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
-        self.pokemon = generate_pokemon(6, map_width, map_height)
+        self.pokemon = generate_pokemon(6, self.map_width, self.map_height)
 
         self.entities = self.pokemon + [self.player]
         entities_renderer = EntitiesRenderer(self.entities, assets)
@@ -58,7 +58,10 @@ class Game:
             if entity is self.player:
                 pokeball = self.player.update_intended(keys=keys)
             else:
-                entity.update_intended(player_position=(self.player.x, self.player.y))
+                entity.update_intended(
+                    player_position=(self.player.x, self.player.y),
+                    map_size=(self.map_width, self.map_height)
+                )
 
         # Add the pokeball to the entities list if it was created
         if pokeball is not None:
