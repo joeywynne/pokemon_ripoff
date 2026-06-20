@@ -1,24 +1,30 @@
-from src.entities.entity import Entity
+from pathlib import Path
+
+from src.entities.entity import Entity, SpriteInfo
 from src.movement.behaviour import PokeballBehaviour
 from src.core.settings import POKEBALL_SIZE
-from typing import Optional
 
 
 class Projectile(Entity):
-    def __init__(self, x, y, colour):
-        super().__init__(x, y, colour)
-
-    def update(self, **kwargs) -> Optional[Entity]:
-        if self.z < 0.1 and self.vz < 0.1:
-            self.is_active = False  # Signal that this projectile should be removed
-        return super().update(**kwargs)
+    pass
 
 
 class Pokeball(Projectile):
     def __init__(self, x, y, colour, facing: tuple = (1, 0), throw_power: float = 5.0):
-        super().__init__(x, y, colour)
+        super().__init__(
+            x,
+            y,
+            colour,
+            movement_controller=PokeballBehaviour(facing=facing, throw_power=throw_power)
+        )
         self.size = POKEBALL_SIZE
         self.mass = 0.5
-        self.movement_controller = PokeballBehaviour(
-            facing=facing, throw_power=throw_power
+        self.start_deactivating = False
+        self.active_timer = 25
+
+    def get_sprite_info(self):
+        return SpriteInfo(
+            relative_path=Path("entities/pokeballs.png"),
+            position=(0, 0),
+            sheet_size=(5, 5),
         )

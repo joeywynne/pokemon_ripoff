@@ -23,7 +23,7 @@ class Entity:
         self.desired_velocity = [0.0, 0.0]
         self.mass = 1.0
         self.colour = colour
-        self.sprite_info: Optional[SpriteInfo] = None
+        self.sprite_info = self.get_sprite_info()
         self.facing = (1, 0)
         self.is_active = True
         self.movement_controller = movement_controller
@@ -38,6 +38,9 @@ class Entity:
             self.mass * self.desired_velocity[0],
             self.mass * self.desired_velocity[1],
         )
+    
+    def get_sprite_info(self) -> SpriteInfo:
+        pass
 
     def get_rect(self):
         return pygame.Rect(self.x, self.y, self.size, self.size)
@@ -45,7 +48,7 @@ class Entity:
     def get_intended_move(self, **kwargs) -> tuple[float, float]:
         return self.movement_controller.get_intended_move(self, **kwargs)
 
-    def update(self, **kwargs) -> None:
+    def update_intended(self, **kwargs) -> None:
         intended_move = self.get_intended_move(**kwargs)
         dx, dy = intended_move
 

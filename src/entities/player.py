@@ -20,7 +20,8 @@ class Player(Entity):
         self.throwing = False
         self.cool_down = 0  # todo
 
-    def update(self, keys: dict) -> Pokeball | None:
+    def update_intended(self, keys: dict) -> Pokeball | None:
+        pokeball = None
         if keys[pygame.K_SPACE]:
             # Pokeball time!
             self.charge_pokeball()
@@ -31,7 +32,7 @@ class Player(Entity):
         if self.cool_down > 0:
             self.cool_down -= 1
 
-        super().update(keys=keys)
+        super().update_intended(keys=keys)
         return pokeball
 
     def charge_pokeball(self):

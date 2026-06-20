@@ -1,3 +1,5 @@
+import re
+
 import pygame
 
 from src.core import settings
@@ -41,33 +43,55 @@ class PokeballBehaviour(MovementBehaviour):
         self.velocity = (self.facing[0] * magnitude, self.facing[1] * magnitude)
         self.vz = magnitude * 0.75
 
-        self.bounce_damping = 0.5  # Damping factor for vertical velocity after bounce
-        self.min_bounce_velocity = (
-            0.25  # Minimum vertical velocity to continue bouncing
-        )
-        self.air_resistance = (
-            0.98  # Damping factor for horizontal velocity to simulate air resistance
-        )
+        # Damping factor for vertical velocity after bounce
+        self.bounce_damping = 0.5
+        # Minimum vertical velocity to continue bouncing
+        self.min_bounce_velocity = 0.25
+        # Damping factor for horizontal velocity to simulate air resistance
+        self.air_resistance = 0.97
+        self.ground_resistance = 0.94
+        # Minimum horizontal velocity to be considered active
+        self.min_horizontal_velocity = 0.05
 
     def get_intended_move(self, entity) -> tuple[float, float]:
-        # Return the intended move based on current velocity
-        self.vz -= settings.GRAVITY  # Simulate gravity effect on vertical velocity
-        entity.z += self.vz  # Update vertical position
+        self._update_vertical_arc(entity)
+        self._update_horizontal_velocity(entity)
+        self._set_active_timer(entity)
+
+        if entity.start_deactivating:
+            entity.active_timer -= 1
+        if entity.active_timer <= 0:
+            entity.is_active = False
+
+        return self.velocity
+    
+    def _update_vertical_arc(self, entity):
+        self.vz -= settings.GRAVITY
+        entity.z += self.vz
+
         if entity.z < 0:
             entity.z = 0
-            self.vz = -self.vz * self.bounce_damping  # Bounce effect with energy loss
-
-            if (
-                self.vz < self.min_bounce_velocity
-            ):  # If the vertical velocity is very small, stop bouncing
+            self.vz = -self.vz * self.bounce_damping
+            
+            if abs(self.vz) < self.min_bounce_velocity:
                 self.vz = 0
 
-        # dampen velocity
+    def _update_horizontal_velocity(self, entity):
+        # If on floor should be more resistant to horizontal movement
+        if entity.z < 0.1:
+            resistance_factor = self.air_resistance * self.ground_resistance
+        else:
+            resistance_factor = self.air_resistance
+
         self.velocity = (
-            self.velocity[0] * self.air_resistance,
-            self.velocity[1] * self.air_resistance,
+            self.velocity[0] * resistance_factor,
+            self.velocity[1] * resistance_factor,
         )
-        return self.velocity
+
+    def _set_active_timer(self, entity):
+        horizontal_speed = (self.velocity[0] ** 2 + self.velocity[1] ** 2) ** 0.5
+        if entity.z == 0 and self.vz == 0 and horizontal_speed < self.min_horizontal_velocity:
+            entity.start_deactivating = True
 
 
 class StationaryBehaviour(MovementBehaviour):

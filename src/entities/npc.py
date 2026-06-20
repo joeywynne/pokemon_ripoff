@@ -2,7 +2,12 @@ from pathlib import Path
 from src.entities.entity import Entity, SpriteInfo
 from src.core.settings import PLAYER_SIZE, NPC_SPEED, BLUE_GREEN, TILE_SIZE
 import random
-from src.movement.behaviour import MovementBehaviour, StationaryBehaviour, PacingBehaviour, WanderBehaviour
+from src.movement.behaviour import (
+    MovementBehaviour,
+    StationaryBehaviour,
+    PacingBehaviour,
+    WanderBehaviour,
+)
 
 
 class NPC(Entity):
@@ -13,12 +18,8 @@ class NPC(Entity):
         self.size = PLAYER_SIZE
         self.speed = NPC_SPEED
 
-        self.sprite_info = self.get_sprite_info()
         self.movement_controller: MovementBehaviour = movement_controller
         self.mass = 2.0
-
-    def get_sprite_info(self) -> SpriteInfo:
-        pass
 
     def set_movement_behavior(self, movement_controller: MovementBehaviour):
         self.movement_controller = movement_controller
@@ -31,7 +32,7 @@ class Drowzee(NPC):
 
 def generate_npcs(num_npcs: int, map_width: int, map_height: int) -> list[NPC]:
     return [
-        NPC(
+        Drowzee(
             random.randint(TILE_SIZE, map_width - TILE_SIZE),
             random.randint(TILE_SIZE, map_height - TILE_SIZE),
             BLUE_GREEN,
