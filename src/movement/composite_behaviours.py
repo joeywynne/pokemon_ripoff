@@ -1,4 +1,10 @@
-from src.movement.behaviour import MovementBehaviour, WanderBehaviour, StationaryBehaviour, FollowBehaviour
+from src.movement.behaviour import (
+    MovementBehaviour,
+    WanderBehaviour,
+    StationaryBehaviour,
+    FleeBehaviour,
+    FollowBehaviour,
+)
 import random
 
 
@@ -17,11 +23,7 @@ class StationaryWanderBehaviour(MovementBehaviour):
 
         if self.timer <= 0:
 
-            self.state = (
-                "idle"
-                if self.state == "wander"
-                else "wander"
-            )
+            self.state = "idle" if self.state == "wander" else "wander"
 
             self.timer = random.randint(120, 300)
 
@@ -37,7 +39,6 @@ class StationaryWanderBehaviour(MovementBehaviour):
         )
 
 
-
 class WanderFollowBehaviour(MovementBehaviour):
 
     def __init__(self, start_follow_distance=100, stop_follow_distance=150):
@@ -51,7 +52,7 @@ class WanderFollowBehaviour(MovementBehaviour):
     def get_intended_move(self, entity, player_position: tuple[float, float]):
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
-        distance = (dx ** 2 + dy ** 2) ** 0.5
+        distance = (dx**2 + dy**2) ** 0.5
 
         if distance < self.start_follow_distance:
             self.state = "follow"
@@ -60,5 +61,31 @@ class WanderFollowBehaviour(MovementBehaviour):
 
         if self.state == "wander":
             return self.wander.get_intended_move(entity)
-        return self.follow.get_intended_move(entity, player_position, speed_multiplier=2)
+        return self.follow.get_intended_move(
+            entity, player_position, speed_multiplier=2
+        )
 
+
+class WanderFleeBehaviour(MovementBehaviour):
+
+    def __init__(self, start_flee_distance=100, stop_flee_distance=150):
+        self.wander = WanderBehaviour()
+        self.flee = FleeBehaviour()
+
+        self.state = "wander"
+        self.start_flee_distance = start_flee_distance
+        self.stop_flee_distance = stop_flee_distance
+
+    def get_intended_move(self, entity, player_position: tuple[float, float]):
+        dx = player_position[0] - entity.x
+        dy = player_position[1] - entity.y
+        distance = (dx**2 + dy**2) ** 0.5
+
+        if distance < self.start_flee_distance:
+            self.state = "flee"
+        elif distance > self.stop_flee_distance:
+            self.state = "wander"
+
+        if self.state == "wander":
+            return self.wander.get_intended_move(entity)
+        return self.flee.get_intended_move(entity, player_position, speed_multiplier=3)

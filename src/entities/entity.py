@@ -21,7 +21,7 @@ class Entity:
         mass: float,
         speed: float,
         sprite_info: SpriteInfo,
-        movement_controller: MovementBehaviour
+        movement_controller: MovementBehaviour,
     ):
         self.x = x
         self.y = y
@@ -47,7 +47,7 @@ class Entity:
             self.mass * self.desired_velocity[0],
             self.mass * self.desired_velocity[1],
         )
-    
+
     def get_sprite_info(self) -> SpriteInfo:
         return self.sprite_info
 

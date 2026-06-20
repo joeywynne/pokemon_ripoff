@@ -36,7 +36,7 @@ class Game:
         map_height = tile_map.height * tile_map.grid_size
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, map_width, map_height)
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
-        self.pokemon = generate_pokemon(4, map_width, map_height)
+        self.pokemon = generate_pokemon(6, map_width, map_height)
 
         self.entities = self.pokemon + [self.player]
         entities_renderer = EntitiesRenderer(self.entities, assets)

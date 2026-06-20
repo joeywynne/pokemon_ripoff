@@ -18,7 +18,9 @@ class Pokeball(Projectile):
             0.5,
             1.0,
             get_pokeball_sprite_info(),
-            movement_controller=PokeballBehaviour(facing=facing, throw_power=throw_power)
+            movement_controller=PokeballBehaviour(
+                facing=facing, throw_power=throw_power
+            ),
         )
         self.size = POKEBALL_SIZE
         self.mass = 0.5

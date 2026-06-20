@@ -67,7 +67,7 @@ class PokeballBehaviour(MovementBehaviour):
         entity.rotation -= self.velocity[0] * 2.0
 
         return self.velocity
-    
+
     def _update_vertical_arc(self, entity):
         self.vz -= settings.GRAVITY
         entity.z += self.vz
@@ -94,7 +94,11 @@ class PokeballBehaviour(MovementBehaviour):
 
     def _set_active_timer(self, entity):
         horizontal_speed = (self.velocity[0] ** 2 + self.velocity[1] ** 2) ** 0.5
-        if entity.z == 0 and self.vz == 0 and horizontal_speed < self.min_horizontal_velocity:
+        if (
+            entity.z == 0
+            and self.vz == 0
+            and horizontal_speed < self.min_horizontal_velocity
+        ):
             entity.start_deactivating = True
 
 
@@ -178,10 +182,31 @@ class WanderBehaviour(MovementBehaviour):
 
 class FollowBehaviour(MovementBehaviour):
 
-    def get_intended_move(self, entity, player_position, speed_multiplier) -> tuple[float, float]:
+    def get_intended_move(
+        self, entity, player_position, speed_multiplier
+    ) -> tuple[float, float]:
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
-        distance = (dx ** 2 + dy ** 2) ** 0.5
+        distance = (dx**2 + dy**2) ** 0.5
+        # Normalize the direction vector and scale by speed
+        if distance != 0:
+            dx = (dx / distance) * entity.speed * speed_multiplier
+            dy = (dy / distance) * entity.speed * speed_multiplier
+        else:
+            dx = 0
+            dy = 0
+
+        return dx, dy
+
+
+class FleeBehaviour(MovementBehaviour):
+
+    def get_intended_move(
+        self, entity, player_position, speed_multiplier
+    ) -> tuple[float, float]:
+        dx = entity.x - player_position[0]
+        dy = entity.y - player_position[1]
+        distance = (dx**2 + dy**2) ** 0.5
         # Normalize the direction vector and scale by speed
         if distance != 0:
             dx = (dx / distance) * entity.speed * speed_multiplier

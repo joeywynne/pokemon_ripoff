@@ -2,7 +2,11 @@ from enum import Enum
 from dataclasses import dataclass
 from src.entities.entity import SpriteInfo
 from src.movement.behaviour import MovementBehaviour
-from src.movement.composite_behaviours import StationaryWanderBehaviour, WanderFollowBehaviour
+from src.movement.composite_behaviours import (
+    StationaryWanderBehaviour,
+    WanderFollowBehaviour,
+    WanderFleeBehaviour,
+)
 
 
 class PokemonType(Enum):
@@ -16,18 +20,17 @@ class PokemonType(Enum):
 
 
 @dataclass
-class PokemonSpecies():
+class PokemonSpecies:
     name: str
     types: list[PokemonType]
-    #base_hp: int
-    #base_attack: int
-    #base_defense: int
+    # base_hp: int
+    # base_attack: int
+    # base_defense: int
     speed: int
     mass: float
     size: int
     behaviour_factory: MovementBehaviour
     sprite_info: SpriteInfo
-
 
 
 DROWZEE = PokemonSpecies(
@@ -37,7 +40,7 @@ DROWZEE = PokemonSpecies(
     mass=2.0,
     size=40,
     behaviour_factory=StationaryWanderBehaviour,
-    sprite_info=SpriteInfo(relative_path="entities/drowzee.png")
+    sprite_info=SpriteInfo(relative_path="entities/drowzee.png"),
 )
 
 GHASTLY = PokemonSpecies(
@@ -47,5 +50,15 @@ GHASTLY = PokemonSpecies(
     mass=0.5,
     size=35,
     behaviour_factory=WanderFollowBehaviour,
-    sprite_info=SpriteInfo(relative_path="entities/ghastly.png")
+    sprite_info=SpriteInfo(relative_path="entities/ghastly.png"),
+)
+
+NIDORAN = PokemonSpecies(
+    name="Nidoran",
+    types=[PokemonType.POISON],
+    speed=1.8,
+    mass=1.5,
+    size=20,
+    behaviour_factory=WanderFleeBehaviour,
+    sprite_info=SpriteInfo(relative_path="entities/nidoran.png"),
 )

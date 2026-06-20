@@ -45,7 +45,7 @@ class EntitiesRenderer:
                 position=entity.sprite_info.position,
                 sprite_size=entity.sprite_info.sprite_size,
             )
-            
+
             sprite = pygame.transform.rotate(sprite, entity.rotation)
             sprite = pygame.transform.scale(
                 sprite, (int(entity.size * scale_x), int(entity.size * scale_y))

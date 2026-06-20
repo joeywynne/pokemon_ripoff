@@ -139,7 +139,7 @@ def resolve_entity_collision(a: Entity, b: Entity, collision_map: CollisionMap):
         b.x = b_target_x
         b.y = b_target_y
         return
-    
+
     if a_can_move:
         # b is blocked by wall/map edge, so a takes more of the separation.
         a_new_x = a.x - nx * push_distance
@@ -150,7 +150,7 @@ def resolve_entity_collision(a: Entity, b: Entity, collision_map: CollisionMap):
             a.x = a_new_x
             a.y = a_new_y
         return
-    
+
     if b_can_move:
         # a is blocked by wall/map edge, so b takes more of the separation.
         b_new_x = b.x + nx * push_distance

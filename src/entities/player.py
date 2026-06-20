@@ -17,7 +17,7 @@ class Player(Entity):
             1.0,
             PLAYER_SPEED,
             get_player_sprite_info(),
-            movement_controller=PlayerBehaviour()
+            movement_controller=PlayerBehaviour(),
         )
 
         self.throw_charge = 0
