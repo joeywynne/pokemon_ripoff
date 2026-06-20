@@ -2,7 +2,7 @@ from enum import Enum
 from dataclasses import dataclass
 from src.entities.entity import SpriteInfo
 from src.movement.behaviour import MovementBehaviour
-from src.movement.composite_behaviours import StationaryWanderBehaviour
+from src.movement.composite_behaviours import StationaryWanderBehaviour, WanderFollowBehaviour
 
 
 class PokemonType(Enum):
@@ -12,6 +12,7 @@ class PokemonType(Enum):
     GRASS = "grass"
     WATER = "water"
     ELECTRIC = "electric"
+    POISON = "poison"
 
 
 @dataclass
@@ -32,9 +33,19 @@ class PokemonSpecies():
 DROWZEE = PokemonSpecies(
     name="Drowzee",
     types=[PokemonType.PSYCHIC],
-    speed=2,
+    speed=1.5,
     mass=2.0,
     size=40,
     behaviour_factory=StationaryWanderBehaviour,
     sprite_info=SpriteInfo(relative_path="entities/drowzee.png")
+)
+
+GHASTLY = PokemonSpecies(
+    name="Ghastly",
+    types=[PokemonType.GHOST, PokemonType.POISON],
+    speed=2,
+    mass=0.5,
+    size=35,
+    behaviour_factory=WanderFollowBehaviour,
+    sprite_info=SpriteInfo(relative_path="entities/ghastly.png")
 )

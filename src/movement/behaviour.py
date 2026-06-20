@@ -51,7 +51,7 @@ class PokeballBehaviour(MovementBehaviour):
         # Minimum horizontal velocity to be considered active
         self.min_horizontal_velocity = 0.05
 
-    def get_intended_move(self, entity) -> tuple[float, float]:
+    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
         if entity.squash_timer > 0:
             entity.squash_timer -= 1
 
@@ -99,7 +99,7 @@ class PokeballBehaviour(MovementBehaviour):
 
 
 class StationaryBehaviour(MovementBehaviour):
-    def get_intended_move(self, entity) -> tuple[float, float]:
+    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
         return 0, 0
 
 
@@ -114,7 +114,7 @@ class PacingBehaviour(MovementBehaviour):
         self.direction = 1
         self.travelled = 0
 
-    def get_intended_move(self, entity) -> tuple[float, float]:
+    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
         if self.axis == "horizontal":
             dx = entity.speed * self.direction
             dy = 0
@@ -147,7 +147,7 @@ class WanderBehaviour(MovementBehaviour):
         self.direction = (0, 0)
         self.change_interval = random.randint(self.min_interval, self.max_interval)
 
-    def get_intended_move(self, entity) -> tuple[float, float]:
+    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
         self.timer += 1
         if self.timer >= self.change_interval:
             self.timer = 0
@@ -174,3 +174,20 @@ class WanderBehaviour(MovementBehaviour):
             options.append((0, 0))
 
         return random.choice(options)
+
+
+class FollowBehaviour(MovementBehaviour):
+
+    def get_intended_move(self, entity, player_position, speed_multiplier) -> tuple[float, float]:
+        dx = player_position[0] - entity.x
+        dy = player_position[1] - entity.y
+        distance = (dx ** 2 + dy ** 2) ** 0.5
+        # Normalize the direction vector and scale by speed
+        if distance != 0:
+            dx = (dx / distance) * entity.speed * speed_multiplier
+            dy = (dy / distance) * entity.speed * speed_multiplier
+        else:
+            dx = 0
+            dy = 0
+
+        return dx, dy

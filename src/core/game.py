@@ -58,7 +58,7 @@ class Game:
             if entity is self.player:
                 pokeball = self.player.update_intended(keys=keys)
             else:
-                entity.update_intended()
+                entity.update_intended(player_position=(self.player.x, self.player.y))
 
         # Add the pokeball to the entities list if it was created
         if pokeball is not None:

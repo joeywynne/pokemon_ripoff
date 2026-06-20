@@ -4,12 +4,7 @@ from src.pokemon.base import PokemonSpecies
 
 from src.core.settings import TILE_SIZE
 import random
-from src.movement.behaviour import (
-    StationaryBehaviour,
-    PacingBehaviour,
-    WanderBehaviour,
-)
-from src.pokemon.base import DROWZEE
+from src.pokemon.base import DROWZEE, GHASTLY
     
 
 class Pokemon(Entity):
@@ -37,7 +32,7 @@ def generate_pokemon(num_pokemon: int, map_width: int, map_height: int) -> list[
         Pokemon(
             random.randint(TILE_SIZE, map_width - TILE_SIZE),
             random.randint(TILE_SIZE, map_height - TILE_SIZE),
-            DROWZEE
+            random.choice([DROWZEE, GHASTLY])
         )
         for _ in range(num_pokemon)
     ]
