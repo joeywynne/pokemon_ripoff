@@ -13,12 +13,12 @@ class AssetStore:
         relative_path: str,
         entity_size: int,
         position: Optional[tuple[int, int]] = None,
-        sheet_size: Optional[tuple[int, int]] = None,
+        sprite_size: Optional[tuple[int, int]] = None,
         alpha: bool = True,
     ) -> pygame.Surface:
         """Load a sprite from the assets directory.
 
-        If position and sheet_size are provided then we obtain from the spritesheet.
+        If position and sprite_size are provided then we obtain from the spritesheet.
         Otherwise we take the whole image.
         With optional alpha transparency.
         """
@@ -32,8 +32,8 @@ class AssetStore:
             raise FileNotFoundError(f"Asset not found: {full_path}")
 
         image = pygame.image.load(full_path)
-        if position and sheet_size:
-            image = get_image_from_spritesheet(image, position, sheet_size)
+        if position and sprite_size:
+            image = get_image_at(image, position, sprite_size)
         image = image.convert_alpha() if alpha else image.convert()
 
         if image.get_width() != entity_size or image.get_height() != entity_size:
@@ -43,25 +43,16 @@ class AssetStore:
         return image
 
 
-def get_image_from_spritesheet(image, position, sheet_size):
-    """Extract a single tile from a spritesheet based on the given position and sheet size."""
-    width = image.get_width()
-    height = image.get_height()
-    tile_width = width // sheet_size[0]
-    tile_height = height // sheet_size[1]
-    size = (tile_width, tile_height)
-    return get_image_at(
-        image, (position[0] * tile_width, position[1] * tile_height), size
-    )
-
-
 def get_image_at(
     image,
     position,
     size,
 ):
     """Loads image from x, y, x+offset, y+offset"""
+    print(image, position, size)
+    print(image.get_size())
+
     rect = pygame.Rect(position + size)
-    new_image = pygame.Surface(rect.size).convert()
+    new_image = pygame.Surface(rect.size, pygame.SRCALPHA)
     new_image.blit(image, (0, 0), rect)
     return new_image

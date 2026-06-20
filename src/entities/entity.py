@@ -9,7 +9,7 @@ from pathlib import Path
 class SpriteInfo:
     relative_path: Path
     position: Optional[tuple] = None
-    sheet_size: Optional[tuple] = None
+    sprite_size: Optional[tuple] = None
 
 
 class Entity:
@@ -25,6 +25,7 @@ class Entity:
         self.colour = colour
         self.sprite_info = self.get_sprite_info()
         self.facing = (1, 0)
+        self.rotation = 0.0
         self.is_active = True
         self.movement_controller = movement_controller
 

@@ -54,6 +54,9 @@ class PokeballBehaviour(MovementBehaviour):
         self.min_horizontal_velocity = 0.05
 
     def get_intended_move(self, entity) -> tuple[float, float]:
+        if entity.squash_timer > 0:
+            entity.squash_timer -= 1
+
         self._update_vertical_arc(entity)
         self._update_horizontal_velocity(entity)
         self._set_active_timer(entity)
@@ -62,6 +65,8 @@ class PokeballBehaviour(MovementBehaviour):
             entity.active_timer -= 1
         if entity.active_timer <= 0:
             entity.is_active = False
+
+        entity.rotation -= self.velocity[0] * 2.0
 
         return self.velocity
     
@@ -72,7 +77,8 @@ class PokeballBehaviour(MovementBehaviour):
         if entity.z < 0:
             entity.z = 0
             self.vz = -self.vz * self.bounce_damping
-            
+            entity.squash_timer = 6.0
+
             if abs(self.vz) < self.min_bounce_velocity:
                 self.vz = 0
 

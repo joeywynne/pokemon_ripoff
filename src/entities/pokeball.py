@@ -21,10 +21,11 @@ class Pokeball(Projectile):
         self.mass = 0.5
         self.start_deactivating = False
         self.active_timer = 25
+        self.squash_timer = 0.0
 
     def get_sprite_info(self):
         return SpriteInfo(
             relative_path=Path("entities/pokeballs.png"),
-            position=(0, 0),
-            sheet_size=(5, 5),
+            position=(20, 20),
+            sprite_size=(120, 120),
         )
