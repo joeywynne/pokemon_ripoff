@@ -4,6 +4,7 @@ from src.display.assets import AssetStore
 from src.entities.entity import Entity
 from src.entities.pokeball import Projectile
 from src.core.camera import Camera
+from src.entities.pokemon import Pokemon
 
 
 class EntitiesRenderer:
@@ -51,6 +52,9 @@ class EntitiesRenderer:
                 sprite, (int(entity.size * scale_x), int(entity.size * scale_y))
             )
 
+            if isinstance(entity, Pokemon):
+                self.draw_health_bar(surface, entity, screen_rect)
+                self.draw_catch_probability_bar(surface, entity, screen_rect)
             sprite_rect = sprite.get_rect()
             sprite_rect.center = (
                 screen_rect.centerx,
@@ -65,6 +69,54 @@ class EntitiesRenderer:
             pygame.draw.rect(
                 surface, (255, 0, 0), screen_rect, 1
             )  # Red outline for debugging
+
+    def draw_health_bar(self, surface: pygame.Surface, pokemon: Pokemon, screen_rect: pygame.Rect):
+        bar_width = screen_rect.width
+        bar_height = 5
+        bar_x = screen_rect.x
+        bar_y = screen_rect.y - bar_height - 2  # Position above the Pokemon
+
+        # Calculate health percentage
+        health_percentage = max(pokemon.hp / pokemon.species.base_hp, 0)
+
+        # Determine health bar color based on health percentage
+        if health_percentage > 0.5:
+            bar_color = (0, 255, 0)  # Green
+        elif health_percentage > 0.2:
+            bar_color = (255, 255, 0)  # Yellow
+        else:
+            bar_color = (255, 0, 0)  # Red
+
+        # Draw the background of the health bar (gray)
+        pygame.draw.rect(surface, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
+
+        # Draw the current health portion of the health bar
+        current_health_width = int(bar_width * health_percentage)
+        pygame.draw.rect(surface, bar_color, (bar_x, bar_y, current_health_width, bar_height))
+
+    def draw_catch_probability_bar(self, surface: pygame.Surface, pokemon: Pokemon, screen_rect: pygame.Rect):
+        bar_width = screen_rect.width
+        bar_height = 5
+        bar_x = screen_rect.x
+        bar_y = screen_rect.y - bar_height - 10  # Position above the health bar
+
+        # Calculate catch probability
+        catch_probability = max(pokemon.get_approx_catch_probability(), 0)
+
+        # Determine catch probability bar color based on probability
+        if catch_probability > 0.5:
+            bar_color = (0, 255, 0)  # Green
+        elif catch_probability > 0.2:
+            bar_color = (255, 255, 0)  # Yellow
+        else:
+            bar_color = (255, 0, 0)  # Red
+
+        # Draw the background of the health bar (gray)
+        pygame.draw.rect(surface, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
+
+        # Draw the current health portion of the health bar
+        current_health_width = int(bar_width * catch_probability)
+        pygame.draw.rect(surface, bar_color, (bar_x, bar_y, current_health_width, bar_height))
 
     def draw(
         self, surface: pygame.Surface, camera: Camera, debug: Optional[bool] = False

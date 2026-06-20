@@ -49,9 +49,6 @@ def get_image_at(
     size,
 ):
     """Loads image from x, y, x+offset, y+offset"""
-    print(image, position, size)
-    print(image.get_size())
-
     rect = pygame.Rect(position + size)
     new_image = pygame.Surface(rect.size, pygame.SRCALPHA)
     new_image.blit(image, (0, 0), rect)
