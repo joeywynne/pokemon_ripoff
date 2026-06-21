@@ -17,7 +17,6 @@ class PokemonState(Enum):
     ASLEEP = "asleep"
 
 
-
 class Pokemon(Entity):
 
     def __init__(
@@ -38,16 +37,20 @@ class Pokemon(Entity):
         )
         self.hp = species.base_hp
         self.status = PokemonState.HEALTHY
-        
+
     @property
     def statusCondition(self) -> str:
-        if self.status in [PokemonState.POISONED, PokemonState.PARALYSED, PokemonState.BURNED]:
+        if self.status in [
+            PokemonState.POISONED,
+            PokemonState.PARALYSED,
+            PokemonState.BURNED,
+        ]:
             return 12
         elif self.status in [PokemonState.FROZEN, PokemonState.ASLEEP]:
             return 25
         else:
             return 0
-        
+
     def get_approx_catch_probability(self, ball_value: int = 255) -> float:
         """
         Calculate the probability of catching this Pokemon based on its current HP and the type of Pokeball used.
@@ -55,7 +58,7 @@ class Pokemon(Entity):
         https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Approximate_probability
         """
         status_prior = self.statusCondition / (ball_value + 1)
-        
+
         ball = 8 if ball_value == 200 else 12
         if self.hp <= 0:
             f = 255
@@ -65,7 +68,7 @@ class Pokemon(Entity):
         f = max(f, 1)
 
         catch_term = (self.species.catch_rate + 1) / (ball_value + 1)
-        f_term = (f + 1 ) / 256
+        f_term = (f + 1) / 256
         return status_prior + (catch_term * f_term)
 
 

@@ -90,7 +90,8 @@ class WanderFleeBehaviour(MovementBehaviour):
         if self.state == "wander":
             return self.wander.get_intended_move(entity)
         return self.flee.get_intended_move(entity, player_position, speed_multiplier=3)
-    
+
+
 class StationaryTeleportBehaviour(MovementBehaviour):
 
     def __init__(self, teleport_distance=150):
@@ -100,7 +101,9 @@ class StationaryTeleportBehaviour(MovementBehaviour):
         self.teleport_frac = 1.0
         self.teleport_distance = teleport_distance
 
-    def get_intended_move(self, entity, player_position: tuple[float, float], map_size, **kwargs):
+    def get_intended_move(
+        self, entity, player_position: tuple[float, float], map_size, **kwargs
+    ):
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5

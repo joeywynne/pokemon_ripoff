@@ -24,7 +24,7 @@ class Renderer:
         player: Player,
         camera: Camera,
         fps_text: Optional[pygame.Surface] = None,
-        debug: Optional[bool] = False
+        debug: Optional[bool] = False,
     ):
         self.screen.fill(BLACK)
         camera.follow(player.get_rect(), player.velocity)
@@ -34,9 +34,7 @@ class Renderer:
 
         if player.throw_preview_points:
             self.draw_trajectory(
-                player.throw_preview_points,
-                camera,
-                player.render_throw_power
+                player.throw_preview_points, camera, player.render_throw_power
             )
 
         if fps_text is not None:
@@ -64,8 +62,5 @@ class Renderer:
                 power_colour = RED
 
             pygame.draw.circle(
-                self.screen,
-                power_colour,
-                (int(screen_x), int(screen_y)),
-                3
+                self.screen, power_colour, (int(screen_x), int(screen_y)), 3
             )

@@ -1,9 +1,12 @@
+from typing import Optional
+
 from src.entities.entity import Entity, SpriteInfo
 from src.core.settings import PLAYER_SIZE, PLAYER_SPEED, RED
 import pygame
 from pathlib import Path
 
 from src.entities.pokeball import Pokeball
+from src.entities.pokemon import Pokemon
 from src.movement.behaviour import PlayerBehaviour, PokeballBehaviour
 
 
@@ -23,6 +26,7 @@ class Player(Entity):
         self.throw_charge = 0
         self.throwing = False
         self.cool_down = 0
+        self.target: Optional[Pokemon] | None = None
         self.throw_preview_points = []
         self.render_throw_power = 0.0
 
@@ -60,12 +64,16 @@ class Player(Entity):
         self.throw_charge = 0
         self.cool_down = 60
         return pokeball
-    
+
     def get_pokeball_trajectory(self):
         if not self.throwing:
             return []
-        simulation_ball = Pokeball(self.x, self.y, facing=self.facing, throw_power=self.throw_charge)
-        simulation = PokeballBehaviour(facing=self.facing, throw_power=self.throw_charge)
+        simulation_ball = Pokeball(
+            self.x, self.y, facing=self.facing, throw_power=self.throw_charge
+        )
+        simulation = PokeballBehaviour(
+            facing=self.facing, throw_power=self.throw_charge
+        )
         start_x = self.x
         start_y = self.y
         points = []

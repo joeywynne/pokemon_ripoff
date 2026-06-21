@@ -34,7 +34,9 @@ class Game:
 
         self.map_width = tile_map.width * tile_map.grid_size
         self.map_height = tile_map.height * tile_map.grid_size
-        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map_width, self.map_height)
+        self.camera = Camera(
+            SCREEN_WIDTH, SCREEN_HEIGHT, self.map_width, self.map_height
+        )
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
         self.pokemon = generate_pokemon(6, self.map_width, self.map_height)
 
@@ -59,7 +61,7 @@ class Game:
             pokeball = entity.update_intended(
                 keys=keys,
                 player_position=(self.player.x, self.player.y),
-                map_size=(self.map_width, self.map_height)
+                map_size=(self.map_width, self.map_height),
             )
             if pokeball:
                 new_entities.append(pokeball)
@@ -68,16 +70,16 @@ class Game:
         if new_entities != []:
             self.entities.extend(new_entities)
 
-        #for entity in self.entities:
-         #   move_entity(entity, collision_map)
+        # for entity in self.entities:
+        #   move_entity(entity, collision_map)
 
-        #collisions = detect_entity_collisions(entities)
+        # collisions = detect_entity_collisions(entities)
 
         ##process_interactions(collisions)
 
-        #resolve_physical_collisions(collisions, collision_map)
+        # resolve_physical_collisions(collisions, collision_map)
 
-        #for entity in entities:
+        # for entity in entities:
         #    final_safety(entity, collision_map)
 
         move_entities(self.entities, self.collision_map)

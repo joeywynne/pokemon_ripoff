@@ -70,7 +70,9 @@ class EntitiesRenderer:
                 surface, (255, 0, 0), screen_rect, 1
             )  # Red outline for debugging
 
-    def draw_health_bar(self, surface: pygame.Surface, pokemon: Pokemon, screen_rect: pygame.Rect):
+    def draw_health_bar(
+        self, surface: pygame.Surface, pokemon: Pokemon, screen_rect: pygame.Rect
+    ):
         bar_width = screen_rect.width
         bar_height = 5
         bar_x = screen_rect.x
@@ -88,13 +90,19 @@ class EntitiesRenderer:
             bar_color = (255, 0, 0)  # Red
 
         # Draw the background of the health bar (gray)
-        pygame.draw.rect(surface, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
+        pygame.draw.rect(
+            surface, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height)
+        )
 
         # Draw the current health portion of the health bar
         current_health_width = int(bar_width * health_percentage)
-        pygame.draw.rect(surface, bar_color, (bar_x, bar_y, current_health_width, bar_height))
+        pygame.draw.rect(
+            surface, bar_color, (bar_x, bar_y, current_health_width, bar_height)
+        )
 
-    def draw_catch_probability_bar(self, surface: pygame.Surface, pokemon: Pokemon, screen_rect: pygame.Rect):
+    def draw_catch_probability_bar(
+        self, surface: pygame.Surface, pokemon: Pokemon, screen_rect: pygame.Rect
+    ):
         bar_width = screen_rect.width
         bar_height = 5
         bar_x = screen_rect.x
@@ -112,11 +120,15 @@ class EntitiesRenderer:
             bar_color = (255, 0, 0)  # Red
 
         # Draw the background of the health bar (gray)
-        pygame.draw.rect(surface, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
+        pygame.draw.rect(
+            surface, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height)
+        )
 
         # Draw the current health portion of the health bar
         current_health_width = int(bar_width * catch_probability)
-        pygame.draw.rect(surface, bar_color, (bar_x, bar_y, current_health_width, bar_height))
+        pygame.draw.rect(
+            surface, bar_color, (bar_x, bar_y, current_health_width, bar_height)
+        )
 
     def draw(
         self, surface: pygame.Surface, camera: Camera, debug: Optional[bool] = False
