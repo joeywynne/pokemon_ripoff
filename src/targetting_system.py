@@ -41,9 +41,9 @@ def is_in_angle_of_vision(
     )
 
 
-def get_pokeball_trajectory(start_x, start_y, facing, throw_power):
-    simulation_ball = Pokeball(start_x, start_y, facing, throw_power)
-    simulation = PokeballBehaviour(facing, throw_power)
+def get_pokeball_trajectory(start_x, start_y, direction, throw_power):
+    simulation_ball = Pokeball(start_x, start_y, direction, throw_power)
+    simulation = PokeballBehaviour(direction, throw_power)
     points = []
     for _ in range(0, 100):  # Simulate for 100 frames
         dx, dy = simulation.get_intended_move(simulation_ball)

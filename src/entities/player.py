@@ -9,6 +9,7 @@ from src.entities.pokeball import Pokeball
 from src.entities.pokemon import Pokemon
 from src.movement.behaviour import PlayerBehaviour
 from src.targetting_system import get_pokeball_trajectory, find_target
+from src.movement.movement_system import normalise_vector
 
 
 class Player(Entity):
@@ -47,8 +48,9 @@ class Player(Entity):
         if keys[pygame.K_SPACE]:
             # Pokeball time!
             self.charge_pokeball()
+            target_direction = self.get_target_direction()
             self.throw_preview_points = get_pokeball_trajectory(
-                self.x, self.y, self.facing, self.throw_charge
+                self.x, self.y, target_direction, self.throw_charge
             )
             self.render_throw_power = self.throw_charge
         else:
@@ -57,6 +59,14 @@ class Player(Entity):
 
         super().update_intended(keys=keys)
         return pokeball
+    
+    def get_target_direction(self):
+        if not self.target:
+            return self.facing
+    
+        dx = self.target.x - self.x
+        dy = self.target.y - self.y
+        return normalise_vector((dx, dy))
 
     def charge_pokeball(self):
         if not self.throwing:
@@ -68,9 +78,9 @@ class Player(Entity):
             return
 
         power = self.throw_charge
-        # Create a pokeball entity with speed based on charge
-        # and direction based on facing
-        pokeball = Pokeball(self.x, self.y, facing=self.facing, throw_power=power)
+
+        direction = self.get_target_direction()
+        pokeball = Pokeball(self.x, self.y, direction, throw_power=power)
 
         self.throwing = False
         self.throw_charge = 0
