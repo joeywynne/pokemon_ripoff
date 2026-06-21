@@ -6,6 +6,8 @@ from src.display.map_renderer import MapRenderer
 from src.display.entities_renderer import EntitiesRenderer
 from src.entities.player import Player
 from src.core.camera import Camera
+from src.display.assets import AssetStore
+from src.entities.pokemon import Pokemon
 
 
 class Renderer:
@@ -30,7 +32,7 @@ class Renderer:
         camera.follow(player.get_rect(), player.velocity)
         # Draw map first, then entities on top so the player is visible.
         self.map_renderer.draw(self.screen, camera)
-        self.entities_renderer.draw(self.screen, camera, debug)
+        self.entities_renderer.draw(self.screen, camera, player.target, debug)
 
         if player.throw_preview_points:
             self.draw_trajectory(

@@ -17,6 +17,7 @@ class EntitiesRenderer:
         surface: pygame.Surface,
         entity: Entity,
         camera: Camera,
+        target_entity,
         debug: Optional[bool] = False,
     ):
         scale_y = 1
@@ -55,6 +56,8 @@ class EntitiesRenderer:
             if isinstance(entity, Pokemon):
                 self.draw_health_bar(surface, entity, screen_rect)
                 self.draw_catch_probability_bar(surface, entity, screen_rect)
+                if entity == target_entity:
+                    self.draw_target_indicator(surface, entity, screen_rect)
             sprite_rect = sprite.get_rect()
             sprite_rect.center = (
                 screen_rect.centerx,
@@ -130,8 +133,20 @@ class EntitiesRenderer:
             surface, bar_color, (bar_x, bar_y, current_health_width, bar_height)
         )
 
+    def draw_target_indicator(self, surface, target_pokemon: Pokemon, screen_rect):
+        indicator_size = max(target_pokemon.size / 2, 20)
+        indicator_x = screen_rect.x + (target_pokemon.size / 2)
+        indicator_y = screen_rect.y - 22 # Above health bar
+
+        sprite = self.assets.get_sprite("target.png", indicator_size)
+        sprite_rect = sprite.get_rect()
+        sprite_rect.center = (indicator_x, indicator_y)
+
+        surface.blit(sprite, sprite_rect)
+        
+
     def draw(
-        self, surface: pygame.Surface, camera: Camera, debug: Optional[bool] = False
+        self, surface: pygame.Surface, camera: Camera, target_entity, debug: Optional[bool] = False
     ):
         for entity in self.entities:
-            self.draw_entity(surface, entity, camera, debug)
+            self.draw_entity(surface, entity, camera, target_entity, debug)

@@ -62,6 +62,7 @@ class Game:
                 keys=keys,
                 player_position=(self.player.x, self.player.y),
                 map_size=(self.map_width, self.map_height),
+                pokemon=self.pokemon,
             )
             if pokeball:
                 new_entities.append(pokeball)
