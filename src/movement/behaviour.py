@@ -35,7 +35,7 @@ class PokeballBehaviour(MovementBehaviour):
         self.throw_power = throw_power
 
         # Compute an initial velocity from facing direction and throw power.
-        clamped_power = max(1.0, min(self.throw_power, 60.0))
+        clamped_power = max(1.0, min(self.throw_power, settings.MAX_THROW_POWER))
         base_speed = 5.0
         magnitude = min(40.0, 1.0 + clamped_power / 10.0) * base_speed
         self.velocity = (self.facing[0] * magnitude, self.facing[1] * magnitude)
