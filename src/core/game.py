@@ -11,7 +11,7 @@ from src.display.entities_renderer import EntitiesRenderer
 from src.core.settings import PURPLE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
-from src.movement.movement_system import move_entities
+from src.movement.movement_system import move_entities, move_entity
 
 logger = logging.getLogger(__name__)
 
@@ -54,18 +54,31 @@ class Game:
         keys = pygame.key.get_pressed()
 
         # Get the desired moves for all entities
+        new_entities = []
         for entity in self.entities:
-            if entity is self.player:
-                pokeball = self.player.update_intended(keys=keys)
-            else:
-                entity.update_intended(
-                    player_position=(self.player.x, self.player.y),
-                    map_size=(self.map_width, self.map_height)
-                )
+            pokeball = entity.update_intended(
+                keys=keys,
+                player_position=(self.player.x, self.player.y),
+                map_size=(self.map_width, self.map_height)
+            )
+            if pokeball:
+                new_entities.append(pokeball)
 
         # Add the pokeball to the entities list if it was created
-        if pokeball is not None:
-            self.entities.append(pokeball)
+        if new_entities != []:
+            self.entities.extend(new_entities)
+
+        #for entity in self.entities:
+         #   move_entity(entity, collision_map)
+
+        #collisions = detect_entity_collisions(entities)
+
+        ##process_interactions(collisions)
+
+        #resolve_physical_collisions(collisions, collision_map)
+
+        #for entity in entities:
+        #    final_safety(entity, collision_map)
 
         move_entities(self.entities, self.collision_map)
 

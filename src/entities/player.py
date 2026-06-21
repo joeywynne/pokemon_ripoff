@@ -22,9 +22,9 @@ class Player(Entity):
 
         self.throw_charge = 0
         self.throwing = False
-        self.cool_down = 0  # todo
+        self.cool_down = 0
 
-    def update_intended(self, keys: dict) -> Pokeball | None:
+    def update_intended(self, keys: dict, **kwargs) -> Pokeball | None:
         pokeball = None
         if keys[pygame.K_SPACE]:
             # Pokeball time!
@@ -45,8 +45,8 @@ class Player(Entity):
         self.throw_charge += 1
 
     def throw_pokeball(self):
-        if not self.throwing:
-            return  # Not currently charging, so nothing to throw
+        if not self.throwing or self.cool_down > 0:
+            return
 
         power = self.throw_charge
         # Create a pokeball entity with speed based on charge
@@ -55,6 +55,7 @@ class Player(Entity):
 
         self.throwing = False
         self.throw_charge = 0
+        self.cool_down = 60
         return pokeball
 
 
