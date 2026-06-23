@@ -4,6 +4,8 @@ from src.movement.behaviour import PokeballBehaviour
 from typing import Optional
 from src.entities.entity import Entity
 from math import atan2, radians
+from src.core.utils import UpdateContext
+
 
 
 def find_target(
@@ -41,12 +43,28 @@ def is_in_angle_of_vision(
     )
 
 
-def get_pokeball_trajectory(start_x, start_y, direction, throw_power):
+def get_pokeball_trajectory(
+        start_x,
+        start_y,
+        direction,
+        throw_power,
+        keys,
+        map_size,
+        pokemon
+    ):
     simulation_ball = Pokeball(start_x, start_y, direction, throw_power)
+    simulation_context = UpdateContext(
+        entity=simulation_ball,
+        player_position=(start_x, start_y),
+        map_size=map_size,
+        keys=keys,
+        pokemon=pokemon
+    )
+
     simulation = PokeballBehaviour(direction, throw_power)
     points = []
     for _ in range(0, 100):  # Simulate for 100 frames
-        dx, dy = simulation.get_intended_move(simulation_ball)
+        dx, dy = simulation.get_intended_move(simulation_context)
         start_x += dx
         start_y += dy
         points.append((start_x, start_y))

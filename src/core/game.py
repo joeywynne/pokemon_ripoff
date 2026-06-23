@@ -11,7 +11,9 @@ from src.display.entities_renderer import EntitiesRenderer
 from src.core.settings import PURPLE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
-from src.movement.movement_system import move_entities, move_entity
+from src.movement.movement_system import move_entities
+from src.core.utils import UpdateContext
+
 
 logger = logging.getLogger(__name__)
 
@@ -58,30 +60,20 @@ class Game:
         # Get the desired moves for all entities
         new_entities = []
         for entity in self.entities:
-            pokeball = entity.update_intended(
+            context = UpdateContext(
                 keys=keys,
+                pokemon=self.pokemon,
+                entity=entity,
                 player_position=(self.player.x, self.player.y),
                 map_size=(self.map_width, self.map_height),
-                pokemon=self.pokemon,
             )
+            pokeball = entity.update_intended(context)
             if pokeball:
                 new_entities.append(pokeball)
 
         # Add the pokeball to the entities list if it was created
         if new_entities != []:
             self.entities.extend(new_entities)
-
-        # for entity in self.entities:
-        #   move_entity(entity, collision_map)
-
-        # collisions = detect_entity_collisions(entities)
-
-        ##process_interactions(collisions)
-
-        # resolve_physical_collisions(collisions, collision_map)
-
-        # for entity in entities:
-        #    final_safety(entity, collision_map)
 
         move_entities(self.entities, self.collision_map)
 

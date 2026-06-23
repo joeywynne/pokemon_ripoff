@@ -33,31 +33,30 @@ class Player(Entity):
         self.vision_distance = 200
         self.vision_angle = 60
 
-    def update_intended(
-        self, keys: dict, pokemon: list[Pokemon], **kwargs
-    ) -> Pokeball | None:
+    def update_intended(self, update_context) -> Pokeball | None:
         self.target = find_target(
             self.x,
             self.y,
             self.facing,
             self.vision_angle,
             self.vision_distance,
-            pokemon,
+            update_context.pokemon,
         )
         pokeball = None
+        keys = update_context.keys
         if keys[pygame.K_SPACE]:
             # Pokeball time!
             self.charge_pokeball()
             target_direction = self.get_target_direction()
             self.throw_preview_points = get_pokeball_trajectory(
-                self.x, self.y, target_direction, self.throw_charge
+                self.x, self.y, target_direction, self.throw_charge, keys,  update_context.map_size, update_context.pokemon
             )
             self.render_throw_power = self.throw_charge
         else:
             # Need to check if we can now throw a ball
             pokeball = self.throw_pokeball()
 
-        super().update_intended(keys=keys)
+        super().update_intended(update_context)
         return pokeball
     
     def get_target_direction(self):

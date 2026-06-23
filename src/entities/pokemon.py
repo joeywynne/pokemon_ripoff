@@ -6,6 +6,8 @@ from src.pokemon.base import PokemonSpecies
 from src.core.settings import TILE_SIZE
 import random
 from src.pokemon.base import DROWZEE, GASTLY, NIDORAN, ABRA
+from src.pokemon.catching import attempt_capture
+from src.movement.behaviour import FleeBehaviour, FollowBehaviour
 
 
 class PokemonState(Enum):
@@ -70,7 +72,28 @@ class Pokemon(Entity):
         catch_term = (self.species.catch_rate + 1) / (ball_value + 1)
         f_term = (f + 1) / 256
         return status_prior + (catch_term * f_term)
+    
+    def on_hit_by_pokeball(self, pokeball):
+        result = attempt_capture(pokemon=self, pokeball=pokeball)
+        
+        if result:
+            self.on_capture()
+        else:
+            self.on_capture_failure()
 
+    def on_capture(self):
+        self.movement_controller = FollowBehaviour(
+            previous_behaviour=self.movement_controller,
+            speed_multiplier=3.0
+        )
+
+
+    def on_capture_failure(self):
+        self.movement_controller = FleeBehaviour(
+            previous_behaviour=self.movement_controller,
+            speed_multiplier=3.0,
+            duration=300
+        )
 
 def generate_pokemon(num_pokemon: int, map_width: int, map_height: int) -> list[Entity]:
     return [

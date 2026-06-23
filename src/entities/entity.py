@@ -54,11 +54,11 @@ class Entity:
     def get_rect(self):
         return pygame.Rect(self.x, self.y, self.size, self.size)
 
-    def get_intended_move(self, **kwargs) -> tuple[float, float]:
-        return self.movement_controller.get_intended_move(self, **kwargs)
+    def get_intended_move(self, update_context) -> tuple[float, float]:
+        return self.movement_controller.get_intended_move(update_context)
 
-    def update_intended(self, **kwargs) -> None:
-        intended_move = self.get_intended_move(**kwargs)
+    def update_intended(self, update_context) -> None:
+        intended_move = self.get_intended_move(update_context)
         dx, dy = intended_move
 
         if dx != 0 and dy != 0:

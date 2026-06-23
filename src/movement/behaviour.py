@@ -6,13 +6,15 @@ import random
 
 class MovementBehaviour:
 
-    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
+    def get_intended_move(self, update_context) -> tuple[float, float]:
         # Default to no movement
         return 0, 0
 
 
 class PlayerBehaviour(MovementBehaviour):
-    def get_intended_move(self, entity, keys: dict) -> tuple[float, float]:
+    def get_intended_move(self, update_context) -> tuple[float, float]:
+        keys = update_context.keys
+        entity = update_context.entity
         # Default to no movement if no movement keys are pressed
         dy = 0
         dx = 0
@@ -51,7 +53,8 @@ class PokeballBehaviour(MovementBehaviour):
         # Minimum horizontal velocity to be considered active
         self.min_horizontal_velocity = 0.05
 
-    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
+    def get_intended_move(self, update_context) -> tuple[float, float]:
+        entity = update_context.entity
         if entity.squash_timer > 0:
             entity.squash_timer -= 1
 
@@ -103,7 +106,7 @@ class PokeballBehaviour(MovementBehaviour):
 
 
 class StationaryBehaviour(MovementBehaviour):
-    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
+    def get_intended_move(self, update_context) -> tuple[float, float]:
         return 0, 0
 
 
@@ -118,7 +121,8 @@ class PacingBehaviour(MovementBehaviour):
         self.direction = 1
         self.travelled = 0
 
-    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
+    def get_intended_move(self, update_context) -> tuple[float, float]:
+        entity = update_context.entity
         if self.axis == "horizontal":
             dx = entity.speed * self.direction
             dy = 0
@@ -151,7 +155,8 @@ class WanderBehaviour(MovementBehaviour):
         self.direction = (0, 0)
         self.change_interval = random.randint(self.min_interval, self.max_interval)
 
-    def get_intended_move(self, entity, **kwargs) -> tuple[float, float]:
+    def get_intended_move(self, update_context) -> tuple[float, float]:
+        entity = update_context.entity
         self.timer += 1
         if self.timer >= self.change_interval:
             self.timer = 0
@@ -182,16 +187,27 @@ class WanderBehaviour(MovementBehaviour):
 
 class FollowBehaviour(MovementBehaviour):
 
-    def get_intended_move(
-        self, entity, player_position, speed_multiplier
-    ) -> tuple[float, float]:
+    def __init__(self, previous_behaviour: MovementBehaviour, speed_multiplier: float = 1.0, duration: int = 300):
+        self.previous_behaviour = previous_behaviour
+        self.speed_multiplier = speed_multiplier
+        self.duration = duration
+
+    def get_intended_move(self, update_context) -> tuple[float, float]:
+        entity = update_context.entity
+        self.duration -= 1
+
+        if self.duration <= 0:
+            entity.movement_controller = self.previous_behaviour
+            return 0, 0
+
+        player_position = update_context.player_position
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5
         # Normalize the direction vector and scale by speed
         if distance != 0:
-            dx = (dx / distance) * entity.speed * speed_multiplier
-            dy = (dy / distance) * entity.speed * speed_multiplier
+            dx = (dx / distance) * entity.speed * self.speed_multiplier
+            dy = (dy / distance) * entity.speed * self.speed_multiplier
         else:
             dx = 0
             dy = 0
@@ -201,16 +217,27 @@ class FollowBehaviour(MovementBehaviour):
 
 class FleeBehaviour(MovementBehaviour):
 
-    def get_intended_move(
-        self, entity, player_position, speed_multiplier
-    ) -> tuple[float, float]:
+    def __init__(self, previous_behaviour, speed_multiplier: float = 1.0, duration: int = 300):
+        self.speed_multiplier = speed_multiplier
+        self.previous_behaviour = previous_behaviour
+        self.duration = duration
+
+    def get_intended_move(self, update_context) -> tuple[float, float]:
+        entity = update_context.entity
+        self.duration -= 1
+
+        if self.duration <= 0:
+            entity.movement_controller = self.previous_behaviour
+            return 0, 0
+
+        player_position = update_context.player_position
         dx = entity.x - player_position[0]
         dy = entity.y - player_position[1]
         distance = (dx**2 + dy**2) ** 0.5
         # Normalize the direction vector and scale by speed
         if distance != 0:
-            dx = (dx / distance) * entity.speed * speed_multiplier
-            dy = (dy / distance) * entity.speed * speed_multiplier
+            dx = (dx / distance) * entity.speed * self.speed_multiplier
+            dy = (dy / distance) * entity.speed * self.speed_multiplier
         else:
             dx = 0
             dy = 0
@@ -219,10 +246,13 @@ class FleeBehaviour(MovementBehaviour):
 
 
 class TeleportBehaviour(MovementBehaviour):
-    def get_intended_move(
-        self, entity, map_size, teleport_frac=1.0, **kwargs
-    ) -> tuple[float, float]:
-        if teleport_frac <= 0.0:
+    def __init__(self, teleport_frac: float = 1.0):
+        self.teleport_frac = teleport_frac
+
+    def get_intended_move(self, update_context) -> tuple[float, float]:
+        entity = update_context.entity
+        map_size = update_context.map_size
+        if self.teleport_frac <= 0.0:
             # Calculate a random teleport destination within the map boundaries
             target_x = random.randint(
                 settings.TILE_SIZE, map_size[0] - settings.TILE_SIZE
@@ -235,5 +265,5 @@ class TeleportBehaviour(MovementBehaviour):
             dy = target_y - entity.y
             return dx, dy
         else:
-            entity.size = entity.species.size * teleport_frac
+            entity.size = entity.species.size * self.teleport_frac
             return 0, 0

@@ -7,15 +7,20 @@ def move_entities(entities: list[Entity], collision_map: CollisionMap) -> list[E
     """Move all entities based on their desired moves and resolve collisions."""
     # Each entity now has a desired velocity.
     # Use this to try and move them and then resolve any issues with collisions.
+
+    # First move the entities preventing movement into non-accessible tiles
     for entity in entities:
         move_entity(entity, collision_map)
 
+    # Attempt to resolve all collisions between entities
     resolve_all_collisions(entities, collision_map)
 
+    # Remove any entities that are no longer active (e.g., caught, destroyed)
+    entities[:] = [entity for entity in entities if entity.is_active]
+
+    # Final safety check to ensure no entity is stuck
     for entity in entities:
         final_safety(entity, collision_map)
-
-    entities[:] = [entity for entity in entities if entity.is_active]
 
 
 def move_entity(entity, collision_map: CollisionMap):
@@ -75,12 +80,15 @@ def normalise_vector(vector: tuple[float, float]) -> tuple[float, float]:
 
 
 def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
-    """Resolve all collisions using the desired move of the entities.
+    """Resolve any collisions between entities.
+
+    Resolve collisions after we have attempted to move our entities.
+    This is done in multiple passes to ensure that all collisions are resolved.
 
     Order:
-      1. Apply movement + tile collision for everyone
-      2. Resolve entity vs entity collisions
-      3. Final safety check
+      1. Identify collisions
+      2. Resolve interactions (e.g., catching a Pokemon)
+      3. Resolve other entity vs entity collisions (movement blocking)
     """
 
     for _ in range(5):  # Multiple passes to resolve entity collisions
@@ -92,8 +100,12 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
                 a = entities[i]
                 b = entities[j]
 
-                if entities_collide(a, b) and abs(a.z - b.z) < 5.0:
-                    resolve_entity_collision(a, b, collision_map)
+                if entities_collide(a, b) and abs(a.z - b.z) < 3.0:
+                    
+                    a.on_collision(b)
+                    b.on_collision(a)
+
+                    push_entities_apart(a, b, collision_map)
                     any_collisions_resolved = True
 
         # No more collisions, we can stop early
@@ -101,7 +113,7 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
             break
 
 
-def resolve_entity_collision(a: Entity, b: Entity, collision_map: CollisionMap):
+def push_entities_apart(a: Entity, b: Entity, collision_map: CollisionMap):
     """Use momentum to push two colliding entities apart."""
     # Calculate the direction from a to b
     dx = b.x - a.x

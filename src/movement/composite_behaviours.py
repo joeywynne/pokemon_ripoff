@@ -18,7 +18,7 @@ class StationaryWanderBehaviour(MovementBehaviour):
         self.state = "wander"
         self.timer = random.randint(120, 300)
 
-    def get_intended_move(self, entity, **kwargs):
+    def get_intended_move(self, update_context):
 
         self.timer -= 1
 
@@ -29,28 +29,32 @@ class StationaryWanderBehaviour(MovementBehaviour):
             self.timer = random.randint(120, 300)
 
         if self.state == "wander":
-            return self.wander.get_intended_move(
-                entity,
-                **kwargs,
-            )
+            return self.wander.get_intended_move(update_context)
 
-        return self.idle.get_intended_move(
-            entity,
-            **kwargs,
-        )
+        return self.idle.get_intended_move(update_context)
 
 
 class WanderFollowBehaviour(MovementBehaviour):
 
-    def __init__(self, start_follow_distance=100, stop_follow_distance=150):
+    def __init__(
+            self,
+            start_follow_distance=100,
+            stop_follow_distance=150,
+            speed_multiplier=3.0
+        ):
         self.wander = WanderBehaviour()
-        self.follow = FollowBehaviour()
+        self.follow = FollowBehaviour(
+            previous_behaviour=self.wander,
+            speed_multiplier=speed_multiplier
+        )
 
         self.state = "wander"
         self.start_follow_distance = start_follow_distance
         self.stop_follow_distance = stop_follow_distance
 
-    def get_intended_move(self, entity, player_position: tuple[float, float], **kwargs):
+    def get_intended_move(self, update_context):
+        entity = update_context.entity
+        player_position = update_context.player_position
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5
@@ -61,23 +65,30 @@ class WanderFollowBehaviour(MovementBehaviour):
             self.state = "wander"
 
         if self.state == "wander":
-            return self.wander.get_intended_move(entity)
-        return self.follow.get_intended_move(
-            entity, player_position, speed_multiplier=2
-        )
-
+            return self.wander.get_intended_move(update_context)
+        return self.follow.get_intended_move(update_context)
 
 class WanderFleeBehaviour(MovementBehaviour):
 
-    def __init__(self, start_flee_distance=100, stop_flee_distance=150):
+    def __init__(
+            self,
+            start_flee_distance=100,
+            stop_flee_distance=150,
+            speed_multiplier=3.0
+        ):
         self.wander = WanderBehaviour()
-        self.flee = FleeBehaviour()
+        self.flee = FleeBehaviour(
+            previous_behaviour=self.wander,
+            speed_multiplier=speed_multiplier
+        )
 
         self.state = "wander"
         self.start_flee_distance = start_flee_distance
         self.stop_flee_distance = stop_flee_distance
 
-    def get_intended_move(self, entity, player_position: tuple[float, float], **kwargs):
+    def get_intended_move(self, update_context):
+        entity = update_context.entity
+        player_position = update_context.player_position
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5
@@ -88,8 +99,8 @@ class WanderFleeBehaviour(MovementBehaviour):
             self.state = "wander"
 
         if self.state == "wander":
-            return self.wander.get_intended_move(entity)
-        return self.flee.get_intended_move(entity, player_position, speed_multiplier=3)
+            return self.wander.get_intended_move(update_context)
+        return self.flee.get_intended_move(update_context)
 
 
 class StationaryTeleportBehaviour(MovementBehaviour):
@@ -102,8 +113,10 @@ class StationaryTeleportBehaviour(MovementBehaviour):
         self.teleport_distance = teleport_distance
 
     def get_intended_move(
-        self, entity, player_position: tuple[float, float], map_size, **kwargs
+        self, update_context
     ):
+        entity = update_context.entity
+        player_position = update_context.player_position
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5
@@ -115,18 +128,11 @@ class StationaryTeleportBehaviour(MovementBehaviour):
             self.state = "stationary"
 
         if self.state == "teleport":
-            dx, dy = self.teleport.get_intended_move(
-                entity,
-                map_size,
-                teleport_frac=self.teleport_frac,
-                **kwargs,
-            )
+            dx, dy = self.teleport.get_intended_move(update_context)
 
         else:
-            dx, dy = self.idle.get_intended_move(
-                entity,
-                **kwargs,
-            )
+            dx, dy = self.idle.get_intended_move(update_context)
+
         if self.teleport_frac <= 0:
             self.teleport_frac = 1.0
             self.state = "stationary"
