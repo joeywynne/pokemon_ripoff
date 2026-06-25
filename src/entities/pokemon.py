@@ -74,14 +74,14 @@ class Pokemon(Entity):
         catch_term = (self.species.catch_rate + 1) / (ball_value + 1)
         f_term = (f + 1) / 256
         return status_prior + (catch_term * f_term)
-    
+
     def on_collision(self, other_entity: Entity) -> None:
         if isinstance(other_entity, Player) and self.is_captured:
             self.is_active = False
-    
+
     def on_hit_by_pokeball(self, pokeball):
         result = attempt_capture(pokemon=self, pokeball=pokeball)
-        
+
         if result:
             self.on_capture()
         else:
@@ -89,18 +89,17 @@ class Pokemon(Entity):
 
     def on_capture(self):
         self.movement_controller = FollowBehaviour(
-            previous_behaviour=self.movement_controller,
-            speed_multiplier=3.0
+            previous_behaviour=self.movement_controller, speed_multiplier=3.0
         )
         self.is_captured = True
-
 
     def on_capture_failure(self):
         self.movement_controller = FleeBehaviour(
             previous_behaviour=self.movement_controller,
             speed_multiplier=3.0,
-            duration=300
+            duration=300,
         )
+
 
 def generate_pokemon(num_pokemon: int, map_width: int, map_height: int) -> list[Entity]:
     return [

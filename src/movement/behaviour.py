@@ -187,7 +187,12 @@ class WanderBehaviour(MovementBehaviour):
 
 class FollowBehaviour(MovementBehaviour):
 
-    def __init__(self, previous_behaviour: MovementBehaviour, speed_multiplier: float = 1.0, duration: int = 300):
+    def __init__(
+        self,
+        previous_behaviour: MovementBehaviour,
+        speed_multiplier: float = 1.0,
+        duration: int = 300,
+    ):
         self.previous_behaviour = previous_behaviour
         self.speed_multiplier = speed_multiplier
         self.duration = duration
@@ -217,7 +222,9 @@ class FollowBehaviour(MovementBehaviour):
 
 class FleeBehaviour(MovementBehaviour):
 
-    def __init__(self, previous_behaviour, speed_multiplier: float = 1.0, duration: int = 300):
+    def __init__(
+        self, previous_behaviour, speed_multiplier: float = 1.0, duration: int = 300
+    ):
         self.speed_multiplier = speed_multiplier
         self.previous_behaviour = previous_behaviour
         self.duration = duration

@@ -49,7 +49,13 @@ class Player(Entity):
             self.charge_pokeball()
             target_direction = self.get_target_direction()
             self.throw_preview_points = get_pokeball_trajectory(
-                self.x, self.y, target_direction, self.throw_charge, keys,  update_context.map_size, update_context.pokemon
+                self.x,
+                self.y,
+                target_direction,
+                self.throw_charge,
+                keys,
+                update_context.map_size,
+                update_context.pokemon,
             )
             self.render_throw_power = self.throw_charge
         else:
@@ -58,11 +64,11 @@ class Player(Entity):
 
         super().update_intended(update_context)
         return pokeball
-    
+
     def get_target_direction(self):
         if not self.target:
             return self.facing
-    
+
         dx = self.target.x - self.x
         dy = self.target.y - self.y
         return normalise_vector((dx, dy))

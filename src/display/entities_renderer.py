@@ -136,17 +136,20 @@ class EntitiesRenderer:
     def draw_target_indicator(self, surface, target_pokemon: Pokemon, screen_rect):
         indicator_size = max(target_pokemon.size / 2, 20)
         indicator_x = screen_rect.x + (target_pokemon.size / 2)
-        indicator_y = screen_rect.y - 22 # Above health bar
+        indicator_y = screen_rect.y - 22  # Above health bar
 
         sprite = self.assets.get_sprite("target.png", indicator_size)
         sprite_rect = sprite.get_rect()
         sprite_rect.center = (indicator_x, indicator_y)
 
         surface.blit(sprite, sprite_rect)
-        
 
     def draw(
-        self, surface: pygame.Surface, camera: Camera, target_entity, debug: Optional[bool] = False
+        self,
+        surface: pygame.Surface,
+        camera: Camera,
+        target_entity,
+        debug: Optional[bool] = False,
     ):
         for entity in self.entities:
             self.draw_entity(surface, entity, camera, target_entity, debug)

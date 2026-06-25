@@ -5,7 +5,7 @@ import pygame
 
 def move_entities(entities: list[Entity], collision_map: CollisionMap) -> list[Entity]:
     """Move all entities based on their desired moves and resolve collisions.
-    
+
     Returns a list of entities that have been captured
     """
     # Each entity now has a desired velocity.
@@ -19,8 +19,7 @@ def move_entities(entities: list[Entity], collision_map: CollisionMap) -> list[E
     resolve_all_collisions(entities, collision_map)
 
     captures = [
-        entity for entity in entities
-        if not entity.is_active and entity.is_captured
+        entity for entity in entities if not entity.is_active and entity.is_captured
     ]
 
     # Remove any entities that are no longer active (e.g., caught, destroyed)
@@ -29,7 +28,7 @@ def move_entities(entities: list[Entity], collision_map: CollisionMap) -> list[E
     # Final safety check to ensure no entity is stuck
     for entity in entities:
         final_safety(entity, collision_map)
-    
+
     return captures
 
 
@@ -111,7 +110,7 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
                 b = entities[j]
 
                 if entities_collide(a, b) and abs(a.z - b.z) < 3.0:
-                    
+
                     a.on_collision(b)
                     b.on_collision(a)
 

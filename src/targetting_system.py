@@ -7,7 +7,6 @@ from math import atan2, radians
 from src.core.utils import UpdateContext
 
 
-
 def find_target(
     player_x, player_y, facing, vision_angle, vision_distance, pokemon: list[Pokemon]
 ) -> Optional[Pokemon]:
@@ -44,21 +43,15 @@ def is_in_angle_of_vision(
 
 
 def get_pokeball_trajectory(
-        start_x,
-        start_y,
-        direction,
-        throw_power,
-        keys,
-        map_size,
-        pokemon
-    ):
+    start_x, start_y, direction, throw_power, keys, map_size, pokemon
+):
     simulation_ball = Pokeball(start_x, start_y, direction, throw_power)
     simulation_context = UpdateContext(
         entity=simulation_ball,
         player_position=(start_x, start_y),
         map_size=map_size,
         keys=keys,
-        pokemon=pokemon
+        pokemon=pokemon,
     )
 
     simulation = PokeballBehaviour(direction, throw_power)

@@ -15,7 +15,6 @@ from src.movement.movement_system import move_entities
 from src.core.utils import UpdateContext
 from src.core.game_state import GameState
 
-
 logger = logging.getLogger(__name__)
 
 

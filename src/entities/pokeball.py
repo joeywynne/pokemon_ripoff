@@ -30,13 +30,11 @@ class Pokeball(Projectile):
         self.squash_timer = 0.0
         self.ball_value = 255  # Default value for a standard Pokeball
 
-    
     def on_collision(self, other):
         if isinstance(other, Pokemon):
             other.on_hit_by_pokeball(self)
             # start the pokeball deactivation
             self.start_deactivating = True
-
 
 
 def get_pokeball_sprite_info() -> SpriteInfo:

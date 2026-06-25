@@ -37,15 +37,11 @@ class StationaryWanderBehaviour(MovementBehaviour):
 class WanderFollowBehaviour(MovementBehaviour):
 
     def __init__(
-            self,
-            start_follow_distance=100,
-            stop_follow_distance=150,
-            speed_multiplier=3.0
-        ):
+        self, start_follow_distance=100, stop_follow_distance=150, speed_multiplier=3.0
+    ):
         self.wander = WanderBehaviour()
         self.follow = FollowBehaviour(
-            previous_behaviour=self.wander,
-            speed_multiplier=speed_multiplier
+            previous_behaviour=self.wander, speed_multiplier=speed_multiplier
         )
 
         self.state = "wander"
@@ -68,18 +64,15 @@ class WanderFollowBehaviour(MovementBehaviour):
             return self.wander.get_intended_move(update_context)
         return self.follow.get_intended_move(update_context)
 
+
 class WanderFleeBehaviour(MovementBehaviour):
 
     def __init__(
-            self,
-            start_flee_distance=100,
-            stop_flee_distance=150,
-            speed_multiplier=3.0
-        ):
+        self, start_flee_distance=100, stop_flee_distance=150, speed_multiplier=3.0
+    ):
         self.wander = WanderBehaviour()
         self.flee = FleeBehaviour(
-            previous_behaviour=self.wander,
-            speed_multiplier=speed_multiplier
+            previous_behaviour=self.wander, speed_multiplier=speed_multiplier
         )
 
         self.state = "wander"
@@ -112,9 +105,7 @@ class StationaryTeleportBehaviour(MovementBehaviour):
         self.teleport_frac = 1.0
         self.teleport_distance = teleport_distance
 
-    def get_intended_move(
-        self, update_context
-    ):
+    def get_intended_move(self, update_context):
         entity = update_context.entity
         player_position = update_context.player_position
         dx = player_position[0] - entity.x

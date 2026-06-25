@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from src.entities.entity import Entity
 from src.entities.pokemon import Pokemon
-    
+
 
 @dataclass
 class UpdateContext:
