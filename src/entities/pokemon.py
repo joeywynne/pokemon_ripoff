@@ -1,6 +1,7 @@
 from enum import Enum
 
 from src.entities.entity import Entity
+from src.entities.player import Player
 from src.pokemon.base import PokemonSpecies
 
 from src.core.settings import TILE_SIZE
@@ -39,6 +40,7 @@ class Pokemon(Entity):
         )
         self.hp = species.base_hp
         self.status = PokemonState.HEALTHY
+        self.is_captured = False
 
     @property
     def statusCondition(self) -> str:
@@ -73,6 +75,10 @@ class Pokemon(Entity):
         f_term = (f + 1) / 256
         return status_prior + (catch_term * f_term)
     
+    def on_collision(self, other_entity: Entity) -> None:
+        if isinstance(other_entity, Player) and self.is_captured:
+            self.is_active = False
+    
     def on_hit_by_pokeball(self, pokeball):
         result = attempt_capture(pokemon=self, pokeball=pokeball)
         
@@ -86,6 +92,7 @@ class Pokemon(Entity):
             previous_behaviour=self.movement_controller,
             speed_multiplier=3.0
         )
+        self.is_captured = True
 
 
     def on_capture_failure(self):

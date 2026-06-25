@@ -34,6 +34,7 @@ class Pokeball(Projectile):
     def on_collision(self, other):
         if isinstance(other, Pokemon):
             other.on_hit_by_pokeball(self)
+            # start the pokeball deactivation
             self.start_deactivating = True
 
 

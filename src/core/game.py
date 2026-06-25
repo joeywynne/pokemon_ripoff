@@ -13,6 +13,7 @@ from src.core.camera import Camera
 from src.display.assets import AssetStore
 from src.movement.movement_system import move_entities
 from src.core.utils import UpdateContext
+from src.core.game_state import GameState
 
 
 logger = logging.getLogger(__name__)
@@ -47,6 +48,8 @@ class Game:
         self.renderer = Renderer(self.screen, entities_renderer, map_renderer)
         self.last_log_time = pygame.time.get_ticks()
 
+        self.game_state = GameState.new_game()
+
         logger.debug("Game initialized with debug=%s", self.debug)
 
     def handle_events(self):
@@ -75,7 +78,9 @@ class Game:
         if new_entities != []:
             self.entities.extend(new_entities)
 
-        move_entities(self.entities, self.collision_map)
+        captures = move_entities(self.entities, self.collision_map)
+        for capture in captures:
+            self.game_state.add_pokemon_to_party(capture.species)
 
         self.log_debug_info()
 
