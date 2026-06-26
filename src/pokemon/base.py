@@ -20,10 +20,10 @@ class PokemonType(Enum):
     POISON = "poison"
 
 
-@dataclass
+@dataclass(frozen=True)
 class PokemonSpecies:
     name: str
-    types: list[PokemonType]
+    types: tuple[PokemonType, ...]
     base_hp: int
     catch_rate: int
     # base_attack: int
@@ -37,7 +37,7 @@ class PokemonSpecies:
 
 DROWZEE = PokemonSpecies(
     name="Drowzee",
-    types=[PokemonType.PSYCHIC],
+    types=(PokemonType.PSYCHIC),
     catch_rate=190,
     base_hp=60,
     speed=1.5,
@@ -49,7 +49,7 @@ DROWZEE = PokemonSpecies(
 
 GASTLY = PokemonSpecies(
     name="Gastly",
-    types=[PokemonType.GHOST, PokemonType.POISON],
+    types=(PokemonType.GHOST, PokemonType.POISON),
     catch_rate=245,
     base_hp=30,
     speed=2,
@@ -61,7 +61,7 @@ GASTLY = PokemonSpecies(
 
 NIDORAN = PokemonSpecies(
     name="Nidoran",
-    types=[PokemonType.POISON],
+    types=(PokemonType.POISON),
     catch_rate=235,
     base_hp=55,
     speed=1.8,
@@ -73,7 +73,7 @@ NIDORAN = PokemonSpecies(
 
 ABRA = PokemonSpecies(
     name="Abra",
-    types=[PokemonType.PSYCHIC],
+    types=(PokemonType.PSYCHIC),
     catch_rate=200,
     base_hp=25,
     speed=1.8,

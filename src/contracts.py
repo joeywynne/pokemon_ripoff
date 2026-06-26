@@ -16,4 +16,3 @@ class UpdateContext:
     nearby_pokemon: list[EntityPositionProtocol]
     player_position: tuple[float, float]
     map_size: tuple[int, int]
-    

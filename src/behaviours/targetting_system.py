@@ -6,7 +6,12 @@ from src.contracts import EntityPositionProtocol, UpdateContext
 
 
 def find_target(
-    player_x, player_y, facing, vision_angle, vision_distance, nearby_pokemon: list[EntityPositionProtocol]
+    player_x,
+    player_y,
+    facing,
+    vision_angle,
+    vision_distance,
+    nearby_pokemon: list[EntityPositionProtocol],
 ) -> Optional[EntityPositionProtocol]:
     """Find the closest Pokemon to the player within the player's cone of vision."""
     closest_pokemon = None
@@ -41,7 +46,13 @@ def is_in_angle_of_vision(
 
 
 def get_pokeball_trajectory(
-    start_x, start_y, direction, throw_power, keys, map_size, nearby_pokemon: list[EntityPositionProtocol]
+    start_x,
+    start_y,
+    direction,
+    throw_power,
+    keys,
+    map_size,
+    nearby_pokemon: list[EntityPositionProtocol],
 ):
     simulation_ball = Pokeball(start_x, start_y, direction, throw_power)
     simulation_context = UpdateContext(

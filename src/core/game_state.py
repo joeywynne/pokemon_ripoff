@@ -13,7 +13,7 @@ class GameState:
 
     @classmethod
     def new_game(cls):
-        return cls(pokedex={species: False for species in ALL_SPECIES})
+        return cls(pokedex={species.name: False for species in ALL_SPECIES})
 
     @property
     def party_size(self) -> int:

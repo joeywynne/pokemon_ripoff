@@ -74,7 +74,6 @@ class Pokemon(Entity):
         f_term = (f + 1) / 256
         return status_prior + (catch_term * f_term)
 
-
     def on_hit_by_pokeball(self, pokeball):
         result = attempt_capture(pokemon=self, pokeball=pokeball)
 
@@ -97,7 +96,9 @@ class Pokemon(Entity):
         )
 
 
-def generate_pokemon(num_pokemon: int, map_width: int, map_height: int) -> list[Pokemon]:
+def generate_pokemon(
+    num_pokemon: int, map_width: int, map_height: int
+) -> list[Pokemon]:
     return [
         Pokemon(
             random.randint(TILE_SIZE, map_width - TILE_SIZE),

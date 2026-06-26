@@ -1,4 +1,3 @@
-
 from src.core.game_state import GameState
 from src.entities.entity import Entity
 from src.entities.player import Player
@@ -11,10 +10,10 @@ def process_interaction(
     b: Entity,
     game_state: GameState,
 ):
-    
+
     if isinstance(a, Pokeball) and isinstance(b, Pokemon):
         process_pokeball_hit(a, b)
-    
+
     elif isinstance(b, Pokeball) and isinstance(a, Pokemon):
         process_pokeball_hit(b, a)
 

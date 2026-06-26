@@ -1,11 +1,12 @@
-from src.core import game_state
+from src.core.game_state import GameState
 from src.entities.entity import Entity
 from src.core.map.collision_map import CollisionMap
 from src.behaviours.interactions import process_interaction
+from src.utils import normalise_vector
 import pygame
 
 
-def move_entities(entities: list[Entity], collision_map: CollisionMap) -> list[Entity]:
+def move_entities(entities: list[Entity], collision_map: CollisionMap, game_state: GameState) -> list[Entity]:
     """Move all entities based on their desired moves and resolve collisions.
 
     Returns a list of entities that have been captured
@@ -18,11 +19,7 @@ def move_entities(entities: list[Entity], collision_map: CollisionMap) -> list[E
         move_entity(entity, collision_map)
 
     # Attempt to resolve all collisions between entities
-    resolve_all_collisions(entities, collision_map)
-
-    captures = [
-        entity for entity in entities if not entity.is_active and entity.is_captured
-    ]
+    resolve_all_collisions(entities, collision_map, game_state)
 
     # Remove any entities that are no longer active (e.g., caught, destroyed)
     entities[:] = [entity for entity in entities if entity.is_active]
@@ -31,7 +28,6 @@ def move_entities(entities: list[Entity], collision_map: CollisionMap) -> list[E
     for entity in entities:
         final_safety(entity, collision_map)
 
-    return captures
 
 
 def move_entity(entity, collision_map: CollisionMap):
@@ -81,16 +77,7 @@ def can_move_to(target_rect: pygame.Rect, collision_map: CollisionMap) -> bool:
     return not collision_map.collides(target_rect)
 
 
-def normalise_vector(vector: tuple[float, float]) -> tuple[float, float]:
-    """Return a normalized version of the vector."""
-    x, y = vector
-    magnitude = (x**2 + y**2) ** 0.5
-    if magnitude == 0:
-        return (0, 0)
-    return (x / magnitude, y / magnitude)
-
-
-def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
+def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap, game_state: GameState):
     """Resolve any collisions between entities.
 
     Resolve collisions after we have attempted to move our entities.

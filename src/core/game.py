@@ -8,7 +8,6 @@ from src.entities.player import Player
 from src.entities.pokemon import generate_pokemon
 from src.display.renderer import Renderer
 from src.display.entities_renderer import EntitiesRenderer
-from src.core.settings import PURPLE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
 from src.behaviours.movement_system import move_entities
@@ -40,7 +39,7 @@ class Game:
         self.camera = Camera(
             SCREEN_WIDTH, SCREEN_HEIGHT, self.map_width, self.map_height
         )
-        self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PURPLE)
+        self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.pokemon = generate_pokemon(6, self.map_width, self.map_height)
 
         self.entities = self.pokemon + [self.player]
@@ -82,9 +81,7 @@ class Game:
         if new_entities != []:
             self.entities.extend(new_entities)
 
-        captures = move_entities(self.entities, self.collision_map)
-        for capture in captures:
-            self.game_state.add_pokemon_to_party(capture.species)
+        move_entities(self.entities, self.collision_map, self.game_state)
 
         self.log_debug_info()
 

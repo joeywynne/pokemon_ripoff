@@ -9,7 +9,7 @@ from pathlib import Path
 from src.entities.pokeball import Pokeball
 from src.behaviours.behaviour import PlayerBehaviour
 from src.behaviours.targetting_system import get_pokeball_trajectory, find_target
-from src.behaviours.movement_system import normalise_vector
+from src.utils import normalise_vector
 
 
 class Player(Entity):
