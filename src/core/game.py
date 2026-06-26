@@ -14,6 +14,7 @@ from src.display.assets import AssetStore
 from src.movement.movement_system import move_entities
 from src.core.utils import UpdateContext
 from src.core.game_state import GameState
+from src.display.inventory_renderer import InventoryRenderer
 
 logger = logging.getLogger(__name__)
 
@@ -44,10 +45,12 @@ class Game:
 
         self.entities = self.pokemon + [self.player]
         entities_renderer = EntitiesRenderer(self.entities, assets)
+        self.inventory_renderer = InventoryRenderer()
         self.renderer = Renderer(self.screen, entities_renderer, map_renderer)
         self.last_log_time = pygame.time.get_ticks()
 
         self.game_state = GameState.new_game()
+        self.inventory_open = False
 
         logger.debug("Game initialized with debug=%s", self.debug)
 
@@ -55,6 +58,9 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_i:
+                    self.inventory_open = not self.inventory_open
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -90,6 +96,8 @@ class Game:
             fps_text = self.font.render(f"FPS: {fps:.1f}", True, (255, 255, 0))
 
         self.renderer.render(self.player, self.camera, fps_text, self.debug)
+        if self.inventory_open:
+            self.inventory_renderer.render(self.screen, self.game_state)
 
     def log_debug_info(self):
         if not self.debug:

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from src.entities.entity import Entity, SpriteInfo
-from src.core.settings import PLAYER_SIZE, PLAYER_SPEED, RED
+from src.core.settings import PLAYER_SIZE, PLAYER_SPEED
 import pygame
 from pathlib import Path
 

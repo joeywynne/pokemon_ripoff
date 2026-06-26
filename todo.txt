@@ -1,0 +1,20 @@
+View inventory
+Take Pokemon from inventory
+Put pokemon back into inventory
+
+Buddy pokemon movement
+    - agressive: attacks visible pokemon
+    - defensive: no agression
+
+Develop realtime fighting:
+    - Battle stats: (attack, defense, attack moves)
+    - Flee when damaged
+    - Should we kill or just freeze to allow for catch
+        - default stun (catcheable)
+        - hit button to finish (xp boost)
+
+Some way to make money
+Forage
+Crafting
+Trading
+Slave trade for Pokemon?
