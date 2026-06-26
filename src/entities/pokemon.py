@@ -8,6 +8,7 @@ import random
 from src.pokemon.base import DROWZEE, GASTLY, NIDORAN, ABRA
 from src.pokemon.catching import attempt_capture
 from src.behaviours.behaviour import FleeBehaviour, FollowBehaviour
+from src.behaviours.behaviour_registry import BEHAVIOUR_FACTORIES
 
 
 class PokemonState(Enum):
@@ -35,8 +36,8 @@ class Pokemon(Entity):
             species.mass,
             species.speed,
             species.sprite_info,
-            movement_controller=species.behaviour_factory(),
-        )
+            movement_controller=BEHAVIOUR_FACTORIES[species.behaviour_id](),
+    )
         self.hp = species.base_hp
         self.status = PokemonState.HEALTHY
         self.is_captured = False

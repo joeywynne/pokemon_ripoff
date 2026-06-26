@@ -31,7 +31,7 @@ class PokemonSpecies:
     speed: int
     mass: float
     size: int
-    behaviour_factory: MovementBehaviour
+    behaviour_id: str
     sprite_info: SpriteInfo
 
 
@@ -43,7 +43,7 @@ DROWZEE = PokemonSpecies(
     speed=1.5,
     mass=2.0,
     size=40,
-    behaviour_factory=StationaryWanderBehaviour,
+    behaviour_id="stationary_wander",
     sprite_info=SpriteInfo(relative_path="entities/drowzee.png"),
 )
 
@@ -55,7 +55,7 @@ GASTLY = PokemonSpecies(
     speed=2,
     mass=0.5,
     size=35,
-    behaviour_factory=WanderFollowBehaviour,
+    behaviour_id="wander_follow",
     sprite_info=SpriteInfo(relative_path="entities/gastly.png"),
 )
 
@@ -67,7 +67,7 @@ NIDORAN = PokemonSpecies(
     speed=1.8,
     mass=1.5,
     size=20,
-    behaviour_factory=WanderFleeBehaviour,
+    behaviour_id="wander_flee",
     sprite_info=SpriteInfo(relative_path="entities/nidoran.png"),
 )
 
@@ -79,6 +79,6 @@ ABRA = PokemonSpecies(
     speed=1.8,
     mass=1.5,
     size=36,
-    behaviour_factory=StationaryTeleportBehaviour,
+    behaviour_id="stationary_teleport",
     sprite_info=SpriteInfo(relative_path="entities/abra.png"),
 )

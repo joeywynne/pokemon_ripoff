@@ -4,6 +4,9 @@ from src.core import settings
 import random
 
 
+
+
+
 class MovementBehaviour:
 
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:

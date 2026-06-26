@@ -3,7 +3,6 @@ from pathlib import Path
 from src.entities.entity import Entity, SpriteInfo
 from src.behaviours.behaviour import PokeballBehaviour
 from src.core.settings import POKEBALL_SIZE
-from src.entities.pokemon import Pokemon
 
 
 class Projectile(Entity):
