@@ -14,7 +14,6 @@ from src.behaviours.behaviour import (
     TeleportBehaviour,
 )
 
-
 BEHAVIOUR_FACTORIES = {
     "player": PlayerBehaviour,
     "pokeball": PokeballBehaviour,

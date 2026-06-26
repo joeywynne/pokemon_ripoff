@@ -37,7 +37,7 @@ class Pokemon(Entity):
             species.speed,
             species.sprite_info,
             movement_controller=BEHAVIOUR_FACTORIES[species.behaviour_id](),
-    )
+        )
         self.hp = species.base_hp
         self.status = PokemonState.HEALTHY
         self.is_captured = False

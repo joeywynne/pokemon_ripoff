@@ -29,7 +29,7 @@ class GameState:
 
     def add_pokemon_to_party(self, pokemon: Pokemon) -> None:
         self.party.append(pokemon)
-        self.pokedex[pokemon.name] = True
+        self.pokedex[pokemon.species.name] = True
 
     def remove_pokemon_from_party(self, pokemon: Pokemon) -> None:
         self.party.remove(pokemon)

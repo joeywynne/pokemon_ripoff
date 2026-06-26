@@ -1,13 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
 from src.entities.entity import SpriteInfo
-from src.behaviours.behaviour import MovementBehaviour
-from src.behaviours.composite_behaviours import (
-    StationaryWanderBehaviour,
-    StationaryTeleportBehaviour,
-    WanderFollowBehaviour,
-    WanderFleeBehaviour,
-)
 
 
 class PokemonType(Enum):
@@ -37,7 +30,7 @@ class PokemonSpecies:
 
 DROWZEE = PokemonSpecies(
     name="Drowzee",
-    types=(PokemonType.PSYCHIC),
+    types=(PokemonType.PSYCHIC,),
     catch_rate=190,
     base_hp=60,
     speed=1.5,
@@ -61,7 +54,7 @@ GASTLY = PokemonSpecies(
 
 NIDORAN = PokemonSpecies(
     name="Nidoran",
-    types=(PokemonType.POISON),
+    types=(PokemonType.POISON,),
     catch_rate=235,
     base_hp=55,
     speed=1.8,
@@ -73,7 +66,7 @@ NIDORAN = PokemonSpecies(
 
 ABRA = PokemonSpecies(
     name="Abra",
-    types=(PokemonType.PSYCHIC),
+    types=(PokemonType.PSYCHIC,),
     catch_rate=200,
     base_hp=25,
     speed=1.8,

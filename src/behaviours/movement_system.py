@@ -6,7 +6,9 @@ from src.utils import normalise_vector
 import pygame
 
 
-def move_entities(entities: list[Entity], collision_map: CollisionMap, game_state: GameState) -> list[Entity]:
+def move_entities(
+    entities: list[Entity], collision_map: CollisionMap, game_state: GameState
+) -> None:
     """Move all entities based on their desired moves and resolve collisions.
 
     Returns a list of entities that have been captured
@@ -27,7 +29,6 @@ def move_entities(entities: list[Entity], collision_map: CollisionMap, game_stat
     # Final safety check to ensure no entity is stuck
     for entity in entities:
         final_safety(entity, collision_map)
-
 
 
 def move_entity(entity, collision_map: CollisionMap):
@@ -77,7 +78,9 @@ def can_move_to(target_rect: pygame.Rect, collision_map: CollisionMap) -> bool:
     return not collision_map.collides(target_rect)
 
 
-def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap, game_state: GameState):
+def resolve_all_collisions(
+    entities: list[Entity], collision_map: CollisionMap, game_state: GameState
+):
     """Resolve any collisions between entities.
 
     Resolve collisions after we have attempted to move our entities.

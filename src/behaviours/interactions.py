@@ -34,4 +34,4 @@ def process_pokeball_hit(pokeball: Pokeball, pokemon: Pokemon):
 def process_player_pokemon_interaction(pokemon: Pokemon, game_state: GameState):
     if pokemon.is_captured:
         pokemon.is_active = False
-    game_state.add_pokemon_to_party(pokemon)
+        game_state.add_pokemon_to_party(pokemon)
