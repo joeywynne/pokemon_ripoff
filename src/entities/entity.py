@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import pygame
 from typing import Optional
 from pathlib import Path
-from src.movement.behaviour import MovementBehaviour
+from src.behaviours.behaviour import MovementBehaviour
 
 
 @dataclass
@@ -66,7 +66,3 @@ class Entity:
             dy *= 0.7071
 
         self.desired_velocity = [dx, dy]
-
-    def on_collision(self, other_entity: "Entity") -> None:
-        """Handle collision interactions with another entity."""
-        pass

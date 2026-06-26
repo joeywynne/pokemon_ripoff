@@ -1,5 +1,7 @@
+from src.core import game_state
 from src.entities.entity import Entity
 from src.core.map.collision_map import CollisionMap
+from src.behaviours.interactions import process_interaction
 import pygame
 
 
@@ -111,8 +113,7 @@ def resolve_all_collisions(entities: list[Entity], collision_map: CollisionMap):
 
                 if entities_collide(a, b) and abs(a.z - b.z) < 3.0:
 
-                    a.on_collision(b)
-                    b.on_collision(a)
+                    process_interaction(a, b, game_state)
 
                     push_entities_apart(a, b, collision_map)
                     any_collisions_resolved = True

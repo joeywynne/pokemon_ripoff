@@ -11,7 +11,7 @@ from src.display.entities_renderer import EntitiesRenderer
 from src.core.settings import PURPLE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
-from src.movement.movement_system import move_entities
+from src.behaviours.movement_system import move_entities
 from src.contracts import UpdateContext
 from src.core.game_state import GameState
 from src.display.inventory_renderer import InventoryRenderer

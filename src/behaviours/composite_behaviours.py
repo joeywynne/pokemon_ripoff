@@ -1,4 +1,4 @@
-from src.movement.behaviour import (
+from src.behaviours.behaviour import (
     MovementBehaviour,
     WanderBehaviour,
     StationaryBehaviour,

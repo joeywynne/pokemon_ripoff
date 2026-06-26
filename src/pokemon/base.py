@@ -1,8 +1,8 @@
 from enum import Enum
 from dataclasses import dataclass
 from src.entities.entity import SpriteInfo
-from src.movement.behaviour import MovementBehaviour
-from src.movement.composite_behaviours import (
+from src.behaviours.behaviour import MovementBehaviour
+from src.behaviours.composite_behaviours import (
     StationaryWanderBehaviour,
     StationaryTeleportBehaviour,
     WanderFollowBehaviour,

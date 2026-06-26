@@ -1,5 +1,5 @@
 from src.entities.pokeball import Pokeball
-from src.movement.behaviour import PokeballBehaviour
+from src.behaviours.behaviour import PokeballBehaviour
 from typing import Optional
 from math import atan2, radians
 from src.contracts import EntityPositionProtocol, UpdateContext
