@@ -27,9 +27,9 @@ class GameState:
     def remaining_pokemon_to_catch(self) -> int:
         return sum(1 for captured in self.pokedex.values() if not captured)
 
-    def add_pokemon_to_party(self, pokemon: str) -> None:
+    def add_pokemon_to_party(self, pokemon: Pokemon) -> None:
         self.party.append(pokemon)
-        self.pokedex[pokemon] = True
+        self.pokedex[pokemon.name] = True
 
-    def remove_pokemon_from_party(self, pokemon: str) -> None:
+    def remove_pokemon_from_party(self, pokemon: Pokemon) -> None:
         self.party.remove(pokemon)
