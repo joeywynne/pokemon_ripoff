@@ -12,7 +12,7 @@ from src.core.settings import PURPLE
 from src.core.camera import Camera
 from src.display.assets import AssetStore
 from src.movement.movement_system import move_entities
-from src.core.utils import UpdateContext
+from src.contracts import UpdateContext
 from src.core.game_state import GameState
 from src.display.inventory_renderer import InventoryRenderer
 
@@ -70,8 +70,7 @@ class Game:
         for entity in self.entities:
             context = UpdateContext(
                 keys=keys,
-                pokemon=self.pokemon,
-                entity=entity,
+                nearby_pokemon=self.pokemon,
                 player_position=(self.player.x, self.player.y),
                 map_size=(self.map_width, self.map_height),
             )

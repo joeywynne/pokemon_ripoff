@@ -1,14 +1,10 @@
 import pygame
 from typing import Optional
-from src.core import camera
-from src.core.game_state import GameState
 from src.core.settings import BLACK, GREEN, MAX_THROW_POWER, RED
 from src.display.map_renderer import MapRenderer
 from src.display.entities_renderer import EntitiesRenderer
 from src.entities.player import Player
 from src.core.camera import Camera
-from src.display.assets import AssetStore
-from src.entities.pokemon import Pokemon
 
 
 class Renderer:

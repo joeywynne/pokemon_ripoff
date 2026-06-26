@@ -55,7 +55,7 @@ class Entity:
         return pygame.Rect(self.x, self.y, self.size, self.size)
 
     def get_intended_move(self, update_context) -> tuple[float, float]:
-        return self.movement_controller.get_intended_move(update_context)
+        return self.movement_controller.get_intended_move(self, update_context)
 
     def update_intended(self, update_context) -> None:
         intended_move = self.get_intended_move(update_context)

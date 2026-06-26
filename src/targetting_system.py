@@ -1,19 +1,17 @@
 from src.entities.pokeball import Pokeball
-from src.entities.pokemon import Pokemon
 from src.movement.behaviour import PokeballBehaviour
 from typing import Optional
-from src.entities.entity import Entity
 from math import atan2, radians
-from src.core.utils import UpdateContext
+from src.contracts import EntityPositionProtocol, UpdateContext
 
 
 def find_target(
-    player_x, player_y, facing, vision_angle, vision_distance, pokemon: list[Pokemon]
-) -> Optional[Pokemon]:
+    player_x, player_y, facing, vision_angle, vision_distance, nearby_pokemon: list[EntityPositionProtocol]
+) -> Optional[EntityPositionProtocol]:
     """Find the closest Pokemon to the player within the player's cone of vision."""
     closest_pokemon = None
     closest_distance = float("inf")
-    for p in pokemon:
+    for p in nearby_pokemon:
         if is_in_angle_of_vision(player_x, player_y, facing, vision_angle, p):
             distance = get_distance(player_x, player_y, p)
             if distance <= vision_distance and distance < closest_distance:
@@ -22,12 +20,12 @@ def find_target(
     return closest_pokemon
 
 
-def get_distance(player_x, player_y, entity: Entity) -> float:
+def get_distance(player_x, player_y, entity: EntityPositionProtocol) -> float:
     return ((player_x - entity.x) ** 2 + (player_y - entity.y) ** 2) ** 0.5
 
 
 def is_in_angle_of_vision(
-    player_x, player_y, facing, vision_angle, pokemon: Pokemon
+    player_x, player_y, facing, vision_angle, pokemon: EntityPositionProtocol
 ) -> bool:
     """Check if a Pokemon is within the player's cone of vision."""
     dy = pokemon.y - player_y
@@ -43,21 +41,20 @@ def is_in_angle_of_vision(
 
 
 def get_pokeball_trajectory(
-    start_x, start_y, direction, throw_power, keys, map_size, pokemon
+    start_x, start_y, direction, throw_power, keys, map_size, nearby_pokemon: list[EntityPositionProtocol]
 ):
     simulation_ball = Pokeball(start_x, start_y, direction, throw_power)
     simulation_context = UpdateContext(
-        entity=simulation_ball,
         player_position=(start_x, start_y),
         map_size=map_size,
         keys=keys,
-        pokemon=pokemon,
+        nearby_pokemon=nearby_pokemon,
     )
 
     simulation = PokeballBehaviour(direction, throw_power)
     points = []
     for _ in range(0, 100):  # Simulate for 100 frames
-        dx, dy = simulation.get_intended_move(simulation_context)
+        dx, dy = simulation.get_intended_move(simulation_ball, simulation_context)
         start_x += dx
         start_y += dy
         points.append((start_x, start_y))

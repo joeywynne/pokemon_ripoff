@@ -1,12 +1,12 @@
 from typing import Optional
 
+from src.contracts import EntityPositionProtocol
 from src.entities.entity import Entity, SpriteInfo
 from src.core.settings import PLAYER_SIZE, PLAYER_SPEED
 import pygame
 from pathlib import Path
 
 from src.entities.pokeball import Pokeball
-from src.entities.pokemon import Pokemon
 from src.movement.behaviour import PlayerBehaviour
 from src.targetting_system import get_pokeball_trajectory, find_target
 from src.movement.movement_system import normalise_vector
@@ -14,7 +14,7 @@ from src.movement.movement_system import normalise_vector
 
 class Player(Entity):
 
-    def __init__(self, x: int, y: int, colour: tuple):
+    def __init__(self, x: int, y: int):
         super().__init__(
             x,
             y,
@@ -27,7 +27,7 @@ class Player(Entity):
 
         self.throw_charge = 0
         self.throwing = False
-        self.target: Optional[Pokemon] | None = None
+        self.target: Optional[EntityPositionProtocol] | None = None
         self.throw_preview_points = []
         self.render_throw_power = 0.0
         self.vision_distance = 200
@@ -40,7 +40,7 @@ class Player(Entity):
             self.facing,
             self.vision_angle,
             self.vision_distance,
-            update_context.pokemon,
+            update_context.nearby_pokemon,
         )
         pokeball = None
         keys = update_context.keys
@@ -55,7 +55,7 @@ class Player(Entity):
                 self.throw_charge,
                 keys,
                 update_context.map_size,
-                update_context.pokemon,
+                update_context.nearby_pokemon,
             )
             self.render_throw_power = self.throw_charge
         else:

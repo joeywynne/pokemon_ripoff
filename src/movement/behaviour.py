@@ -6,27 +6,26 @@ import random
 
 class MovementBehaviour:
 
-    def get_intended_move(self, update_context) -> tuple[float, float]:
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         # Default to no movement
         return 0, 0
 
 
 class PlayerBehaviour(MovementBehaviour):
-    def get_intended_move(self, update_context) -> tuple[float, float]:
+    def get_intended_move(self, player, update_context) -> tuple[float, float]:
         keys = update_context.keys
-        entity = update_context.entity
         # Default to no movement if no movement keys are pressed
         dy = 0
         dx = 0
 
         if keys[pygame.K_LEFT]:
-            dx -= entity.speed
+            dx -= player.speed
         if keys[pygame.K_RIGHT]:
-            dx += entity.speed
+            dx += player.speed
         if keys[pygame.K_UP]:
-            dy -= entity.speed
+            dy -= player.speed
         if keys[pygame.K_DOWN]:
-            dy += entity.speed
+            dy += player.speed
 
         return dx, dy
 
@@ -53,39 +52,38 @@ class PokeballBehaviour(MovementBehaviour):
         # Minimum horizontal velocity to be considered active
         self.min_horizontal_velocity = 0.05
 
-    def get_intended_move(self, update_context) -> tuple[float, float]:
-        entity = update_context.entity
-        if entity.squash_timer > 0:
-            entity.squash_timer -= 1
+    def get_intended_move(self, pokeball, update_context) -> tuple[float, float]:
+        if pokeball.squash_timer > 0:
+            pokeball.squash_timer -= 1
 
-        self._update_vertical_arc(entity)
-        self._update_horizontal_velocity(entity)
-        self._set_active_timer(entity)
+        self._update_vertical_arc(pokeball)
+        self._update_horizontal_velocity(pokeball)
+        self._set_active_timer(pokeball)
 
-        if entity.start_deactivating:
-            entity.active_timer -= 1
-        if entity.active_timer <= 0:
-            entity.is_active = False
+        if pokeball.start_deactivating:
+            pokeball.active_timer -= 1
+        if pokeball.active_timer <= 0:
+            pokeball.is_active = False
 
-        entity.rotation -= self.velocity[0] * 2.0
+        pokeball.rotation -= self.velocity[0] * 2.0
 
         return self.velocity
 
-    def _update_vertical_arc(self, entity):
+    def _update_vertical_arc(self, pokeball):
         self.vz -= settings.GRAVITY
-        entity.z += self.vz
+        pokeball.z += self.vz
 
-        if entity.z < 0:
-            entity.z = 0
+        if pokeball.z < 0:
+            pokeball.z = 0
             self.vz = -self.vz * self.bounce_damping
-            entity.squash_timer = 6.0
+            pokeball.squash_timer = 6.0
 
             if abs(self.vz) < self.min_bounce_velocity:
                 self.vz = 0
 
-    def _update_horizontal_velocity(self, entity):
+    def _update_horizontal_velocity(self, pokeball):
         # If on floor should be more resistant to horizontal movement
-        if entity.z < 0.1:
+        if pokeball.z < 0.1:
             resistance_factor = self.air_resistance * self.ground_resistance
         else:
             resistance_factor = self.air_resistance
@@ -95,18 +93,18 @@ class PokeballBehaviour(MovementBehaviour):
             self.velocity[1] * resistance_factor,
         )
 
-    def _set_active_timer(self, entity):
+    def _set_active_timer(self, pokeball):
         horizontal_speed = (self.velocity[0] ** 2 + self.velocity[1] ** 2) ** 0.5
         if (
-            entity.z == 0
+            pokeball.z == 0
             and self.vz == 0
             and horizontal_speed < self.min_horizontal_velocity
         ):
-            entity.start_deactivating = True
+            pokeball.start_deactivating = True
 
 
 class StationaryBehaviour(MovementBehaviour):
-    def get_intended_move(self, update_context) -> tuple[float, float]:
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         return 0, 0
 
 
@@ -121,8 +119,7 @@ class PacingBehaviour(MovementBehaviour):
         self.direction = 1
         self.travelled = 0
 
-    def get_intended_move(self, update_context) -> tuple[float, float]:
-        entity = update_context.entity
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         if self.axis == "horizontal":
             dx = entity.speed * self.direction
             dy = 0
@@ -155,8 +152,7 @@ class WanderBehaviour(MovementBehaviour):
         self.direction = (0, 0)
         self.change_interval = random.randint(self.min_interval, self.max_interval)
 
-    def get_intended_move(self, update_context) -> tuple[float, float]:
-        entity = update_context.entity
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         self.timer += 1
         if self.timer >= self.change_interval:
             self.timer = 0
@@ -197,8 +193,7 @@ class FollowBehaviour(MovementBehaviour):
         self.speed_multiplier = speed_multiplier
         self.duration = duration
 
-    def get_intended_move(self, update_context) -> tuple[float, float]:
-        entity = update_context.entity
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         self.duration -= 1
 
         if self.duration <= 0:
@@ -229,8 +224,7 @@ class FleeBehaviour(MovementBehaviour):
         self.previous_behaviour = previous_behaviour
         self.duration = duration
 
-    def get_intended_move(self, update_context) -> tuple[float, float]:
-        entity = update_context.entity
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         self.duration -= 1
 
         if self.duration <= 0:
@@ -256,8 +250,7 @@ class TeleportBehaviour(MovementBehaviour):
     def __init__(self, teleport_frac: float = 1.0):
         self.teleport_frac = teleport_frac
 
-    def get_intended_move(self, update_context) -> tuple[float, float]:
-        entity = update_context.entity
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         map_size = update_context.map_size
         if self.teleport_frac <= 0.0:
             # Calculate a random teleport destination within the map boundaries
