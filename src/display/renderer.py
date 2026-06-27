@@ -46,8 +46,6 @@ class Renderer:
             pygame.draw.rect(self.screen, (0, 0, 0), box_rect)
             self.screen.blit(fps_text, (8 + padding, 8 + padding))
 
-        pygame.display.flip()
-
     def draw_trajectory(self, points, camera, power):
         for x, y in points[::3]:
             screen_x = x - camera.x

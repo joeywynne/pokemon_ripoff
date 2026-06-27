@@ -14,6 +14,7 @@ from src.behaviours.movement_system import move_entities
 from src.contracts import UpdateContext
 from src.core.game_state import GameState
 from src.display.inventory_renderer import InventoryRenderer
+from src.menu.inventory_screen import InventoryScreen
 
 logger = logging.getLogger(__name__)
 
@@ -44,12 +45,12 @@ class Game:
 
         self.entities = self.pokemon + [self.player]
         entities_renderer = EntitiesRenderer(self.entities, assets)
-        self.inventory_renderer = InventoryRenderer()
         self.renderer = Renderer(self.screen, entities_renderer, map_renderer)
         self.last_log_time = pygame.time.get_ticks()
 
         self.game_state = GameState.new_game()
-        self.inventory_open = False
+        self.inventory_screen = InventoryScreen()
+        self.inventory_renderer = InventoryRenderer(self.screen)
 
         logger.debug("Game initialized with debug=%s", self.debug)
 
@@ -59,31 +60,40 @@ class Game:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_i:
-                    self.inventory_open = not self.inventory_open
+                    self.inventory_screen.visible = not self.inventory_screen.visible
 
     def update(self):
         keys = pygame.key.get_pressed()
 
-        # Get the desired moves for all entities
-        new_entities = []
-        for entity in self.entities:
-            context = UpdateContext(
-                keys=keys,
-                nearby_pokemon=self.pokemon,
-                player_position=(self.player.x, self.player.y),
-                map_size=(self.map_width, self.map_height),
-            )
-            pokeball = entity.update_intended(context)
-            if pokeball:
-                new_entities.append(pokeball)
-
-        # Add the pokeball to the entities list if it was created
-        if new_entities != []:
-            self.entities.extend(new_entities)
-
-        move_entities(self.entities, self.collision_map, self.game_state)
+        if self.inventory_screen.visible:
+            self.update_inventory(keys)
+        else:
+            self.update_game(keys)
 
         self.log_debug_info()
+
+    def update_game(self, keys):
+        # Get the desired moves for all entities
+            new_entities = []
+            for entity in self.entities:
+                context = UpdateContext(
+                    keys=keys,
+                    nearby_pokemon=self.pokemon,
+                    player_position=(self.player.x, self.player.y),
+                    map_size=(self.map_width, self.map_height),
+                )
+                pokeball = entity.update_intended(context)
+                if pokeball:
+                    new_entities.append(pokeball)
+
+            # Add the pokeball to the entities list if it was created
+            if new_entities != []:
+                self.entities.extend(new_entities)
+
+            move_entities(self.entities, self.collision_map, self.game_state)
+    
+    def update_inventory(self, keys):
+        self.inventory_screen.update(keys, self.game_state)
 
     def render(self):
         fps_text = None
@@ -92,8 +102,10 @@ class Game:
             fps_text = self.font.render(f"FPS: {fps:.1f}", True, (255, 255, 0))
 
         self.renderer.render(self.player, self.camera, fps_text, self.debug)
-        if self.inventory_open:
-            self.inventory_renderer.render(self.screen, self.game_state)
+        if self.inventory_screen.visible:
+            self.inventory_renderer.render(self.game_state, self.inventory_screen)
+        
+        pygame.display.flip()
 
     def log_debug_info(self):
         if not self.debug:

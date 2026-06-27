@@ -41,6 +41,7 @@ class Pokemon(Entity):
         self.hp = species.base_hp
         self.status = PokemonState.HEALTHY
         self.is_captured = False
+        self.name = self.species.name
 
     @property
     def statusCondition(self) -> str:
@@ -77,6 +78,7 @@ class Pokemon(Entity):
 
     def on_hit_by_pokeball(self, pokeball):
         result = attempt_capture(pokemon=self, pokeball=pokeball)
+        result = True
 
         if result:
             self.on_capture()
