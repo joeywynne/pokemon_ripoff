@@ -102,6 +102,8 @@ def resolve_all_collisions(
                 b = entities[j]
 
                 if entities_collide(a, b) and abs(a.z - b.z) < 3.0:
+                    if not all((a.is_active, b.is_active)):
+                        continue
 
                     process_interaction(a, b, game_state)
 

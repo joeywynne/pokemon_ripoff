@@ -1,6 +1,10 @@
 View inventory
+    - highlight Buddy with icon
+    - Space to select Buddy
+    - Scroll and space instructions in the title
 Take Pokemon from inventory
 Put pokemon back into inventory
+Pokemon naming
 
 Buddy pokemon movement
     - agressive: attacks visible pokemon
