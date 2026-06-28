@@ -19,7 +19,6 @@ class InventoryRenderer:
     def draw_rows(self, panel, game_state, inventory_screen):
         start_y = panel.y + self.title_gap
         num_rows = self.get_visible_rows(panel.height, inventory_screen.selected_index)
-        print(self.first_visible_row)
 
         for row_index, pokemon_index in enumerate(
             range(self.first_visible_row, self.first_visible_row + num_rows)
@@ -39,7 +38,11 @@ class InventoryRenderer:
                 )
                 pygame.draw.rect(self.screen, (70, 70, 140), highlight)
 
-            text = self.font.render(pokemon.name, True, "white")
+            row_text = pokemon.name
+            print(pokemon_index, inventory_screen.buddy_index)
+            if pokemon_index == inventory_screen.buddy_index:
+                row_text = f"{row_text}     (*)"
+            text = self.font.render(row_text, True, "white")
             self.screen.blit(text, (panel.x + 15, row_y + 4))
 
         
