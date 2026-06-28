@@ -59,14 +59,14 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_i:
-                    self.inventory_screen.visible = not self.inventory_screen.visible
+                self.inventory_screen.handle_event(event)
 
     def update(self):
+        events = pygame.event.get()
         keys = pygame.key.get_pressed()
 
         if self.inventory_screen.visible:
-            self.update_inventory(keys)
+            self.update_inventory(keys, events)
         else:
             self.update_game(keys)
 
@@ -92,7 +92,7 @@ class Game:
 
             move_entities(self.entities, self.collision_map, self.game_state)
     
-    def update_inventory(self, keys):
+    def update_inventory(self, keys, events):
         self.inventory_screen.update(keys, self.game_state)
 
     def render(self):

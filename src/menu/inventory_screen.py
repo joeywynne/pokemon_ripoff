@@ -15,6 +15,8 @@ class InventoryScreen():
 
 
     def update(self, keys, game_state):
+        if not self.visible:
+            return
         moving = (
             keys[pygame.K_UP] or
             keys[pygame.K_DOWN]
@@ -23,23 +25,27 @@ class InventoryScreen():
         if not moving:
             self.first_press = False
             self.move_timer = 0
+            return
     
-        else:
-            if self.move_timer > 0:
-                self.move_timer -= 1
+        if self.move_timer > 0:
+            self.move_timer -= 1
 
-            max_index = len(game_state.party) - 1
-            if keys[pygame.K_DOWN]:
-                direction = 1
+        max_index = len(game_state.party) - 1
+        if keys[pygame.K_DOWN]:
+            self.try_navigate(1, max_index)
 
-            elif keys[pygame.K_UP]:
-                direction = -1
-            
-            self.try_navigate(direction, max_index)
-
-        if keys[pygame.K_SPACE]:
-            self.buddy_index = self.selected_index
-            print(f"Buddy is {self.buddy_index}")
+        elif keys[pygame.K_UP]:
+            self.try_navigate(-1, max_index)
+    
+    def handle_event(self, event):
+        if event.key == pygame.K_i:
+            self.visible = not self.visible
+            return
+        
+        if not self.visible:
+            return
+        if event.key == pygame.K_SPACE:
+            self.try_select_buddy() 
 
     def try_navigate(self, move_index: int, max_idx):
         if self.move_timer > 0:
@@ -54,3 +60,10 @@ class InventoryScreen():
             self.move_timer = self.move_delay
 
         self.first_press = True
+
+    def try_select_buddy(self):
+        if self.selected_index != self.buddy_index:
+            self.buddy_index = self.selected_index
+        else:
+            # Deselect buddy
+            self.buddy_index = -1

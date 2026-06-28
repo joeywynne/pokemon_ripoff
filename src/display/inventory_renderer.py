@@ -1,5 +1,6 @@
 import pygame
 from src.menu.inventory_screen import InventoryScreen
+from typing import Optional
 
 
 class InventoryRenderer:
@@ -13,7 +14,8 @@ class InventoryRenderer:
         self.first_visible_row = 0
 
     def render(self, game_state, inventory_screen: InventoryScreen):
-        window_panel = self.draw_window(title="Current Party")
+        sub_title = "Up/down to navgate. Space to select/deselect your Buddy."
+        window_panel = self.draw_window(title="Current Party", sub_title=sub_title)
         self.draw_rows(window_panel, game_state, inventory_screen)
 
     def draw_rows(self, panel, game_state, inventory_screen):
@@ -39,14 +41,13 @@ class InventoryRenderer:
                 pygame.draw.rect(self.screen, (70, 70, 140), highlight)
 
             row_text = pokemon.name
-            print(pokemon_index, inventory_screen.buddy_index)
             if pokemon_index == inventory_screen.buddy_index:
                 row_text = f"{row_text}     (*)"
             text = self.font.render(row_text, True, "white")
             self.screen.blit(text, (panel.x + 15, row_y + 4))
 
         
-    def draw_window(self, title: str):
+    def draw_window(self, title: str, sub_title: Optional[str]):
         w = self.screen.width
         h = self.screen.height
         window_width = w / 2
@@ -59,7 +60,15 @@ class InventoryRenderer:
         pygame.draw.rect(self.screen, (255, 255, 255), panel_rect, 2)
 
         title = self.font.render(title, True, "white")
+
         self.screen.blit(title, (panel_rect.x + self.padding, panel_rect.y + self.padding))
+        if sub_title:
+            font_size = self.font.point_size
+            sub_font_size = int(font_size / 2)
+            sub_title_render = pygame.font.SysFont(self.font.name, sub_font_size).render(sub_title, True, "white")
+            self.screen.blit(
+                sub_title_render,
+                (panel_rect.x + self.padding, panel_rect.y + self.padding + font_size))
 
         return panel_rect
 
