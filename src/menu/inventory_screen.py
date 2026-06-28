@@ -6,17 +6,13 @@ class InventoryScreen():
     def __init__(self):
         self.selected_index = 0
         self.buddy_index = -1
-        self.visible = False
         # delay before we do another move
         self.move_timer = 0
         self.move_delay = 6
         self.subsequent_move_delay = 3
         self.first_press = False
 
-
     def update(self, keys, game_state):
-        if not self.visible:
-            return
         moving = (
             keys[pygame.K_UP] or
             keys[pygame.K_DOWN]
@@ -37,15 +33,9 @@ class InventoryScreen():
         elif keys[pygame.K_UP]:
             self.try_navigate(-1, max_index)
     
-    def handle_event(self, event):
-        if event.key == pygame.K_i:
-            self.visible = not self.visible
-            return
-        
-        if not self.visible:
-            return
+    def handle_event(self, event):        
         if event.key == pygame.K_SPACE:
-            self.try_select_buddy() 
+            self.try_select_buddy()
 
     def try_navigate(self, move_index: int, max_idx):
         if self.move_timer > 0:

@@ -1,5 +1,3 @@
-View inventory
-    - Scroll and space instructions in the title
 Take Pokemon from inventory
 Put pokemon back into inventory
 Pokemon naming

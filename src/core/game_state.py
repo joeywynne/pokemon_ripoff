@@ -9,6 +9,7 @@ class GameState:
 
     party: list[Pokemon] = field(default_factory=list)
     pokedex: dict[str, bool] = field(default_factory=dict)
+    buddy: Pokemon = None
     # items: list[Items] = field(default_factory=list)
 
     @classmethod
@@ -33,3 +34,10 @@ class GameState:
 
     def remove_pokemon_from_party(self, pokemon: Pokemon) -> None:
         self.party.remove(pokemon)
+
+    def set_buddy(self, buddy_index: int):
+        if 0 <= buddy_index < len(self.party):
+            self.buddy = self.party[buddy_index]
+        else:
+            self.buddy = None
+

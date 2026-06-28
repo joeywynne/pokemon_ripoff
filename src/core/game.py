@@ -51,6 +51,7 @@ class Game:
         self.game_state = GameState.new_game()
         self.inventory_screen = InventoryScreen()
         self.inventory_renderer = InventoryRenderer(self.screen)
+        self.inventory_open = False
 
         logger.debug("Game initialized with debug=%s", self.debug)
 
@@ -59,14 +60,33 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                self.inventory_screen.handle_event(event)
+                if event.key == pygame.K_i:
+                    self.toggle_inventory()
+                elif self.inventory_open:
+                    self.inventory_screen.handle_event(event)
+
+    def toggle_inventory(self):
+        if self.inventory_open:
+            self.close_inventory()
+        else:
+            self.open_inventory()
+
+    def open_inventory(self):
+        self.inventory_open = True
+
+    def close_inventory(self):
+        self.inventory_open = False
+        self.commit_inventory_changes()
+    
+    def commit_inventory_changes(self):
+        buddy_index = self.inventory_screen.buddy_index
+        self.game_state.set_buddy(buddy_index)
 
     def update(self):
-        events = pygame.event.get()
         keys = pygame.key.get_pressed()
 
-        if self.inventory_screen.visible:
-            self.update_inventory(keys, events)
+        if self.inventory_open:
+            self.update_inventory(keys)
         else:
             self.update_game(keys)
 
@@ -92,7 +112,7 @@ class Game:
 
             move_entities(self.entities, self.collision_map, self.game_state)
     
-    def update_inventory(self, keys, events):
+    def update_inventory(self, keys):
         self.inventory_screen.update(keys, self.game_state)
 
     def render(self):
@@ -102,7 +122,7 @@ class Game:
             fps_text = self.font.render(f"FPS: {fps:.1f}", True, (255, 255, 0))
 
         self.renderer.render(self.player, self.camera, fps_text, self.debug)
-        if self.inventory_screen.visible:
+        if self.inventory_open:
             self.inventory_renderer.render(self.game_state, self.inventory_screen)
         
         pygame.display.flip()
