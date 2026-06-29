@@ -5,7 +5,7 @@ from src.core.map.tile_map import TileMap
 from src.core.settings import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 from src.display.map_renderer import MapRenderer
 from src.entities.player import Player
-from src.entities.pokemon import generate_pokemon
+from src.entities.pokemon import generate_pokemon, Pokemon
 from src.display.renderer import Renderer
 from src.display.entities_renderer import EntitiesRenderer
 from src.core.camera import Camera
@@ -80,7 +80,15 @@ class Game:
     
     def commit_inventory_changes(self):
         buddy_index = self.inventory_screen.buddy_index
-        self.game_state.set_buddy(buddy_index)
+        buddy = self.game_state.swap_buddy(
+            buddy_index,
+            self.player.x + self.player.size / 2,
+            self.player.y + self.player.size / 2
+        )
+        # remove the old buddy (is_active = False)
+        self.entities[:] = [entity for entity in self.entities if entity.is_active]
+        if buddy:
+            self.entities.append(buddy)
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -94,23 +102,23 @@ class Game:
 
     def update_game(self, keys):
         # Get the desired moves for all entities
-            new_entities = []
-            for entity in self.entities:
-                context = UpdateContext(
-                    keys=keys,
-                    nearby_pokemon=self.pokemon,
-                    player_position=(self.player.x, self.player.y),
-                    map_size=(self.map_width, self.map_height),
-                )
-                pokeball = entity.update_intended(context)
-                if pokeball:
-                    new_entities.append(pokeball)
+        new_entities = []
+        for entity in self.entities:
+            context = UpdateContext(
+                keys=keys,
+                nearby_pokemon=self.pokemon,
+                player_position=(self.player.x, self.player.y),
+                map_size=(self.map_width, self.map_height),
+            )
+            pokeball = entity.update_intended(context)
+            if pokeball:
+                new_entities.append(pokeball)
 
-            # Add the pokeball to the entities list if it was created
-            if new_entities != []:
-                self.entities.extend(new_entities)
+        # Add the pokeball to the entities list if it was created
+        if new_entities != []:
+            self.entities.extend(new_entities)
 
-            move_entities(self.entities, self.collision_map, self.game_state)
+        move_entities(self.entities, self.collision_map, self.game_state)
     
     def update_inventory(self, keys):
         self.inventory_screen.update(keys, self.game_state)
@@ -138,6 +146,7 @@ class Game:
             logger.debug(
                 "Player desired velocity: (%.2f, %.2f)", *self.player.desired_velocity
             )
+            logger.debug(len(self.entities))
             self.last_log_time = current_time
 
     def run(self):

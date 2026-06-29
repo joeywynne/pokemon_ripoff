@@ -5,6 +5,7 @@ from src.entities.entity import Entity
 from src.entities.pokeball import Projectile
 from src.core.camera import Camera
 from src.entities.pokemon import Pokemon
+import math
 
 
 class EntitiesRenderer:
@@ -17,7 +18,7 @@ class EntitiesRenderer:
         surface: pygame.Surface,
         entity: Entity,
         camera: Camera,
-        target_entity,
+        target_entity: Entity,
         debug: Optional[bool] = False,
     ):
         scale_y = 1
@@ -52,6 +53,32 @@ class EntitiesRenderer:
             sprite = pygame.transform.scale(
                 sprite, (int(entity.size * scale_x), int(entity.size * scale_y))
             )
+
+            if getattr(entity, "is_buddy", False):
+
+                t = pygame.time.get_ticks() / 500
+                pulse = (math.sin(t) + 1) / 2
+                alpha = int(40 + pulse * 160)  # 80 → 200
+                inflate_size = entity.size / 10
+                glow_size = screen_rect.inflate(inflate_size, inflate_size)
+                glow_surface = pygame.Surface(
+                (glow_size.width, glow_size.height),
+                pygame.SRCALPHA
+                )
+                pygame.draw.ellipse(
+                glow_surface,
+                (255, 255, 0, alpha),
+                glow_surface.get_rect()
+                )
+
+                surface.blit(glow_surface, glow_size.topleft)
+                offsets = [(-2,0), (2,0), (0,-2), (0,2)]
+
+                for ox, oy in offsets:
+                    outline_sprite = sprite.copy()
+                    outline_sprite.fill((255, 255, 0), special_flags=pygame.BLEND_RGB_ADD)
+
+                    surface.blit(outline_sprite, (screen_rect.x + ox, screen_rect.y + oy))
 
             if isinstance(entity, Pokemon):
                 self.draw_health_bar(surface, entity, screen_rect)

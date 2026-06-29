@@ -1,6 +1,6 @@
-Take Pokemon from inventory
-Put pokemon back into inventory
 Pokemon naming
+
+Fix entities sticking in wall
 
 Buddy pokemon movement
     - agressive: attacks visible pokemon

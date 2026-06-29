@@ -9,7 +9,7 @@ class GameState:
 
     party: list[Pokemon] = field(default_factory=list)
     pokedex: dict[str, bool] = field(default_factory=dict)
-    buddy: Pokemon = None
+    buddy_index: Pokemon = -1
     # items: list[Items] = field(default_factory=list)
 
     @classmethod
@@ -35,9 +35,28 @@ class GameState:
     def remove_pokemon_from_party(self, pokemon: Pokemon) -> None:
         self.party.remove(pokemon)
 
-    def set_buddy(self, buddy_index: int):
-        if 0 <= buddy_index < len(self.party):
-            self.buddy = self.party[buddy_index]
-        else:
-            self.buddy = None
+    def swap_buddy(self, buddy_index: int, pos_x: float, pos_y: float):
+        if self.buddy_index == buddy_index:
+            return
+        # Deactivate previous pokemon
+        prev_buddy = try_get_pokemon(self.party, self.buddy_index)
+        if prev_buddy:
+            prev_buddy.is_active = False
+
+        if buddy_index == -1:
+            return
+
+        # Create and set pokeom
+        self.buddy_index = buddy_index
+        new_buddy = try_get_pokemon(self.party, buddy_index)
+        new_buddy.is_buddy = True
+        new_buddy.is_captured = False
+        new_buddy.is_active = True
+        new_buddy.x = pos_x
+        new_buddy.y = pos_y
+        return new_buddy
+
+def try_get_pokemon(party, index):
+    if 0 <= index < len(party):
+        return party[index]
 

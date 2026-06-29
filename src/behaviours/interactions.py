@@ -26,6 +26,8 @@ def process_interaction(
 
 def process_pokeball_hit(pokeball: Pokeball, pokemon: Pokemon):
     """Process the interaction when a Pokeball hits a Pokemon."""
+    if pokemon.is_buddy:
+        return
     pokemon.on_hit_by_pokeball(pokeball)
     # Start the Pokeball deactivation
     pokeball.start_deactivating = True

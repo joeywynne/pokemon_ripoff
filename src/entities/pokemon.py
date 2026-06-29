@@ -42,6 +42,7 @@ class Pokemon(Entity):
         self.status = PokemonState.HEALTHY
         self.is_captured = False
         self.name = self.species.name
+        self.is_buddy = False
 
     @property
     def statusCondition(self) -> str:
