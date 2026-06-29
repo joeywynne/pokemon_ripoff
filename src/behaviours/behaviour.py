@@ -188,10 +188,12 @@ class FollowBehaviour(MovementBehaviour):
         previous_behaviour: MovementBehaviour,
         speed_multiplier: float = 1.0,
         duration: int = 300,
+        min_distance: int = 50
     ):
         self.previous_behaviour = previous_behaviour
         self.speed_multiplier = speed_multiplier
         self.duration = duration
+        self.min_distance = min_distance
 
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         self.duration -= 1
@@ -205,7 +207,7 @@ class FollowBehaviour(MovementBehaviour):
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5
         # Normalize the direction vector and scale by speed
-        if distance != 0:
+        if distance != 0 and distance > self.min_distance:
             dx = (dx / distance) * entity.speed * self.speed_multiplier
             dy = (dy / distance) * entity.speed * self.speed_multiplier
         else:
@@ -263,7 +265,10 @@ class TeleportBehaviour(MovementBehaviour):
 
             dx = target_x - entity.x
             dy = target_y - entity.y
+            self.teleport_frac = 1.0
+            entity.size = entity.species.size
             return dx, dy
         else:
+            self.teleport_frac -= 0.01
             entity.size = entity.species.size * self.teleport_frac
             return 0, 0

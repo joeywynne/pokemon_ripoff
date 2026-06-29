@@ -100,7 +100,6 @@ class StationaryTeleportBehaviour(MovementBehaviour):
         self.state = "stationary"
         self.idle = StationaryBehaviour()
         self.teleport = TeleportBehaviour()
-        self.teleport_frac = 1.0
         self.teleport_distance = teleport_distance
 
     def get_intended_move(self, entity, update_context):
@@ -111,7 +110,6 @@ class StationaryTeleportBehaviour(MovementBehaviour):
 
         if distance < self.teleport_distance or self.state == "teleport":
             self.state = "teleport"
-            self.teleport_frac -= 0.01
         else:
             self.state = "stationary"
 
@@ -121,8 +119,7 @@ class StationaryTeleportBehaviour(MovementBehaviour):
         else:
             dx, dy = self.idle.get_intended_move(entity, update_context)
 
-        if self.teleport_frac <= 0:
-            self.teleport_frac = 1.0
+        if abs(dy) + abs(dx) > 0:
             self.state = "stationary"
 
         return dx, dy
