@@ -1,7 +1,5 @@
 Pokemon naming
 
-Fix entities sticking in wall
-
 Buddy pokemon movement
     - agressive: attacks visible pokemon
     - defensive: no agression

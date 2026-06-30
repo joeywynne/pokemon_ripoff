@@ -15,6 +15,7 @@ def move_entities(
     """
     # Each entity now has a desired velocity.
     # Use this to try and move them and then resolve any issues with collisions.
+    previous_positions = { entity.id: (entity.x, entity.y) for entity in entities}
 
     # First move the entities preventing movement into non-accessible tiles
     for entity in entities:
@@ -28,7 +29,8 @@ def move_entities(
 
     # Final safety check to ensure no entity is stuck
     for entity in entities:
-        final_safety(entity, collision_map)
+        previous_position = previous_positions.get(entity.id)
+        final_safety(entity, collision_map, previous_position)
 
 
 def move_entity(entity, collision_map: CollisionMap):
@@ -58,18 +60,20 @@ def move_entity(entity, collision_map: CollisionMap):
         entity.facing = normalise_vector(entity.desired_velocity)
 
 
-def final_safety(entity, collision_map: CollisionMap):
+def final_safety(entity, collision_map: CollisionMap, previous_position: tuple[float, float] = None):
     """Ensure the entity is not stuck in a wall after movement."""
+    if can_move_to(entity.get_rect(), collision_map):
+        return
+    
+    # Try previous position
+    prev_x, prev_y = previous_position
+    entity.x = prev_x
+    entity.y = prev_y
     if not can_move_to(entity.get_rect(), collision_map):
-        # Push back along last movement
-        entity.x -= entity.desired_velocity[0] * 2.5
-        entity.y -= entity.desired_velocity[1] * 2.5
-
-        # Last resort: snap to integer position
-        if not can_move_to(entity.get_rect(), collision_map):
-            entity.x = round(entity.x)
-            entity.y = round(entity.y)
-            entity.desired_velocity = [0.0, 0.0]
+        # We are in trouble - previous position is also blocked
+        entity.x = round(entity.x)
+        entity.y = round(entity.y)
+        entity.desired_velocity = [0.0, 0.0]
 
     entity.velocity = entity.desired_velocity
 

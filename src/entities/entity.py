@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import uuid
 import pygame
 from typing import Optional
 from pathlib import Path
@@ -22,7 +23,8 @@ class Entity:
         speed: float,
         sprite_info: SpriteInfo,
         movement_controller: MovementBehaviour,
-    ):
+    ):  
+        self.id = uuid.uuid4()
         self.x = x
         self.y = y
         self.z = 0
