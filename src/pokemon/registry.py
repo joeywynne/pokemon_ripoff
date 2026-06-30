@@ -1,4 +1,4 @@
-from src.pokemon.base import DROWZEE, GASTLY, NIDORAN, ABRA
+from src.pokemon.species import DROWZEE, GASTLY, NIDORAN, ABRA
 
 ALL_SPECIES = [
     DROWZEE,

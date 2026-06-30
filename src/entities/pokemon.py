@@ -1,11 +1,11 @@
 from enum import Enum
 
 from src.entities.entity import Entity
-from src.pokemon.base import PokemonSpecies
+from src.pokemon.species import PokemonSpecies
 
 from src.core.settings import TILE_SIZE
 import random
-from src.pokemon.base import DROWZEE, GASTLY, NIDORAN, ABRA
+from src.pokemon.species import DROWZEE, GASTLY, NIDORAN, ABRA
 from src.pokemon.catching import attempt_capture
 from src.behaviours.behaviour import FleeBehaviour, FollowBehaviour
 from src.behaviours.behaviour_registry import BEHAVIOUR_FACTORIES
