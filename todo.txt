@@ -6,11 +6,16 @@ Buddy pokemon movement
     - defensive: no agression
 
 Develop realtime fighting:
-    - Battle stats: (attack, defense, attack moves)
+    - Battle stats: (attack, defense, attack moves, attack range, other effects)
     - Flee when damaged
     - Should we kill or just freeze to allow for catch
         - default stun (catcheable)
         - hit button to finish (xp boost)
+
+Training
+  - Purchase moves
+  - swap moves
+  - level up moves
 
 Some way to make money
 Forage
