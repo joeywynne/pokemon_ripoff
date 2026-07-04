@@ -4,6 +4,7 @@ import pygame
 class GridMap:
     def __init__(self, grid: list[list], grid_size: int):
         self.grid_size = grid_size
+        # Grid of true/false values indicating solid (True) or passable (False) cells
         self.grid = grid
 
         self.width = len(self.grid[0]) if self.grid else 0

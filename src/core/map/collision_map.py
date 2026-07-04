@@ -22,7 +22,7 @@ class CollisionMap(GridMap):
 def generate_collision_map(tile_map: TileMap) -> CollisionMap:
     return CollisionMap(
         [
-            [tile == 4 for tile in row]  # Only tile type 4 (Solid) is considered solid
+            [not tile.is_passible for tile in row]
             for row in tile_map.grid
         ],
         tile_map.grid_size,
