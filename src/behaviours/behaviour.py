@@ -188,7 +188,7 @@ class FollowBehaviour(MovementBehaviour):
         previous_behaviour: MovementBehaviour,
         speed_multiplier: float = 1.0,
         duration: int = 300,
-        min_distance: int = 50
+        min_distance: int = 50,
     ):
         self.previous_behaviour = previous_behaviour
         self.speed_multiplier = speed_multiplier
@@ -272,3 +272,11 @@ class TeleportBehaviour(MovementBehaviour):
             self.teleport_frac -= 0.01
             entity.size = entity.species.size * self.teleport_frac
             return 0, 0
+
+
+class BuddyBehaviour(MovementBehaviour):
+    def __init__(self):
+        pass
+
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
+        return 0, 0

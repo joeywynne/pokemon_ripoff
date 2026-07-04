@@ -1,6 +1,7 @@
 Pokemon naming
 
 Buddy pokemon movement
+    - Follow with range
     - agressive: attacks visible pokemon
     - defensive: no agression
 

@@ -23,7 +23,7 @@ class Entity:
         speed: float,
         sprite_info: SpriteInfo,
         movement_controller: MovementBehaviour,
-    ):  
+    ):
         self.id = uuid.uuid4()
         self.x = x
         self.y = y

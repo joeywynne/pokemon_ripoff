@@ -88,7 +88,9 @@ class Pokemon(Entity):
 
     def on_capture(self):
         self.movement_controller = FollowBehaviour(
-            previous_behaviour=self.movement_controller, speed_multiplier=3.0, min_distance=0.0
+            previous_behaviour=self.movement_controller,
+            speed_multiplier=3.0,
+            min_distance=0.0,
         )
         self.is_captured = True
 

@@ -5,7 +5,7 @@ from src.core.map.tile_map import TileMap
 from src.core.settings import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 from src.display.map_renderer import MapRenderer
 from src.entities.player import Player
-from src.entities.pokemon import generate_pokemon, Pokemon
+from src.entities.pokemon import generate_pokemon
 from src.display.renderer import Renderer
 from src.display.entities_renderer import EntitiesRenderer
 from src.core.camera import Camera
@@ -13,8 +13,9 @@ from src.display.assets import AssetStore
 from src.behaviours.movement_system import move_entities
 from src.contracts import UpdateContext
 from src.core.game_state import GameState
-from src.display.inventory_renderer import InventoryRenderer
-from src.menu.inventory_screen import InventoryScreen
+from src.ui.renderers.party_renderer import PartyRenderer
+from src.ui.screens.party_screen import PartyScreen
+from src.ui.ui_handler import UIManager
 
 logger = logging.getLogger(__name__)
 
@@ -49,9 +50,7 @@ class Game:
         self.last_log_time = pygame.time.get_ticks()
 
         self.game_state = GameState.new_game()
-        self.inventory_screen = InventoryScreen()
-        self.inventory_renderer = InventoryRenderer(self.screen)
-        self.inventory_open = False
+        self.ui_handler = UIManager()
 
         logger.debug("Game initialized with debug=%s", self.debug)
 
@@ -59,42 +58,57 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_i:
-                    self.toggle_inventory()
-                elif self.inventory_open:
-                    self.inventory_screen.handle_event(event)
+                return
 
-    def toggle_inventory(self):
-        if self.inventory_open:
-            self.close_inventory()
-        else:
-            self.open_inventory()
+            if self.ui_handler.has_screen:
+                self.ui_handler.handle_event(event)
+            else:
+                self.handle_game_event(event)
 
-    def open_inventory(self):
-        self.inventory_open = True
+    def handle_game_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:
+                self.open_party_screen()
+            elif event.key == pygame.K_i:
+                self.open_inventory_screen()
 
-    def close_inventory(self):
-        self.inventory_open = False
-        self.commit_inventory_changes()
-    
-    def commit_inventory_changes(self):
-        buddy_index = self.inventory_screen.buddy_index
+    def open_inventory_screen(self):
+        logger.info("Opening inventory screen")
+        pass
+
+    def close_inventory_screen(self, inventory_screen):
+        logger.info("Closing inventory screen")
+        self.ui_handler.close()
+
+    def open_party_screen(self):
+        screen = PartyScreen(
+            game_state=self.game_state,
+            on_close=self.close_party_screen,
+            renderer=PartyRenderer(),
+        )
+        self.ui_handler.open(screen)
+
+    def close_party_screen(self, party_screen):
+        self.commit_party_changes(party_screen.buddy_index)
+        self.ui_handler.close()
+
+    def commit_party_changes(self, buddy_index):
         buddy = self.game_state.swap_buddy(
             buddy_index,
             self.player.x + self.player.size / 2,
-            self.player.y + self.player.size / 2
+            self.player.y + self.player.size / 2,
         )
-        # remove the old buddy (is_active = False)
+
         self.entities[:] = [entity for entity in self.entities if entity.is_active]
+
         if buddy:
             self.entities.append(buddy)
 
     def update(self):
         keys = pygame.key.get_pressed()
 
-        if self.inventory_open:
-            self.update_inventory(keys)
+        if self.ui_handler.has_screen:
+            self.ui_handler.update(keys)
         else:
             self.update_game(keys)
 
@@ -119,9 +133,6 @@ class Game:
             self.entities.extend(new_entities)
 
         move_entities(self.entities, self.collision_map, self.game_state)
-    
-    def update_inventory(self, keys):
-        self.inventory_screen.update(keys, self.game_state)
 
     def render(self):
         fps_text = None
@@ -130,9 +141,8 @@ class Game:
             fps_text = self.font.render(f"FPS: {fps:.1f}", True, (255, 255, 0))
 
         self.renderer.render(self.player, self.camera, fps_text, self.debug)
-        if self.inventory_open:
-            self.inventory_renderer.render(self.game_state, self.inventory_screen)
-        
+        self.ui_handler.render(self.screen)
+
         pygame.display.flip()
 
     def log_debug_info(self):

@@ -15,7 +15,7 @@ def move_entities(
     """
     # Each entity now has a desired velocity.
     # Use this to try and move them and then resolve any issues with collisions.
-    previous_positions = { entity.id: (entity.x, entity.y) for entity in entities}
+    previous_positions = {entity.id: (entity.x, entity.y) for entity in entities}
 
     # First move the entities preventing movement into non-accessible tiles
     for entity in entities:
@@ -60,11 +60,13 @@ def move_entity(entity, collision_map: CollisionMap):
         entity.facing = normalise_vector(entity.desired_velocity)
 
 
-def final_safety(entity, collision_map: CollisionMap, previous_position: tuple[float, float] = None):
+def final_safety(
+    entity, collision_map: CollisionMap, previous_position: tuple[float, float] = None
+):
     """Ensure the entity is not stuck in a wall after movement."""
     if can_move_to(entity.get_rect(), collision_map):
         return
-    
+
     # Try previous position
     prev_x, prev_y = previous_position
     entity.x = prev_x
