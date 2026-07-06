@@ -16,6 +16,9 @@ from src.core.game_state import GameState
 from src.ui.renderers.party_renderer import PartyRenderer
 from src.ui.screens.party_screen import PartyScreen
 from src.ui.ui_handler import UIManager
+from src.ui.screens.text_input_modal import TextInputModal
+from src.ui.renderers.text_input_renderer import TextInputRenderer
+from src.core.events import PokemonCapturedEvent
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +63,7 @@ class Game:
                 self.running = False
                 return
 
-            if self.ui_handler.has_screen:
+            if self.ui_handler.is_open:
                 self.ui_handler.handle_event(event)
             else:
                 self.handle_game_event(event)
@@ -72,42 +75,10 @@ class Game:
             elif event.key == pygame.K_i:
                 self.open_inventory_screen()
 
-    def open_inventory_screen(self):
-        logger.info("Opening inventory screen")
-        pass
-
-    def close_inventory_screen(self, inventory_screen):
-        logger.info("Closing inventory screen")
-        self.ui_handler.close()
-
-    def open_party_screen(self):
-        screen = PartyScreen(
-            game_state=self.game_state,
-            on_close=self.close_party_screen,
-            renderer=PartyRenderer(),
-        )
-        self.ui_handler.open(screen)
-
-    def close_party_screen(self, party_screen):
-        self.commit_party_changes(party_screen.buddy_index)
-        self.ui_handler.close()
-
-    def commit_party_changes(self, buddy_index):
-        buddy = self.game_state.swap_buddy(
-            buddy_index,
-            self.player.x + self.player.size / 2,
-            self.player.y + self.player.size / 2,
-        )
-
-        self.entities[:] = [entity for entity in self.entities if entity.is_active]
-
-        if buddy:
-            self.entities.append(buddy)
-
     def update(self):
         keys = pygame.key.get_pressed()
 
-        if self.ui_handler.has_screen:
+        if self.ui_handler.is_open:
             self.ui_handler.update(keys)
         else:
             self.update_game(keys)
@@ -133,6 +104,7 @@ class Game:
             self.entities.extend(new_entities)
 
         move_entities(self.entities, self.collision_map, self.game_state)
+        self.process_game_events()
 
     def render(self):
         fps_text = None
@@ -144,6 +116,62 @@ class Game:
         self.ui_handler.render(self.screen)
 
         pygame.display.flip()
+    
+    def process_game_events(self):
+        while self.game_state.pending_events:
+            event = self.game_state.pending_events.pop()
+            if isinstance(event, PokemonCapturedEvent):
+                self.open_renaming_modal(event.pokemon)
+    
+    def open_inventory_screen(self):
+        logger.info("Opening inventory screen")
+        pass
+
+    def close_inventory_screen(self, inventory_screen):
+        logger.info("Closing inventory screen")
+        self.ui_handler.close_screen()
+
+    def open_party_screen(self):
+        screen = PartyScreen(
+            game_state=self.game_state,
+            on_close=self.close_party_screen,
+            renderer=PartyRenderer(),
+        )
+        self.ui_handler.open_screen(screen)
+
+    def close_party_screen(self, party_screen):
+        self.commit_party_changes(party_screen.buddy_index)
+        self.ui_handler.close_screen()
+
+    def commit_party_changes(self, buddy_index):
+        buddy = self.game_state.swap_buddy(
+            buddy_index,
+            self.player.x + self.player.size / 2,
+            self.player.y + self.player.size / 2,
+        )
+
+        self.entities[:] = [entity for entity in self.entities if entity.is_active]
+
+        if buddy:
+            self.entities.append(buddy)
+
+    def open_renaming_modal(self, pokemon):
+        def on_submit(modal):
+            pokemon.rename(modal.text)
+            self.ui_handler.close_modal()
+        
+        self.ui_handler.open_modal(
+            TextInputModal(
+                renderer=TextInputRenderer(),
+                on_submit=on_submit,
+            )
+        )
+    
+    def close_renaming_modal(self, new_name):
+        if new_name is not None:
+            self.ui_handler.current_modal.pokemon.rename(new_name)
+        self.ui_handler.close_modal()
+        
 
     def log_debug_info(self):
         if not self.debug:

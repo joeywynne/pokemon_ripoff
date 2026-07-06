@@ -1,5 +1,6 @@
 from src.core.map.tile_map import TileMap
 from src.core.map.grid_map import GridMap
+from src.core.map.tiles import TILE_REGISTRY
 
 
 class CollisionMap(GridMap):
@@ -22,7 +23,7 @@ class CollisionMap(GridMap):
 def generate_collision_map(tile_map: TileMap) -> CollisionMap:
     return CollisionMap(
         [
-            [not tile.is_passible for tile in row]
+            [not TILE_REGISTRY[tile].is_passable for tile in row]
             for row in tile_map.grid
         ],
         tile_map.grid_size,

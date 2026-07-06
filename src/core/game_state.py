@@ -1,8 +1,8 @@
 from src.entities.pokemon import Pokemon
 from src.behaviours.behaviour import BuddyBehaviour
 from dataclasses import dataclass, field
-
 from src.pokemon.registry import ALL_SPECIES
+from src.core.events import PokemonCapturedEvent
 
 
 @dataclass
@@ -11,6 +11,7 @@ class GameState:
     party: list[Pokemon] = field(default_factory=list)
     pokedex: dict[str, bool] = field(default_factory=dict)
     buddy_index: int = -1
+    pending_events: list = field(default_factory=list)
     # items: list[Items] = field(default_factory=list)
 
     @classmethod
@@ -32,6 +33,7 @@ class GameState:
     def add_pokemon_to_party(self, pokemon: Pokemon) -> None:
         self.party.append(pokemon)
         self.pokedex[pokemon.species.name] = True
+        self.pending_events.append(PokemonCapturedEvent(pokemon=pokemon))
 
     def remove_pokemon_from_party(self, pokemon: Pokemon) -> None:
         self.party.remove(pokemon)

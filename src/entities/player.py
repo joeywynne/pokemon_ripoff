@@ -78,9 +78,9 @@ class Player(Entity):
             self.throwing = True
         self.throw_charge += 1
 
-    def throw_pokeball(self):
+    def throw_pokeball(self) -> Pokeball | None:
         if not self.throwing:
-            return
+            return None
 
         power = self.throw_charge
 

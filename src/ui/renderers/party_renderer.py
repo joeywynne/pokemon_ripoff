@@ -11,7 +11,7 @@ class PartyRenderer:
         self.first_visible_row = 0
 
     def render(self, surface: pygame.Surface, party_screen):
-        sub_title = "Up/down to navgate. Space to select/deselect your Buddy."
+        sub_title = "Up/down to navigate. Space to select/deselect your Buddy."
         window_panel = utils.draw_window(
             surface=surface,
             title="Current Party",

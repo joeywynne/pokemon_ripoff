@@ -2,7 +2,7 @@
 # Not dependant on concrete Classes
 
 from typing import Protocol
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 class EntityPositionProtocol(Protocol):
@@ -16,3 +16,4 @@ class UpdateContext:
     nearby_pokemon: list[EntityPositionProtocol]
     player_position: tuple[float, float]
     map_size: tuple[int, int]
+    event_queue: list = field(default_factory=list)

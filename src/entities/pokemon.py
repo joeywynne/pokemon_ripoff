@@ -100,6 +100,9 @@ class Pokemon(Entity):
             speed_multiplier=3.0,
             duration=300,
         )
+    
+    def rename(self, new_name: str):
+        self.name = new_name
 
 
 def generate_pokemon(

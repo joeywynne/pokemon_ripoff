@@ -8,14 +8,27 @@ def draw_window(
     sub_title: Optional[str],
     font: pygame.font.Font,
     padding: int,
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+    x: Optional[int] = None,
+    y: Optional[int] = None,
 ):
-    # TODO: Abstract this size section
-    w = surface.get_width()
-    h = surface.get_height()
-    window_width = w / 2
-    window_height = h / 2
-    x = (w / 2) - (window_width / 2)
-    y = (h / 2) - (window_height / 2)
+    if not width:
+        w = surface.get_width()
+        window_width = w / 2
+    else:
+        window_width = width
+
+    if not height:
+        h = surface.get_height()
+        window_height = h / 2
+    else:
+        window_height = height
+
+    if x is None:
+        x = (surface.get_width() / 2) - (window_width / 2)
+    if y is None:
+        y = (surface.get_height() / 2) - (window_height / 2)
 
     panel_rect = pygame.Rect(x, y, window_width, window_height)
     pygame.draw.rect(surface, (30, 30, 30), panel_rect)
