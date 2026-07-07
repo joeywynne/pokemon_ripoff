@@ -1,7 +1,5 @@
 Pokemon naming
-- Add cursor and underscores
-- default name stands
-- Fix bug where buddies now don't follow
+- Can change name from party screen
 
 Catch mechanics - currently 100% catch rate
 

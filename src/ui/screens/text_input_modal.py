@@ -2,14 +2,21 @@ import pygame
 from src.ui.renderers.text_input_renderer import TextInputRenderer
 
 class TextInputModal:
-    def __init__(self, renderer: TextInputRenderer, on_submit):
+    def __init__(self, renderer: TextInputRenderer, on_submit, on_cancel, text: str = ""):
         self.renderer = renderer
         self.on_submit = on_submit
-        self.text = ""
+        self.on_cancel = on_cancel
+        self.text = text
         self.max_length = 25  # Maximum length of the input text
 
+        self.cursor_visible = True
+        self.cursor_timer = 0
+
     def update(self, keys):
-        pass  # No continuous updates needed for text input modal
+        self.cursor_timer += 1
+        if self.cursor_timer >= 30:
+            self.cursor_visible = not self.cursor_visible
+            self.cursor_timer = 0
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -17,7 +24,7 @@ class TextInputModal:
                 self.on_submit(self)
 
             elif event.key == pygame.K_ESCAPE:
-                self.on_submit(None)  # Indicate cancellation
+                self.on_cancel()  # Indicate cancellation
             
             else:
                 # Handle text input
@@ -25,9 +32,9 @@ class TextInputModal:
                     self.text = self.text[:-1]
                 else:
                     char = event.unicode
-                    if char.isprintable():
+                    if char and char.isprintable():
                         if len(self.text) < self.max_length:
                             self.text += char
 
     def render(self, surface):
-        self.renderer.render(surface, self.text)
+        self.renderer.render(surface, self)

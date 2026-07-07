@@ -162,8 +162,10 @@ class Game:
         
         self.ui_handler.open_modal(
             TextInputModal(
+                text=pokemon.name,
                 renderer=TextInputRenderer(),
                 on_submit=on_submit,
+                on_cancel=lambda: self.ui_handler.close_modal()
             )
         )
     
