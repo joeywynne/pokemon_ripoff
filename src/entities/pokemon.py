@@ -104,6 +104,10 @@ class Pokemon(Entity):
     def rename(self, new_name: str):
         self.name = new_name
 
+    def reset_stats_when_captured(self):
+        # Add more stats when appropriate
+        self.size = self.species.size
+
 
 def generate_pokemon(
     num_pokemon: int, map_width: int, map_height: int

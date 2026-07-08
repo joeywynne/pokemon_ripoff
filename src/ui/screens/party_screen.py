@@ -7,10 +7,11 @@ REPEAT_DELAY = 3
 
 
 class PartyScreen:
-    def __init__(self, game_state: GameState, renderer: PartyRenderer, on_close):
+    def __init__(self, game_state: GameState, renderer: PartyRenderer, on_close, on_rename):
         self.game_state = game_state
         self.renderer = renderer
         self.on_close = on_close
+        self.on_rename = on_rename
 
         self.buddy_index = game_state.buddy_index
         self.selected_index = max(0, self.buddy_index)
@@ -41,6 +42,10 @@ class PartyScreen:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 self.try_select_buddy()
+
+            elif event.key == pygame.K_r:
+                pokemon = self.game_state.party[self.selected_index]
+                self.on_rename(pokemon)
 
             elif event.key in (pygame.K_ESCAPE, pygame.K_p):
                 self.on_close(self)

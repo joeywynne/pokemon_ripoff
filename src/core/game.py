@@ -135,6 +135,7 @@ class Game:
         screen = PartyScreen(
             game_state=self.game_state,
             on_close=self.close_party_screen,
+            on_rename=self.open_renaming_modal,
             renderer=PartyRenderer(),
         )
         self.ui_handler.open_screen(screen)
@@ -156,24 +157,18 @@ class Game:
             self.entities.append(buddy)
 
     def open_renaming_modal(self, pokemon):
-        def on_submit(modal):
+        def rename_pokemon(modal):
             pokemon.rename(modal.text)
-            self.ui_handler.close_modal()
+            self.ui_handler.close_screen()
         
-        self.ui_handler.open_modal(
+        self.ui_handler.open_screen(
             TextInputModal(
                 text=pokemon.name,
                 renderer=TextInputRenderer(),
-                on_submit=on_submit,
-                on_cancel=lambda: self.ui_handler.close_modal()
+                on_submit=rename_pokemon,
+                on_cancel=lambda: self.ui_handler.close_screen()
             )
         )
-    
-    def close_renaming_modal(self, new_name):
-        if new_name is not None:
-            self.ui_handler.current_modal.pokemon.rename(new_name)
-        self.ui_handler.close_modal()
-        
 
     def log_debug_info(self):
         if not self.debug:

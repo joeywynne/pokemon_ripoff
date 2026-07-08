@@ -14,43 +14,27 @@ class UIScreen(Protocol):
 
 class UIManager:
     def __init__(self):
-        self.current_screen: UIScreen | None = None
-        self.current_modal: UIScreen | None = None
+        self.ui_stack: list[UIScreen] = []
 
     @property
     def is_open(self) -> bool:
-        return (self.current_screen is not None) or (self.current_modal is not None)
+        return len(self.ui_stack) > 0
 
-    def open_screen(self, screen: UIScreen | None):
-        self.current_screen = screen
+    def open_screen(self, screen: UIScreen):
+        self.ui_stack.append(screen)
 
     def close_screen(self):
-        self.current_screen = None
-    
-    def open_modal(self, modal: UIScreen | None):
-        self.current_modal = modal
-
-    @property
-    def has_modal(self) -> bool:
-        return self.current_modal is not None
-
-    def close_modal(self):
-        self.current_modal = None
+        if self.ui_stack:
+            self.ui_stack.pop()
 
     def handle_event(self, event):
-        if self.current_screen:
-            self.current_screen.handle_event(event)
-        if self.current_modal:
-            self.current_modal.handle_event(event)
+        if self.ui_stack:
+            self.ui_stack[-1].handle_event(event)
 
     def update(self, keys):
-        if self.current_screen:
-            self.current_screen.update(keys)
-        if self.current_modal:
-            self.current_modal.update(keys)
+        if self.ui_stack:
+            self.ui_stack[-1].update(keys)
 
     def render(self, surface):
-        if self.current_screen:
-            self.current_screen.render(surface)
-        if self.current_modal:
-            self.current_modal.render(surface)
+        if self.ui_stack:
+            self.ui_stack[-1].render(surface)
