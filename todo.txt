@@ -1,12 +1,11 @@
-Pokemon naming
-- Can change name from party screen
-
 Catch mechanics - currently 100% catch rate
+    Pick a generation
 
 Buddy pokemon movement
+    - Refactor behaviour system
     - Follow with range
-    - agressive: attacks visible pokemon
-    - defensive: no agression
+    - aggressive: attacks visible pokemon
+    - defensive: no aggression
 
 Develop realtime fighting:
     - Battle stats: (attack, defense, attack moves, attack range, other effects)
@@ -16,12 +15,16 @@ Develop realtime fighting:
         - hit button to finish (xp boost)
 
 Training
-  - Purchase moves
+  - Purchase moves with research points? Pokemon require XP / levels to get them
   - swap moves
   - level up moves
 
 Some way to make money
-Forage
-Crafting
-Trading
+Item shop:
+    Forage
+    Crafting
+    Trading
+
 Slave trade for Pokemon?
+    - more coins but negative reputation -> towards team rocket
+    - less coins but fund research points

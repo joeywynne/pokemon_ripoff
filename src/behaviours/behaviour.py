@@ -102,6 +102,13 @@ class PokeballBehaviour(MovementBehaviour):
         ):
             pokeball.start_deactivating = True
 
+class BuddyBehaviour(MovementBehaviour):
+    def __init__(self):
+        pass
+
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
+        return 0, 0
+
 
 class StationaryBehaviour(MovementBehaviour):
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
@@ -185,23 +192,13 @@ class FollowBehaviour(MovementBehaviour):
 
     def __init__(
         self,
-        previous_behaviour: MovementBehaviour,
         speed_multiplier: float = 1.0,
-        duration: int = 300,
         min_distance: int = 50,
     ):
-        self.previous_behaviour = previous_behaviour
         self.speed_multiplier = speed_multiplier
-        self.duration = duration
         self.min_distance = min_distance
 
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        self.duration -= 1
-
-        if self.duration <= 0:
-            entity.movement_controller = self.previous_behaviour
-            return 0, 0
-
         player_position = update_context.player_position
         dx = player_position[0] - entity.x
         dy = player_position[1] - entity.y
@@ -219,20 +216,10 @@ class FollowBehaviour(MovementBehaviour):
 
 class FleeBehaviour(MovementBehaviour):
 
-    def __init__(
-        self, previous_behaviour, speed_multiplier: float = 1.0, duration: int = 300
-    ):
+    def __init__(self, speed_multiplier: float = 1.0):
         self.speed_multiplier = speed_multiplier
-        self.previous_behaviour = previous_behaviour
-        self.duration = duration
 
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        self.duration -= 1
-
-        if self.duration <= 0:
-            entity.movement_controller = self.previous_behaviour
-            return 0, 0
-
         player_position = update_context.player_position
         dx = entity.x - player_position[0]
         dy = entity.y - player_position[1]
@@ -272,11 +259,37 @@ class TeleportBehaviour(MovementBehaviour):
             self.teleport_frac -= 0.01
             entity.size = entity.species.size * self.teleport_frac
             return 0, 0
+    
 
+class TemporaryBehaviour(MovementBehaviour):
 
-class BuddyBehaviour(MovementBehaviour):
-    def __init__(self):
-        pass
+    def __init__(
+        self,
+        behaviour: MovementBehaviour,
+        fallback: MovementBehaviour,
+        duration: int,
+    ):
+        self.behaviour = behaviour
+        self.fallback = fallback
+        self.duration = duration
 
-    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        return 0, 0
+    def get_intended_move(
+        self,
+        entity,
+        update_context,
+    ):
+        self.duration -= 1
+
+        if self.duration <= 0:
+            entity.movement_controller = self.fallback
+            return self.fallback.get_intended_move(
+                entity,
+                update_context,
+            )
+
+        return self.behaviour.get_intended_move(
+            entity,
+            update_context,
+        )
+    
+

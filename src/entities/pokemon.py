@@ -7,7 +7,7 @@ from src.core.settings import TILE_SIZE
 import random
 from src.pokemon.species import DROWZEE, GASTLY, NIDORAN, ABRA
 from src.pokemon.catching import attempt_capture
-from src.behaviours.behaviour import FleeBehaviour, FollowBehaviour
+from src.behaviours.behaviour import TemporaryBehaviour, FollowBehaviour, FleeBehaviour
 from src.behaviours.behaviour_registry import BEHAVIOUR_FACTORIES
 
 
@@ -88,16 +88,17 @@ class Pokemon(Entity):
 
     def on_capture(self):
         self.movement_controller = FollowBehaviour(
-            previous_behaviour=self.movement_controller,
             speed_multiplier=3.0,
             min_distance=0.0,
         )
         self.is_captured = True
 
     def on_capture_failure(self):
-        self.movement_controller = FleeBehaviour(
-            previous_behaviour=self.movement_controller,
-            speed_multiplier=3.0,
+        self.movement_controller = TemporaryBehaviour(
+            behaviour=FleeBehaviour(
+                speed_multiplier=3.0,
+            ),
+            fallback=self.movement_controller,
             duration=300,
         )
     

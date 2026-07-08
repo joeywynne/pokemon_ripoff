@@ -1,3 +1,5 @@
+from enum import Enum, auto
+
 from src.behaviours.behaviour import (
     MovementBehaviour,
     WanderBehaviour,
@@ -9,13 +11,21 @@ from src.behaviours.behaviour import (
 import random
 
 
+class BehaviourState(Enum):
+    WANDER = auto()
+    IDLE = auto()   
+    FOLLOW = auto()
+    FLEE = auto()
+    TELEPORT = auto()
+
+
 class StationaryWanderBehaviour(MovementBehaviour):
 
     def __init__(self):
         self.wander = WanderBehaviour()
         self.idle = StationaryBehaviour()
 
-        self.state = "wander"
+        self.state = BehaviourState.WANDER
         self.timer = random.randint(120, 300)
 
     def get_intended_move(self, entity, update_context):
@@ -24,11 +34,11 @@ class StationaryWanderBehaviour(MovementBehaviour):
 
         if self.timer <= 0:
 
-            self.state = "idle" if self.state == "wander" else "wander"
+            self.state = BehaviourState.IDLE if self.state == BehaviourState.WANDER else BehaviourState.WANDER
 
             self.timer = random.randint(120, 300)
 
-        if self.state == "wander":
+        if self.state == BehaviourState.WANDER:
             return self.wander.get_intended_move(entity, update_context)
 
         return self.idle.get_intended_move(entity, update_context)
@@ -40,11 +50,9 @@ class WanderFollowBehaviour(MovementBehaviour):
         self, start_follow_distance=100, stop_follow_distance=150, speed_multiplier=3.0
     ):
         self.wander = WanderBehaviour()
-        self.follow = FollowBehaviour(
-            previous_behaviour=self.wander, speed_multiplier=speed_multiplier
-        )
+        self.follow = FollowBehaviour(speed_multiplier=speed_multiplier)
 
-        self.state = "wander"
+        self.state = BehaviourState.WANDER
         self.start_follow_distance = start_follow_distance
         self.stop_follow_distance = stop_follow_distance
 
@@ -55,11 +63,11 @@ class WanderFollowBehaviour(MovementBehaviour):
         distance = (dx**2 + dy**2) ** 0.5
 
         if distance < self.start_follow_distance:
-            self.state = "follow"
+            self.state = BehaviourState.FOLLOW
         elif distance > self.stop_follow_distance:
-            self.state = "wander"
+            self.state = BehaviourState.WANDER
 
-        if self.state == "wander":
+        if self.state == BehaviourState.WANDER:
             return self.wander.get_intended_move(entity, update_context)
         return self.follow.get_intended_move(entity, update_context)
 
@@ -70,11 +78,9 @@ class WanderFleeBehaviour(MovementBehaviour):
         self, start_flee_distance=100, stop_flee_distance=150, speed_multiplier=3.0
     ):
         self.wander = WanderBehaviour()
-        self.flee = FleeBehaviour(
-            previous_behaviour=self.wander, speed_multiplier=speed_multiplier
-        )
+        self.flee = FleeBehaviour(speed_multiplier=speed_multiplier)
 
-        self.state = "wander"
+        self.state = BehaviourState.WANDER
         self.start_flee_distance = start_flee_distance
         self.stop_flee_distance = stop_flee_distance
 
@@ -85,11 +91,11 @@ class WanderFleeBehaviour(MovementBehaviour):
         distance = (dx**2 + dy**2) ** 0.5
 
         if distance < self.start_flee_distance:
-            self.state = "flee"
+            self.state = BehaviourState.FLEE
         elif distance > self.stop_flee_distance:
-            self.state = "wander"
+            self.state = BehaviourState.WANDER
 
-        if self.state == "wander":
+        if self.state == BehaviourState.WANDER:
             return self.wander.get_intended_move(entity, update_context)
         return self.flee.get_intended_move(entity, update_context)
 
@@ -97,7 +103,7 @@ class WanderFleeBehaviour(MovementBehaviour):
 class StationaryTeleportBehaviour(MovementBehaviour):
 
     def __init__(self, teleport_distance=150):
-        self.state = "stationary"
+        self.state = BehaviourState.IDLE
         self.idle = StationaryBehaviour()
         self.teleport = TeleportBehaviour()
         self.teleport_distance = teleport_distance
@@ -108,18 +114,18 @@ class StationaryTeleportBehaviour(MovementBehaviour):
         dy = player_position[1] - entity.y
         distance = (dx**2 + dy**2) ** 0.5
 
-        if distance < self.teleport_distance or self.state == "teleport":
-            self.state = "teleport"
+        if distance < self.teleport_distance or self.state == BehaviourState.TELEPORT:
+            self.state = BehaviourState.TELEPORT
         else:
-            self.state = "stationary"
+            self.state = BehaviourState.IDLE
 
-        if self.state == "teleport":
+        if self.state == BehaviourState.TELEPORT:
             dx, dy = self.teleport.get_intended_move(entity, update_context)
 
         else:
             dx, dy = self.idle.get_intended_move(entity, update_context)
 
         if abs(dy) + abs(dx) > 0:
-            self.state = "stationary"
+            self.state = BehaviourState.IDLE
 
         return dx, dy
