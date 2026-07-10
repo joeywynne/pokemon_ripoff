@@ -91,7 +91,7 @@ class Game:
         for entity in self.entities:
             context = UpdateContext(
                 keys=keys,
-                nearby_pokemon=self.pokemon,
+                nearby_entities=self.entities,
                 player_position=(self.player.x, self.player.y),
                 map_size=(self.map_width, self.map_height),
             )

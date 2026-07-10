@@ -47,7 +47,7 @@ class PartyScreen:
                 pokemon = self.game_state.party[self.selected_index]
                 self.on_rename(pokemon)
 
-            elif event.key in (pygame.K_ESCAPE, pygame.K_p):
+            elif event.key in (pygame.K_ESCAPE, pygame.K_p, pygame.K_RETURN):
                 self.on_close(self)
                 return
 

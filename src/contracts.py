@@ -13,7 +13,7 @@ class EntityPositionProtocol(Protocol):
 @dataclass
 class UpdateContext:
     keys: dict
-    nearby_pokemon: list[EntityPositionProtocol]
+    nearby_entities: list[EntityPositionProtocol]
     player_position: tuple[float, float]
     map_size: tuple[int, int]
     event_queue: list = field(default_factory=list)

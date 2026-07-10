@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from src.contracts import EntityPositionProtocol, UpdateContext
 from src.entities.entity import Entity, SpriteInfo
 from src.behaviours.behaviour import PokeballBehaviour
 from src.core.settings import POKEBALL_SIZE
@@ -36,3 +37,30 @@ def get_pokeball_sprite_info() -> SpriteInfo:
         position=(20, 20),
         sprite_size=(120, 120),
     )
+
+def get_pokeball_trajectory(
+    start_x,
+    start_y,
+    direction,
+    throw_power,
+    keys,
+    map_size,
+    nearby_entities: list[EntityPositionProtocol],
+):
+    simulation_ball = Pokeball(start_x, start_y, direction, throw_power)
+    simulation_context = UpdateContext(
+        player_position=(start_x, start_y),
+        map_size=map_size,
+        keys=keys,
+        nearby_entities=nearby_entities,
+    )
+
+    simulation = PokeballBehaviour(direction, throw_power)
+    points = []
+    for _ in range(0, 100):  # Simulate for 100 frames
+        dx, dy = simulation.get_intended_move(simulation_ball, simulation_context)
+        start_x += dx
+        start_y += dy
+        points.append((start_x, start_y))
+    return points
+

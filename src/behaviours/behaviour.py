@@ -102,13 +102,6 @@ class PokeballBehaviour(MovementBehaviour):
         ):
             pokeball.start_deactivating = True
 
-class BuddyBehaviour(MovementBehaviour):
-    def __init__(self):
-        pass
-
-    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        return 0, 0
-
 
 class StationaryBehaviour(MovementBehaviour):
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
@@ -199,19 +192,13 @@ class FollowBehaviour(MovementBehaviour):
         self.min_distance = min_distance
 
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        player_position = update_context.player_position
-        dx = player_position[0] - entity.x
-        dy = player_position[1] - entity.y
-        distance = (dx**2 + dy**2) ** 0.5
-        # Normalize the direction vector and scale by speed
-        if distance != 0 and distance > self.min_distance:
-            dx = (dx / distance) * entity.speed * self.speed_multiplier
-            dy = (dy / distance) * entity.speed * self.speed_multiplier
-        else:
-            dx = 0
-            dy = 0
-
-        return dx, dy
+        target = entity.target
+        if target is None:
+            target = update_context.player_position
+        
+        dx = target.x - entity.x
+        dy = target.y - entity.y
+        return scaled_direction(dx, dy, entity.speed * self.speed_multiplier)
 
 
 class FleeBehaviour(MovementBehaviour):
@@ -220,19 +207,12 @@ class FleeBehaviour(MovementBehaviour):
         self.speed_multiplier = speed_multiplier
 
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        player_position = update_context.player_position
-        dx = entity.x - player_position[0]
-        dy = entity.y - player_position[1]
-        distance = (dx**2 + dy**2) ** 0.5
-        # Normalize the direction vector and scale by speed
-        if distance != 0:
-            dx = (dx / distance) * entity.speed * self.speed_multiplier
-            dy = (dy / distance) * entity.speed * self.speed_multiplier
-        else:
-            dx = 0
-            dy = 0
-
-        return dx, dy
+        target = entity.target
+        if target is None:
+            return 0, 0
+        dx = entity.x - target.x
+        dy = entity.y - target.y
+        return scaled_direction(dx, dy, entity.speed * self.speed_multiplier)
 
 
 class TeleportBehaviour(MovementBehaviour):
@@ -293,3 +273,10 @@ class TemporaryBehaviour(MovementBehaviour):
         )
     
 
+def scaled_direction(dx: float, dy: float, speed: float) -> tuple[float, float]:
+    distance = (dx**2 + dy**2) ** 0.5
+    # Normalize the direction vector and scale by speed
+    if distance != 0:
+        return (dx / distance) * speed, (dy / distance) * speed
+    else:
+        return 0, 0

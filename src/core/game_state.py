@@ -1,5 +1,5 @@
 from src.entities.pokemon import Pokemon
-from src.behaviours.behaviour import BuddyBehaviour
+from src.behaviours.composite_behaviours import BuddyBehaviour
 from dataclasses import dataclass, field
 from src.pokemon.registry import ALL_SPECIES
 from src.core.events import PokemonCapturedEvent

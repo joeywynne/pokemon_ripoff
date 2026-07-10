@@ -1,16 +1,11 @@
-from typing import Optional
-
-from src.contracts import EntityPositionProtocol
 from src.entities.entity import Entity, SpriteInfo
 from src.core.settings import PLAYER_SIZE, PLAYER_SPEED
+from src.behaviours.targeting_system import VisionTargeting
 import pygame
 from pathlib import Path
 
-from src.entities.pokeball import Pokeball
+from src.entities.pokeball import Pokeball, get_pokeball_trajectory
 from src.behaviours.behaviour import PlayerBehaviour
-from src.behaviours.targetting_system import get_pokeball_trajectory, find_target
-from src.utils import normalise_vector
-
 
 class Player(Entity):
 
@@ -23,29 +18,34 @@ class Player(Entity):
             PLAYER_SPEED,
             get_player_sprite_info(),
             movement_controller=PlayerBehaviour(),
+            targeting_system=VisionTargeting()
         )
 
         self.throw_charge = 0
         self.throwing = False
-        self.target: Optional[EntityPositionProtocol] | None = None
         self.throw_preview_points = []
         self.render_throw_power = 0.0
         self.vision_distance = 200
         self.vision_angle = 60
 
     def update_intended(self, update_context) -> Pokeball | None:
-        self.target = find_target(
-            self.x,
-            self.y,
-            self.facing,
-            self.vision_angle,
-            self.vision_distance,
-            update_context.nearby_pokemon,
+        self.target = self.targeting_system.get_target(
+            self,
+            update_context.nearby_entities
         )
+        pokeball = self.handle_pokeball_throwing(update_context)
+
+        if update_context.keys[pygame.K_a]:
+            pass
+            
+        super().update_intended(update_context)
+        return pokeball
+    
+    def handle_pokeball_throwing(self, update_context):
         pokeball = None
         keys = update_context.keys
         if keys[pygame.K_SPACE]:
-            # Pokeball time!
+        # Pokeball time!
             self.charge_pokeball()
             target_direction = self.get_target_direction()
             self.throw_preview_points = get_pokeball_trajectory(
@@ -55,23 +55,13 @@ class Player(Entity):
                 self.throw_charge,
                 keys,
                 update_context.map_size,
-                update_context.nearby_pokemon,
+                update_context.nearby_entities
             )
             self.render_throw_power = self.throw_charge
         else:
             # Need to check if we can now throw a ball
             pokeball = self.throw_pokeball()
-
-        super().update_intended(update_context)
         return pokeball
-
-    def get_target_direction(self):
-        if not self.target:
-            return self.facing
-
-        dx = self.target.x - self.x
-        dy = self.target.y - self.y
-        return normalise_vector((dx, dy))
 
     def charge_pokeball(self):
         if not self.throwing:

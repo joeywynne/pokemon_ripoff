@@ -30,13 +30,9 @@ class StationaryWanderBehaviour(MovementBehaviour):
         self.timer = random.randint(120, 300)
 
     def get_intended_move(self, entity, update_context):
-
         self.timer -= 1
-
         if self.timer <= 0:
-
             self.state = BehaviourState.IDLE if self.state == BehaviourState.WANDER else BehaviourState.WANDER
-
             self.timer = random.randint(120, 300)
 
         if self.state == BehaviourState.WANDER:
@@ -45,98 +41,20 @@ class StationaryWanderBehaviour(MovementBehaviour):
         return self.idle.get_intended_move(entity, update_context)
 
 
-class PredicateSelectorBehaviour(MovementBehaviour):
-    """Selects between two child behaviours using a stateful predicate."""
-
-    def __init__(
-        self,
-        primary_behaviour: MovementBehaviour,
-        secondary_behaviour: MovementBehaviour,
-        should_use_secondary: Callable[[bool, object, object], bool],
-        use_secondary_initially: bool = False,
-    ):
-        self.primary_behaviour = primary_behaviour
-        self.secondary_behaviour = secondary_behaviour
-        self.should_use_secondary = should_use_secondary
-        self.use_secondary = use_secondary_initially
-
-    def get_intended_move(self, entity, update_context):
-        self.use_secondary = self.should_use_secondary(
-            self.use_secondary,
-            entity,
-            update_context,
-        )
-
-        if self.use_secondary:
-            return self.secondary_behaviour.get_intended_move(entity, update_context)
-
-        return self.primary_behaviour.get_intended_move(entity, update_context)
-
-
-class DistanceSelectorBehaviour(PredicateSelectorBehaviour):
-    """Switches to secondary when near, back to primary when far enough."""
-
-    def __init__(
-        self,
-        primary_behaviour: MovementBehaviour,
-        secondary_behaviour: MovementBehaviour,
-        start_secondary_distance: float,
-        stop_secondary_distance: float,
-    ):
-        self.start_secondary_distance = start_secondary_distance
-        self.stop_secondary_distance = stop_secondary_distance
-        super().__init__(
-            primary_behaviour=primary_behaviour,
-            secondary_behaviour=secondary_behaviour,
-            should_use_secondary=self._should_use_secondary,
-        )
-
-    def _should_use_secondary(self, currently_secondary: bool, entity, update_context) -> bool:
-        player_position = update_context.player_position
-        dx = player_position[0] - entity.x
-        dy = player_position[1] - entity.y
-        distance = (dx**2 + dy**2) ** 0.5
-
-        # Hysteresis prevents rapid state flapping near the threshold.
-        if distance < self.start_secondary_distance:
-            return True
-
-        if distance > self.stop_secondary_distance:
-            return False
-
-        return currently_secondary
-
-
 class WanderFollowBehaviour(MovementBehaviour):
 
-    def __init__(
-        self, start_follow_distance=100, stop_follow_distance=150, speed_multiplier=3.0
-    ):
-        self.selector = DistanceSelectorBehaviour(
-            primary_behaviour=WanderBehaviour(),
-            secondary_behaviour=FollowBehaviour(speed_multiplier=speed_multiplier),
-            start_secondary_distance=start_follow_distance,
-            stop_secondary_distance=stop_follow_distance,
-        )
-
     def get_intended_move(self, entity, update_context):
-        return self.selector.get_intended_move(entity, update_context)
+        if entity.target is not None:
+            return FollowBehaviour(speed_multiplier=1.0, min_distance=50).get_intended_move(entity, update_context)
+        return WanderBehaviour().get_intended_move(entity, update_context)
 
 
 class WanderFleeBehaviour(MovementBehaviour):
 
-    def __init__(
-        self, start_flee_distance=100, stop_flee_distance=150, speed_multiplier=3.0
-    ):
-        self.selector = DistanceSelectorBehaviour(
-            primary_behaviour=WanderBehaviour(),
-            secondary_behaviour=FleeBehaviour(speed_multiplier=speed_multiplier),
-            start_secondary_distance=start_flee_distance,
-            stop_secondary_distance=stop_flee_distance,
-        )
-
     def get_intended_move(self, entity, update_context):
-        return self.selector.get_intended_move(entity, update_context)
+        if entity.target is not None:
+            return FleeBehaviour(speed_multiplier=1.0).get_intended_move(entity, update_context)
+        return WanderBehaviour().get_intended_move(entity, update_context)
 
 
 class StationaryTeleportBehaviour(MovementBehaviour):
@@ -168,3 +86,21 @@ class StationaryTeleportBehaviour(MovementBehaviour):
             self.state = BehaviourState.IDLE
 
         return dx, dy
+
+
+class BuddyBehaviour(MovementBehaviour):
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
+        if entity.target is not None:
+            # Target is Pokemon - chase it
+            return FollowBehaviour(speed_multiplier=2.0, min_distance=10).get_intended_move(entity, update_context)
+        else:
+            # No target - follow player
+            return FollowBehaviour(speed_multiplier=0.5, min_distance=30).get_intended_move(entity, update_context)
+    
+    def _get_aggressive_move(self):
+        return 0, 0
+        # Essentially follows the player within x distance
+        # Player can target a wild pokemon which triggers "Aggression"
+        # If no target Buddy is defensive
+        # Can recall pokemon to flee - buddy follows you and then hits and enters party
+        # Maybe all party changes should follow this model?

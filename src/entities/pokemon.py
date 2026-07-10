@@ -1,6 +1,7 @@
 from enum import Enum
 
 from src.entities.entity import Entity
+from src.behaviours.targeting_system import NearestTargeting
 from src.pokemon.species import PokemonSpecies
 
 from src.core.settings import TILE_SIZE
@@ -37,6 +38,10 @@ class Pokemon(Entity):
             species.speed,
             species.sprite_info,
             movement_controller=BEHAVIOUR_FACTORIES[species.behaviour_id](),
+            targeting_system=NearestTargeting(
+                start_targeting_distance=100,
+                stop_targeting_distance=150,
+            ),
         )
         self.hp = species.base_hp
         self.status = PokemonState.HEALTHY
@@ -45,7 +50,7 @@ class Pokemon(Entity):
         self.is_buddy = False
 
     @property
-    def statusCondition(self) -> str:
+    def status_condition(self) -> int:
         if self.status in [
             PokemonState.POISONED,
             PokemonState.PARALYSED,
@@ -63,7 +68,7 @@ class Pokemon(Entity):
         The formula is based on the catch rate and the current HP of the Pokemon.
         https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Approximate_probability
         """
-        status_prior = self.statusCondition / (ball_value + 1)
+        status_prior = self.status_condition / (ball_value + 1)
 
         ball = 8 if ball_value == 200 else 12
         if self.hp <= 0:
