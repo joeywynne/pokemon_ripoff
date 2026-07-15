@@ -42,13 +42,11 @@ def draw_window(
     surface.blit(title_render, (panel_rect.x + padding, panel_rect.y + padding))
 
     if sub_title:
-        sub_font_size = int(font_size/ 2)
+        sub_font_size = int(font_size / 2)
         sub_title_font = ensure_font_fits(
             sub_title, font_name, sub_font_size, window_width - 2 * padding
         )
-        sub_title_render = sub_title_font.render(
-            sub_title, True, "white"
-        )
+        sub_title_render = sub_title_font.render(sub_title, True, "white")
         surface.blit(
             sub_title_render,
             (panel_rect.x + padding, panel_rect.y + padding + font_size + 5),
@@ -56,7 +54,10 @@ def draw_window(
 
     return panel_rect
 
-def ensure_font_fits(text: str, font_name: str, font_size: int, max_width: int) -> pygame.font.Font:
+
+def ensure_font_fits(
+    text: str, font_name: str, font_size: int, max_width: int
+) -> pygame.font.Font:
     """
     Adjusts the font size to ensure the text fits within the specified max_width.
     Returns a new font object with the adjusted size.
@@ -68,7 +69,9 @@ def ensure_font_fits(text: str, font_name: str, font_size: int, max_width: int) 
     return font
 
 
-def draw_underscores(surface: pygame.Surface, start_x: int, start_y: int, length: int, font_width):
+def draw_underscores(
+    surface: pygame.Surface, start_x: int, start_y: int, length: int, font_width
+):
     score_width = max(1, int(font_width * 0.85))
     score_gap = max(1, int(font_width * 0.24))
 
@@ -83,7 +86,14 @@ def draw_underscores(surface: pygame.Surface, start_x: int, start_y: int, length
             2,
         )
 
-def draw_cursor(surface: pygame.Surface, pos_x: int, pos_y: int, cursor_width: int = 2, cursor_height: int = 20):
+
+def draw_cursor(
+    surface: pygame.Surface,
+    pos_x: int,
+    pos_y: int,
+    cursor_width: int = 2,
+    cursor_height: int = 20,
+):
     pygame.draw.line(
         surface,
         "white",

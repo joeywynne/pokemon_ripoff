@@ -7,6 +7,7 @@ from pathlib import Path
 from src.entities.pokeball import Pokeball, get_pokeball_trajectory
 from src.behaviours.behaviour import PlayerBehaviour
 
+
 class Player(Entity):
 
     def __init__(self, x: int, y: int):
@@ -18,7 +19,7 @@ class Player(Entity):
             PLAYER_SPEED,
             get_player_sprite_info(),
             movement_controller=PlayerBehaviour(),
-            targeting_system=VisionTargeting()
+            targeting_system=VisionTargeting(),
         )
 
         self.throw_charge = 0
@@ -30,22 +31,21 @@ class Player(Entity):
 
     def update_intended(self, update_context) -> Pokeball | None:
         self.target = self.targeting_system.get_target(
-            self,
-            update_context.nearby_entities
+            self, update_context.nearby_entities
         )
         pokeball = self.handle_pokeball_throwing(update_context)
 
         if update_context.keys[pygame.K_a]:
             pass
-            
+
         super().update_intended(update_context)
         return pokeball
-    
+
     def handle_pokeball_throwing(self, update_context):
         pokeball = None
         keys = update_context.keys
         if keys[pygame.K_SPACE]:
-        # Pokeball time!
+            # Pokeball time!
             self.charge_pokeball()
             target_direction = self.get_target_direction()
             self.throw_preview_points = get_pokeball_trajectory(
@@ -55,7 +55,7 @@ class Player(Entity):
                 self.throw_charge,
                 keys,
                 update_context.map_size,
-                update_context.nearby_entities
+                update_context.nearby_entities,
             )
             self.render_throw_power = self.throw_charge
         else:

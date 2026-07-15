@@ -1,8 +1,11 @@
 import pygame
 from src.ui.renderers.text_input_renderer import TextInputRenderer
 
+
 class TextInputModal:
-    def __init__(self, renderer: TextInputRenderer, on_submit, on_cancel, text: str = ""):
+    def __init__(
+        self, renderer: TextInputRenderer, on_submit, on_cancel, text: str = ""
+    ):
         self.renderer = renderer
         self.on_submit = on_submit
         self.on_cancel = on_cancel
@@ -25,7 +28,7 @@ class TextInputModal:
 
             elif event.key == pygame.K_ESCAPE:
                 self.on_cancel()  # Indicate cancellation
-            
+
             else:
                 # Handle text input
                 if event.key == pygame.K_BACKSPACE:

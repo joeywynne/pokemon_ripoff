@@ -4,8 +4,8 @@ from typing import Protocol
 
 
 class TargetingProtocol(Protocol):
-    def get_target(self, entity, nearby_entities) -> EntityPositionProtocol | None:
-        ...
+    def get_target(self, entity, nearby_entities) -> EntityPositionProtocol | None: ...
+
 
 class VisionTargeting:
 
@@ -36,7 +36,8 @@ class VisionTargeting:
             <= angle_to_pokemon
             <= facing_angle + vision_radians
         )
-    
+
+
 class NearestTargeting:
     def __init__(self, start_targeting_distance: float, stop_targeting_distance: float):
         self.start_targeting_distance = start_targeting_distance
@@ -60,7 +61,7 @@ class NearestTargeting:
                 closest_entity = nearby_entity
                 closest_distance = distance
         return closest_entity
-        
+
 
 def get_distance(player_x, player_y, entity: EntityPositionProtocol) -> float:
     return ((player_x - entity.x) ** 2 + (player_y - entity.y) ** 2) ** 0.5

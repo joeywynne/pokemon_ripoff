@@ -7,7 +7,9 @@ REPEAT_DELAY = 3
 
 
 class PartyScreen:
-    def __init__(self, game_state: GameState, renderer: PartyRenderer, on_close, on_rename):
+    def __init__(
+        self, game_state: GameState, renderer: PartyRenderer, on_close, on_rename
+    ):
         self.game_state = game_state
         self.renderer = renderer
         self.on_close = on_close
@@ -15,7 +17,7 @@ class PartyScreen:
 
         self.buddy_index = game_state.buddy_index
         self.selected_index = max(0, self.buddy_index)
-    
+
         # delay before we do another move
         self.move_timer = 0
         self.first_press = False

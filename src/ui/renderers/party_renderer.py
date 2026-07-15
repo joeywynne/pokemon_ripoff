@@ -49,9 +49,13 @@ class PartyRenderer:
 
             if pokemon_index == party_screen.buddy_index:
                 available_width = panel.width - 2 * self.padding
-                marker = pygame.font.SysFont(self.font_name, self.font_size).render("(*)", True, "white")
-                surface.blit(marker, (panel.x + 15 + available_width - marker.get_width(), row_y + 4))
-                
+                marker = pygame.font.SysFont(self.font_name, self.font_size).render(
+                    "(*)", True, "white"
+                )
+                surface.blit(
+                    marker,
+                    (panel.x + 15 + available_width - marker.get_width(), row_y + 4),
+                )
 
     def get_visible_rows(self, panel_size, selected_index) -> int:
         usable_height = panel_size - self.title_gap - self.padding

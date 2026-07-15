@@ -2,6 +2,7 @@ import pygame
 from src.ui.renderers import ui_utils as utils
 from src.ui.ui_handler import UIScreen
 
+
 class TextInputRenderer:
     def __init__(self):
         self.font_name = "consolas"
@@ -19,29 +20,21 @@ class TextInputRenderer:
             font_name=self.font_name,
             font_size=self.font_size,
             padding=self.padding,
-            height=self.height
+            height=self.height,
         )
         y_offset = window_panel.height / 2
         text = font.render(modal.text, True, "white")
         text_x = window_panel.x + self.padding
         text_y = window_panel.y + y_offset
         surface.blit(text, (text_x, text_y))
-        
+
         utils.draw_underscores(
-            surface,
-            text_x,
-            text_y + 30,
-            modal.max_length,
-            font.size(" ")[0]
+            surface, text_x, text_y + 30, modal.max_length, font.size(" ")[0]
         )
 
         if modal.cursor_visible:
             text_width = font.size(modal.text)[0]
             cursor_x = text_x + text_width + 3
             utils.draw_cursor(
-                surface,
-                cursor_x,
-                text_y,
-                cursor_width=3,
-                cursor_height=self.font_size
+                surface, cursor_x, text_y, cursor_width=3, cursor_height=self.font_size
             )

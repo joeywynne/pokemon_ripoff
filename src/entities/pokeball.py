@@ -38,6 +38,7 @@ def get_pokeball_sprite_info() -> SpriteInfo:
         sprite_size=(120, 120),
     )
 
+
 def get_pokeball_trajectory(
     start_x,
     start_y,
@@ -63,4 +64,3 @@ def get_pokeball_trajectory(
         start_y += dy
         points.append((start_x, start_y))
     return points
-

@@ -116,13 +116,13 @@ class Game:
         self.ui_handler.render(self.screen)
 
         pygame.display.flip()
-    
+
     def process_game_events(self):
         while self.game_state.pending_events:
             event = self.game_state.pending_events.pop()
             if isinstance(event, PokemonCapturedEvent):
                 self.open_renaming_modal(event.pokemon)
-    
+
     def open_inventory_screen(self):
         logger.info("Opening inventory screen")
         pass
@@ -160,13 +160,13 @@ class Game:
         def rename_pokemon(modal):
             pokemon.rename(modal.text)
             self.ui_handler.close_screen()
-        
+
         self.ui_handler.open_screen(
             TextInputModal(
                 text=pokemon.name,
                 renderer=TextInputRenderer(),
                 on_submit=rename_pokemon,
-                on_cancel=lambda: self.ui_handler.close_screen()
+                on_cancel=lambda: self.ui_handler.close_screen(),
             )
         )
 

@@ -1,5 +1,4 @@
 from enum import Enum, auto
-from typing import Callable
 
 from src.behaviours.behaviour import (
     MovementBehaviour,
@@ -14,7 +13,7 @@ import random
 
 class BehaviourState(Enum):
     WANDER = auto()
-    IDLE = auto()   
+    IDLE = auto()
     FOLLOW = auto()
     FLEE = auto()
     TELEPORT = auto()
@@ -32,7 +31,11 @@ class StationaryWanderBehaviour(MovementBehaviour):
     def get_intended_move(self, entity, update_context):
         self.timer -= 1
         if self.timer <= 0:
-            self.state = BehaviourState.IDLE if self.state == BehaviourState.WANDER else BehaviourState.WANDER
+            self.state = (
+                BehaviourState.IDLE
+                if self.state == BehaviourState.WANDER
+                else BehaviourState.WANDER
+            )
             self.timer = random.randint(120, 300)
 
         if self.state == BehaviourState.WANDER:
@@ -43,17 +46,26 @@ class StationaryWanderBehaviour(MovementBehaviour):
 
 class WanderFollowBehaviour(MovementBehaviour):
 
+    def __init__(self, speed_multiplier=1.0, min_distance=50):
+        self.speed_multiplier = speed_multiplier
+        self.wander = WanderBehaviour()
+        self.follow = FollowBehaviour(
+            speed_multiplier=speed_multiplier, min_distance=min_distance
+        )
+
     def get_intended_move(self, entity, update_context):
         if entity.target is not None:
-            return FollowBehaviour(speed_multiplier=1.0, min_distance=50).get_intended_move(entity, update_context)
-        return WanderBehaviour().get_intended_move(entity, update_context)
+            return self.follow.get_intended_move(entity, update_context)
+        return self.wander.get_intended_move(entity, update_context)
 
 
 class WanderFleeBehaviour(MovementBehaviour):
 
     def get_intended_move(self, entity, update_context):
         if entity.target is not None:
-            return FleeBehaviour(speed_multiplier=1.0).get_intended_move(entity, update_context)
+            return FleeBehaviour(speed_multiplier=1.0).get_intended_move(
+                entity, update_context
+            )
         return WanderBehaviour().get_intended_move(entity, update_context)
 
 
@@ -92,15 +104,11 @@ class BuddyBehaviour(MovementBehaviour):
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
         if entity.target is not None:
             # Target is Pokemon - chase it
-            return FollowBehaviour(speed_multiplier=2.0, min_distance=10).get_intended_move(entity, update_context)
+            return FollowBehaviour(
+                speed_multiplier=2.0, min_distance=10
+            ).get_intended_move(entity, update_context)
         else:
             # No target - follow player
-            return FollowBehaviour(speed_multiplier=0.5, min_distance=30).get_intended_move(entity, update_context)
-    
-    def _get_aggressive_move(self):
-        return 0, 0
-        # Essentially follows the player within x distance
-        # Player can target a wild pokemon which triggers "Aggression"
-        # If no target Buddy is defensive
-        # Can recall pokemon to flee - buddy follows you and then hits and enters party
-        # Maybe all party changes should follow this model?
+            return WanderFollowBehaviour(
+                speed_multiplier=0.5, min_distance=30
+            ).get_intended_move(entity, update_context)

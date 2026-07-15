@@ -8,6 +8,7 @@ from src.contracts import EntityPositionProtocol
 from src.behaviours.targeting_system import TargetingProtocol
 from src.utils import normalise_vector
 
+
 @dataclass
 class SpriteInfo:
     relative_path: Path
@@ -77,8 +78,10 @@ class Entity:
 
     def get_target(self, update_context) -> Optional[EntityPositionProtocol]:
         if self.targeting_system:
-            return self.targeting_system.get_target(self, update_context.nearby_entities)
-    
+            return self.targeting_system.get_target(
+                self, update_context.nearby_entities
+            )
+
     def get_target_direction(self):
         if not self.target:
             return self.facing

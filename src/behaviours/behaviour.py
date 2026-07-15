@@ -195,7 +195,7 @@ class FollowBehaviour(MovementBehaviour):
         target = entity.target
         if target is None:
             target = update_context.player_position
-        
+
         dx = target.x - entity.x
         dy = target.y - entity.y
         return scaled_direction(dx, dy, entity.speed * self.speed_multiplier)
@@ -239,7 +239,7 @@ class TeleportBehaviour(MovementBehaviour):
             self.teleport_frac -= 0.01
             entity.size = entity.species.size * self.teleport_frac
             return 0, 0
-    
+
 
 class TemporaryBehaviour(MovementBehaviour):
 
@@ -271,7 +271,7 @@ class TemporaryBehaviour(MovementBehaviour):
             entity,
             update_context,
         )
-    
+
 
 def scaled_direction(dx: float, dy: float, speed: float) -> tuple[float, float]:
     distance = (dx**2 + dy**2) ** 0.5

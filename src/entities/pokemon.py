@@ -106,7 +106,7 @@ class Pokemon(Entity):
             fallback=self.movement_controller,
             duration=300,
         )
-    
+
     def rename(self, new_name: str):
         self.name = new_name
 
