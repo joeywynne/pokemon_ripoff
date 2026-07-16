@@ -1,6 +1,7 @@
 import pygame
 
 from src.core import settings
+from src.behaviours.targeting_system import VisionTargeting
 import random
 
 
@@ -12,6 +13,9 @@ class MovementBehaviour:
 
 
 class PlayerBehaviour(MovementBehaviour):
+    def __init__(self):
+        self.targeting_system = VisionTargeting()
+
     def get_intended_move(self, player, update_context) -> tuple[float, float]:
         keys = update_context.keys
         # Default to no movement if no movement keys are pressed
@@ -26,6 +30,10 @@ class PlayerBehaviour(MovementBehaviour):
             dy -= player.speed
         if keys[pygame.K_DOWN]:
             dy += player.speed
+
+        player.current_target = self.targeting_system.get_target(
+            player, update_context.nearby_entities
+        )
 
         return dx, dy
 
@@ -149,7 +157,7 @@ class WanderBehaviour(MovementBehaviour):
         self.allow_stationary = allow_stationary
 
         self.timer = 0
-        self.direction = (0, 0)
+        self.direction = self._random_direction()
         self.change_interval = random.randint(self.min_interval, self.max_interval)
 
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
@@ -191,11 +199,7 @@ class FollowBehaviour(MovementBehaviour):
         self.speed_multiplier = speed_multiplier
         self.min_distance = min_distance
 
-    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        target = entity.target
-        if target is None:
-            target = update_context.player_position
-
+    def get_intended_move(self, entity, target) -> tuple[float, float]:
         dx = target.x - entity.x
         dy = target.y - entity.y
         return scaled_direction(dx, dy, entity.speed * self.speed_multiplier)
@@ -206,10 +210,7 @@ class FleeBehaviour(MovementBehaviour):
     def __init__(self, speed_multiplier: float = 1.0):
         self.speed_multiplier = speed_multiplier
 
-    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        target = entity.target
-        if target is None:
-            return 0, 0
+    def get_intended_move(self, entity, target) -> tuple[float, float]:
         dx = entity.x - target.x
         dy = entity.y - target.y
         return scaled_direction(dx, dy, entity.speed * self.speed_multiplier)

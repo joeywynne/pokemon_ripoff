@@ -6,6 +6,12 @@ from src.behaviours.behaviour import PokeballBehaviour
 from src.core.settings import POKEBALL_SIZE
 
 
+class Position:
+    def __init__(self, x: float, y: float):
+        self.x = x
+        self.y = y
+
+
 class Projectile(Entity):
     pass
 
@@ -50,7 +56,7 @@ def get_pokeball_trajectory(
 ):
     simulation_ball = Pokeball(start_x, start_y, direction, throw_power)
     simulation_context = UpdateContext(
-        player_position=(start_x, start_y),
+        player_position=Position(start_x, start_y),
         map_size=map_size,
         keys=keys,
         nearby_entities=nearby_entities,

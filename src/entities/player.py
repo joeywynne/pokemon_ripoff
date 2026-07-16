@@ -1,11 +1,11 @@
 from src.entities.entity import Entity, SpriteInfo
 from src.core.settings import PLAYER_SIZE, PLAYER_SPEED
-from src.behaviours.targeting_system import VisionTargeting
 import pygame
 from pathlib import Path
 
 from src.entities.pokeball import Pokeball, get_pokeball_trajectory
 from src.behaviours.behaviour import PlayerBehaviour
+from src.utils import normalise_vector
 
 
 class Player(Entity):
@@ -18,10 +18,9 @@ class Player(Entity):
             1.0,
             PLAYER_SPEED,
             get_player_sprite_info(),
-            movement_controller=PlayerBehaviour(),
-            targeting_system=VisionTargeting(),
+            movement_controller=PlayerBehaviour()
         )
-
+        self.current_target = None
         self.throw_charge = 0
         self.throwing = False
         self.throw_preview_points = []
@@ -30,16 +29,8 @@ class Player(Entity):
         self.vision_angle = 60
 
     def update_intended(self, update_context) -> Pokeball | None:
-        self.target = self.targeting_system.get_target(
-            self, update_context.nearby_entities
-        )
-        pokeball = self.handle_pokeball_throwing(update_context)
-
-        if update_context.keys[pygame.K_a]:
-            pass
-
         super().update_intended(update_context)
-        return pokeball
+        return self.handle_pokeball_throwing(update_context)
 
     def handle_pokeball_throwing(self, update_context):
         pokeball = None
@@ -80,6 +71,14 @@ class Player(Entity):
         self.throwing = False
         self.throw_charge = 0
         return pokeball
+    
+    def get_target_direction(self):
+        if not self.current_target:
+            return self.facing
+
+        dx = self.current_target.x - self.x
+        dy = self.current_target.y - self.y
+        return normalise_vector((dx, dy))
 
 
 def get_player_sprite_info() -> SpriteInfo:

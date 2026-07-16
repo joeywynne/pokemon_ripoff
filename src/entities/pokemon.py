@@ -1,7 +1,6 @@
 from enum import Enum
 
 from src.entities.entity import Entity
-from src.behaviours.targeting_system import NearestTargeting
 from src.pokemon.species import PokemonSpecies
 
 from src.core.settings import TILE_SIZE
@@ -37,11 +36,7 @@ class Pokemon(Entity):
             species.mass,
             species.speed,
             species.sprite_info,
-            movement_controller=BEHAVIOUR_FACTORIES[species.behaviour_id](),
-            targeting_system=NearestTargeting(
-                start_targeting_distance=100,
-                stop_targeting_distance=150,
-            ),
+            movement_controller=BEHAVIOUR_FACTORIES[species.behaviour_id]()
         )
         self.hp = species.base_hp
         self.status = PokemonState.HEALTHY

@@ -14,6 +14,6 @@ class EntityPositionProtocol(Protocol):
 class UpdateContext:
     keys: dict
     nearby_entities: list[EntityPositionProtocol]
-    player_position: tuple[float, float]
+    player_position: EntityPositionProtocol
     map_size: tuple[int, int]
     event_queue: list = field(default_factory=list)

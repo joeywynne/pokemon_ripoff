@@ -62,6 +62,9 @@ class GameState:
         new_buddy.movement_controller = BuddyBehaviour()
         return new_buddy
 
+    def get_buddy(self) -> Pokemon | None:
+        return try_get_pokemon(self.party, self.buddy_index)
+
 
 def try_get_pokemon(party, index):
     if 0 <= index < len(party):

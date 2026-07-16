@@ -45,7 +45,7 @@ class Game:
             SCREEN_WIDTH, SCREEN_HEIGHT, self.map_width, self.map_height
         )
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        self.pokemon = generate_pokemon(6, self.map_width, self.map_height)
+        self.pokemon = generate_pokemon(1, self.map_width, self.map_height)
 
         self.entities = self.pokemon + [self.player]
         entities_renderer = EntitiesRenderer(self.entities, assets)
@@ -72,8 +72,12 @@ class Game:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:
                 self.open_party_screen()
+
             elif event.key == pygame.K_i:
                 self.open_inventory_screen()
+
+            elif event.key == pygame.K_a:
+                self.toggle_buddy_attack_target()
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -92,7 +96,7 @@ class Game:
             context = UpdateContext(
                 keys=keys,
                 nearby_entities=self.entities,
-                player_position=(self.player.x, self.player.y),
+                player_position=self.player,
                 map_size=(self.map_width, self.map_height),
             )
             pokeball = entity.update_intended(context)
@@ -127,7 +131,7 @@ class Game:
         logger.info("Opening inventory screen")
         pass
 
-    def close_inventory_screen(self, inventory_screen):
+    def close_inventory_screen(self):
         logger.info("Closing inventory screen")
         self.ui_handler.close_screen()
 
@@ -169,6 +173,15 @@ class Game:
                 on_cancel=lambda: self.ui_handler.close_screen(),
             )
         )
+
+    def toggle_buddy_attack_target(self):
+        buddy = self.game_state.get_buddy()
+        target = self.player.current_target
+        if buddy and target:
+            if buddy.attack_target == target:
+                buddy.attack_target = None
+            else:
+                buddy.attack_target = target
 
     def log_debug_info(self):
         if not self.debug:

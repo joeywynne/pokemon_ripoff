@@ -10,6 +10,8 @@ from src.behaviours.behaviour import (
 )
 import random
 
+from src.behaviours.targeting_system import NearestTargeting
+
 
 class BehaviourState(Enum):
     WANDER = auto()
@@ -48,25 +50,38 @@ class WanderFollowBehaviour(MovementBehaviour):
 
     def __init__(self, speed_multiplier=1.0, min_distance=50):
         self.speed_multiplier = speed_multiplier
-        self.wander = WanderBehaviour()
+        self.wander = WanderBehaviour(allow_stationary=False)
         self.follow = FollowBehaviour(
             speed_multiplier=speed_multiplier, min_distance=min_distance
         )
+        self.follow_targeting = NearestTargeting(
+            start_targeting_distance=100, stop_targeting_distance=150
+        )
 
     def get_intended_move(self, entity, update_context):
-        if entity.target is not None:
-            return self.follow.get_intended_move(entity, update_context)
+        target = self.follow_targeting.get_target(
+            entity, update_context.nearby_entities
+        )
+        if target is not None:
+            return self.follow.get_intended_move(entity, target)
         return self.wander.get_intended_move(entity, update_context)
 
 
 class WanderFleeBehaviour(MovementBehaviour):
 
+    def __init__(self, speed_multiplier=1.0):
+        self.speed_multiplier = speed_multiplier
+        self.flee = FleeBehaviour(speed_multiplier=speed_multiplier)
+        self.wander = WanderBehaviour()
+        self.flee_targeting = NearestTargeting(
+            start_targeting_distance=100, stop_targeting_distance=150
+        )
+
     def get_intended_move(self, entity, update_context):
-        if entity.target is not None:
-            return FleeBehaviour(speed_multiplier=1.0).get_intended_move(
-                entity, update_context
-            )
-        return WanderBehaviour().get_intended_move(entity, update_context)
+        target = self.flee_targeting.get_target(entity, update_context.nearby_entities)
+        if target is not None:
+            return self.flee.get_intended_move(entity, target)
+        return self.wander.get_intended_move(entity, update_context)
 
 
 class StationaryTeleportBehaviour(MovementBehaviour):
@@ -78,9 +93,8 @@ class StationaryTeleportBehaviour(MovementBehaviour):
         self.teleport_distance = teleport_distance
 
     def get_intended_move(self, entity, update_context):
-        player_position = update_context.player_position
-        dx = player_position[0] - entity.x
-        dy = player_position[1] - entity.y
+        dx = update_context.player_position.x - entity.x
+        dy = update_context.player_position.y - entity.y
         distance = (dx**2 + dy**2) ** 0.5
 
         if distance < self.teleport_distance or self.state == BehaviourState.TELEPORT:
@@ -101,14 +115,25 @@ class StationaryTeleportBehaviour(MovementBehaviour):
 
 
 class BuddyBehaviour(MovementBehaviour):
+    def __init__(
+        self,
+        wander_speed_mult: float = 0.5,
+        wander_min_distance: int = 30,
+        follow_speed_mult: float = 2.0,
+        follow_min_distance: int = 10,
+    ):
+        self.follow_player = WanderFollowBehaviour(
+            speed_multiplier=wander_speed_mult, min_distance=wander_min_distance
+        )
+        self.attack = FollowBehaviour(
+            speed_multiplier=follow_speed_mult, min_distance=follow_min_distance
+        )
+        self.attack_target = None
+
     def get_intended_move(self, entity, update_context) -> tuple[float, float]:
-        if entity.target is not None:
+        if self.attack_target:
             # Target is Pokemon - chase it
-            return FollowBehaviour(
-                speed_multiplier=2.0, min_distance=10
-            ).get_intended_move(entity, update_context)
+            return self.attack.get_intended_move(entity, self.attack_target)
         else:
             # No target - follow player
-            return WanderFollowBehaviour(
-                speed_multiplier=0.5, min_distance=30
-            ).get_intended_move(entity, update_context)
+            return self.follow_player.get_intended_move(entity, update_context.player_position)
