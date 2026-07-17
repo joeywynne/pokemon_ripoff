@@ -2,12 +2,13 @@ from src.core.game_state import GameState
 from src.entities.entity import Entity
 from src.core.map.collision_map import CollisionMap
 from src.behaviours.interactions import process_interaction
+from src.entities.player import Player
 from src.utils import normalise_vector
 import pygame
 
 
 def move_entities(
-    entities: list[Entity], collision_map: CollisionMap, game_state: GameState
+    entities: list[Entity], collision_map: CollisionMap, game_state: GameState, player: Player
 ) -> None:
     """Move all entities based on their desired moves and resolve collisions.
 
@@ -22,7 +23,7 @@ def move_entities(
         move_entity(entity, collision_map)
 
     # Attempt to resolve all collisions between entities
-    resolve_all_collisions(entities, collision_map, game_state)
+    resolve_all_collisions(entities, collision_map, game_state, player)
 
     # Remove any entities that are no longer active (e.g., caught, destroyed)
     entities[:] = [entity for entity in entities if entity.is_active]
@@ -85,7 +86,7 @@ def can_move_to(target_rect: pygame.Rect, collision_map: CollisionMap) -> bool:
 
 
 def resolve_all_collisions(
-    entities: list[Entity], collision_map: CollisionMap, game_state: GameState
+    entities: list[Entity], collision_map: CollisionMap, game_state: GameState, player: Player
 ):
     """Resolve any collisions between entities.
 
@@ -111,7 +112,7 @@ def resolve_all_collisions(
                     if not all((a.is_active, b.is_active)):
                         continue
 
-                    process_interaction(a, b, game_state)
+                    process_interaction(a, b, player, game_state)
 
                     push_entities_apart(a, b, collision_map)
                     any_collisions_resolved = True

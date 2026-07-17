@@ -45,7 +45,7 @@ class Game:
             SCREEN_WIDTH, SCREEN_HEIGHT, self.map_width, self.map_height
         )
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        self.pokemon = generate_pokemon(1, self.map_width, self.map_height)
+        self.pokemon = generate_pokemon(6, self.map_width, self.map_height)
 
         self.entities = self.pokemon + [self.player]
         entities_renderer = EntitiesRenderer(self.entities, assets)
@@ -107,7 +107,7 @@ class Game:
         if new_entities != []:
             self.entities.extend(new_entities)
 
-        move_entities(self.entities, self.collision_map, self.game_state)
+        move_entities(self.entities, self.collision_map, self.game_state, self.player)
         self.process_game_events()
 
     def render(self):

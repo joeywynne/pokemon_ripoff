@@ -42,13 +42,15 @@ class NearestTargeting:
     def __init__(self, start_targeting_distance: float, stop_targeting_distance: float):
         self.start_targeting_distance = start_targeting_distance
         self.stop_targeting_distance = stop_targeting_distance
+        self.current_target: EntityPositionProtocol | None = None
 
     def get_target(self, entity, nearby_entities) -> EntityPositionProtocol | None:
-        if entity.target is not None:
-            distance = get_distance(entity.x, entity.y, entity.target)
+        if self.current_target is not None:
+            distance = get_distance(entity.x, entity.y, self.current_target)
             if distance > self.stop_targeting_distance:
-                return None
-            return entity.target
+                self.current_target = None
+            else:
+                return self.current_target
 
         # Find the closest entity.
         closest_entity = None
@@ -57,10 +59,11 @@ class NearestTargeting:
             if nearby_entity.id == entity.id:
                 continue  # Skip self
             distance = get_distance(entity.x, entity.y, nearby_entity)
-            if distance < closest_distance:
+            if distance < closest_distance and distance <= self.start_targeting_distance:
                 closest_entity = nearby_entity
                 closest_distance = distance
-        return closest_entity
+        self.current_target = closest_entity
+        return self.current_target
 
 
 def get_distance(player_x, player_y, entity: EntityPositionProtocol) -> float:

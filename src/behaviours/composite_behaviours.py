@@ -1,6 +1,7 @@
 from enum import Enum, auto
 
 from src.behaviours.behaviour import (
+    EntityTargetingSystem,
     MovementBehaviour,
     WanderBehaviour,
     StationaryBehaviour,
@@ -48,39 +49,44 @@ class StationaryWanderBehaviour(MovementBehaviour):
 
 class WanderFollowBehaviour(MovementBehaviour):
 
-    def __init__(self, speed_multiplier=1.0, min_distance=50):
-        self.speed_multiplier = speed_multiplier
+    def __init__(
+            self,
+            follow_speed_multiplier=2.0,
+            min_distance=50,
+            stop_targeting_distance=150,
+            start_targeting_distance=100):
         self.wander = WanderBehaviour(allow_stationary=False)
-        self.follow = FollowBehaviour(
-            speed_multiplier=speed_multiplier, min_distance=min_distance
+        
+        follow_targeting = NearestTargeting(
+            start_targeting_distance=start_targeting_distance,
+            stop_targeting_distance=stop_targeting_distance
         )
-        self.follow_targeting = NearestTargeting(
-            start_targeting_distance=100, stop_targeting_distance=150
+        self.follow = FollowBehaviour(
+            targeting_system=follow_targeting,
+            speed_multiplier=follow_speed_multiplier,
+            min_distance=min_distance,
         )
 
     def get_intended_move(self, entity, update_context):
-        target = self.follow_targeting.get_target(
-            entity, update_context.nearby_entities
-        )
+        target = self.follow.select_target(entity, update_context)
         if target is not None:
-            return self.follow.get_intended_move(entity, target)
+            return self.follow.move_towards_target(entity, target)
         return self.wander.get_intended_move(entity, update_context)
 
 
 class WanderFleeBehaviour(MovementBehaviour):
 
-    def __init__(self, speed_multiplier=1.0):
-        self.speed_multiplier = speed_multiplier
-        self.flee = FleeBehaviour(speed_multiplier=speed_multiplier)
-        self.wander = WanderBehaviour()
-        self.flee_targeting = NearestTargeting(
+    def __init__(self, flee_speed_multiplier=2.0):
+        flee_targeting = NearestTargeting(
             start_targeting_distance=100, stop_targeting_distance=150
         )
-
+        self.flee = FleeBehaviour(speed_multiplier=flee_speed_multiplier, targeting_system=flee_targeting)
+        self.wander = WanderBehaviour()
+        
     def get_intended_move(self, entity, update_context):
-        target = self.flee_targeting.get_target(entity, update_context.nearby_entities)
+        target = self.flee.select_target(entity, update_context)
         if target is not None:
-            return self.flee.get_intended_move(entity, target)
+            return self.flee.move_away_from_target(entity, target)
         return self.wander.get_intended_move(entity, update_context)
 
 
@@ -126,7 +132,9 @@ class BuddyBehaviour(MovementBehaviour):
             speed_multiplier=wander_speed_mult, min_distance=wander_min_distance
         )
         self.attack = FollowBehaviour(
-            speed_multiplier=follow_speed_mult, min_distance=follow_min_distance
+            speed_multiplier=follow_speed_mult,
+            min_distance=follow_min_distance,
+            targeting_system=EntityTargetingSystem()
         )
         self.attack_target = None
 
@@ -136,4 +144,4 @@ class BuddyBehaviour(MovementBehaviour):
             return self.attack.get_intended_move(entity, self.attack_target)
         else:
             # No target - follow player
-            return self.follow_player.get_intended_move(entity, update_context.player_position)
+            return self.follow_player.get_intended_move(entity, update_context)

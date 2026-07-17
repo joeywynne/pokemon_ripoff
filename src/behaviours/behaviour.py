@@ -1,8 +1,10 @@
 import pygame
 
+from src.contracts import EntityPositionProtocol
 from src.core import settings
-from src.behaviours.targeting_system import VisionTargeting
+from src.behaviours.targeting_system import TargetingProtocol, VisionTargeting
 import random
+
 
 
 class MovementBehaviour:
@@ -193,27 +195,53 @@ class FollowBehaviour(MovementBehaviour):
 
     def __init__(
         self,
+        targeting_system: TargetingProtocol,
         speed_multiplier: float = 1.0,
-        min_distance: int = 50,
+        min_distance: int = 50
     ):
         self.speed_multiplier = speed_multiplier
         self.min_distance = min_distance
+        self.targeting_system = targeting_system
 
-    def get_intended_move(self, entity, target) -> tuple[float, float]:
+    def select_target(self, entity, update_context):
+        return self.targeting_system.get_target(entity, update_context.nearby_entities)
+    
+    def move_towards_target(self, entity, target):
         dx = target.x - entity.x
         dy = target.y - entity.y
+        distance = (dx**2 + dy**2) ** 0.5
+
+        if distance < self.min_distance:
+            return 0, 0
+
         return scaled_direction(dx, dy, entity.speed * self.speed_multiplier)
+
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
+        target = self.select_target(entity, update_context)
+        if target is None:
+            return 0, 0
+        return self.move_towards_target(entity, target)
 
 
 class FleeBehaviour(MovementBehaviour):
 
-    def __init__(self, speed_multiplier: float = 1.0):
+    def __init__(self, targeting_system: TargetingProtocol, speed_multiplier: float = 1.0):
         self.speed_multiplier = speed_multiplier
+        self.targeting_system = targeting_system
 
-    def get_intended_move(self, entity, target) -> tuple[float, float]:
+    def select_target(self, entity, update_context):
+        return self.targeting_system.get_target(entity, update_context.nearby_entities)
+    
+    def move_away_from_target(self, entity, target):
         dx = entity.x - target.x
         dy = entity.y - target.y
         return scaled_direction(dx, dy, entity.speed * self.speed_multiplier)
+
+    def get_intended_move(self, entity, update_context) -> tuple[float, float]:
+        target = self.select_target(entity, update_context)
+        if target is None:
+            return 0, 0
+        return self.move_away_from_target(entity, target)
 
 
 class TeleportBehaviour(MovementBehaviour):
@@ -272,6 +300,14 @@ class TemporaryBehaviour(MovementBehaviour):
             entity,
             update_context,
         )
+    
+class EntityTargetingSystem(TargetingProtocol):
+    def __init__(self, target: EntityPositionProtocol | None = None):
+        self.target = target
+
+    def get_target(self, entity, nearby_entities) -> EntityPositionProtocol | None:
+        if self.target is not None and self.target.is_active:
+            return self.target
 
 
 def scaled_direction(dx: float, dy: float, speed: float) -> tuple[float, float]:

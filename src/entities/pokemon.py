@@ -6,8 +6,6 @@ from src.pokemon.species import PokemonSpecies
 from src.core.settings import TILE_SIZE
 import random
 from src.pokemon.species import DROWZEE, GASTLY, NIDORAN, ABRA
-from src.pokemon.catching import attempt_capture
-from src.behaviours.behaviour import TemporaryBehaviour, FollowBehaviour, FleeBehaviour
 from src.behaviours.behaviour_registry import BEHAVIOUR_FACTORIES
 
 
@@ -76,31 +74,10 @@ class Pokemon(Entity):
         catch_term = (self.species.catch_rate + 1) / (ball_value + 1)
         f_term = (f + 1) / 256
         return status_prior + (catch_term * f_term)
-
-    def on_hit_by_pokeball(self, pokeball):
-        result = attempt_capture(pokemon=self, pokeball=pokeball)
-        result = True
-
-        if result:
-            self.on_capture()
-        else:
-            self.on_capture_failure()
-
-    def on_capture(self):
-        self.movement_controller = FollowBehaviour(
-            speed_multiplier=3.0,
-            min_distance=0.0,
-        )
+    
+    def mark_captured(self):
         self.is_captured = True
-
-    def on_capture_failure(self):
-        self.movement_controller = TemporaryBehaviour(
-            behaviour=FleeBehaviour(
-                speed_multiplier=3.0,
-            ),
-            fallback=self.movement_controller,
-            duration=300,
-        )
+        self.reset_stats_when_captured()
 
     def rename(self, new_name: str):
         self.name = new_name
