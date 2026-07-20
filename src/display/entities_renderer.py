@@ -93,8 +93,6 @@ class EntitiesRenderer:
             )
 
             surface.blit(sprite, sprite_rect)
-        else:
-            pygame.draw.rect(surface, entity.colour, screen_rect)
 
         if debug:
             pygame.draw.rect(

@@ -12,6 +12,8 @@ class GameState:
     pokedex: dict[str, bool] = field(default_factory=dict)
     buddy_index: int = -1
     pending_events: list = field(default_factory=list)
+    reputation: int = 0
+    money: int = 0
     # items: list[Items] = field(default_factory=list)
 
     @classmethod
@@ -53,7 +55,10 @@ class GameState:
             return
 
         # Create and set pokemon
-        new_buddy = try_get_pokemon(self.party, buddy_index)
+        return self.setup_buddy(pos_x, pos_y)
+
+    def setup_buddy(self, pos_x: float, pos_y: float) -> Pokemon | None:
+        new_buddy = try_get_pokemon(self.party, self.buddy_index)
         new_buddy.is_buddy = True
         new_buddy.is_captured = False
         new_buddy.is_active = True
@@ -61,9 +66,6 @@ class GameState:
         new_buddy.y = pos_y
         new_buddy.movement_controller = BuddyBehaviour()
         return new_buddy
-
-    def get_buddy(self) -> Pokemon | None:
-        return try_get_pokemon(self.party, self.buddy_index)
 
 
 def try_get_pokemon(party, index):

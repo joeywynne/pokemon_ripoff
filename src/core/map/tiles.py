@@ -3,6 +3,11 @@ from typing import Tuple, Optional
 
 Colour = Tuple[int, int, int]
 
+# Long grass slower
+# Some sort of sharp or poison effect
+# Paths faster
+
+
 
 class Tile:
     "Defines the base tile on the map. No effects or interactions."

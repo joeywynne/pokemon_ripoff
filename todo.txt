@@ -2,10 +2,14 @@ Catch mechanics - currently 100% catch rate
     Pick a generation
 
 Buddy pokemon movement
-    - Refactor behaviour system
-    - Follow with range
+    - Follow with range - check this
     - aggressive: attacks visible pokemon
     - defensive: no aggression
+
+Map:
+- Procedural generation
+- Voronoi regions and biomes
+- Beach, mountain, forest, city, river, lake etc.
 
 Animate movement
 
