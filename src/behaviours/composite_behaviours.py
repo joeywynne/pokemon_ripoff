@@ -123,13 +123,13 @@ class StationaryTeleportBehaviour(MovementBehaviour):
 class BuddyBehaviour(MovementBehaviour):
     def __init__(
         self,
-        wander_speed_mult: float = 0.5,
+        follow_player_speed_mult: float = 0.5,
         wander_min_distance: int = 30,
         follow_speed_mult: float = 2.0,
         follow_min_distance: int = 10,
     ):
         self.follow_player = WanderFollowBehaviour(
-            speed_multiplier=wander_speed_mult, min_distance=wander_min_distance
+            follow_speed_multiplier=follow_player_speed_mult, min_distance=wander_min_distance
         )
         self.attack = FollowBehaviour(
             speed_multiplier=follow_speed_mult,

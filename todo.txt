@@ -1,3 +1,5 @@
+Limit targeting. I.e. stop wild pokemon targeting each other
+
 Catch mechanics - currently 100% catch rate
     Pick a generation
 
@@ -9,7 +11,8 @@ Buddy pokemon movement
 Map:
 - Procedural generation
 - Voronoi regions and biomes
-- Beach, mountain, forest, city, river, lake etc.
+- Beach, mountain, forest, city, lake etc.
+- Add river generation
 
 Animate movement
 

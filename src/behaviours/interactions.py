@@ -33,7 +33,6 @@ def process_pokeball_hit(pokeball: Pokeball, pokemon: Pokemon, player: Player):
         return
     pokeball.start_deactivating = True
     caught = attempt_capture(pokemon, pokeball)
-    print(caught)
     if caught:
         pokemon.mark_captured()
         follow = FollowBehaviour(
@@ -52,8 +51,6 @@ def process_pokeball_hit(pokeball: Pokeball, pokemon: Pokemon, player: Player):
             duration=300,
         )
         pokemon.movement_controller = temp_flee
-
-    print(pokemon.is_captured)
 
 
 def process_player_pokemon_interaction(pokemon: Pokemon, game_state: GameState):

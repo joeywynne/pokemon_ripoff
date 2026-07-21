@@ -10,7 +10,7 @@ class MapRenderer:
         self.tile_map = tile_map
         self.assets = assets
 
-    def draw(self, surface: pygame.Surface, camera: Camera):
+    def draw(self, surface: pygame.Surface, camera: Camera, is_debug: bool):
         tile_size = self.tile_map.grid_size
 
         for ty in range(self.tile_map.height):
@@ -31,4 +31,5 @@ class MapRenderer:
                 else:
                     pygame.draw.rect(surface, tile.colour, dest)
                 # Grid lines for debugging
-                pygame.draw.rect(surface, WHITE, dest, 1)
+                if is_debug:
+                    pygame.draw.rect(surface, WHITE, dest, 1)

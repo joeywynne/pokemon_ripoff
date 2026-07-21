@@ -2,8 +2,9 @@ import argparse
 import logging
 
 from src.core.game import Game
-from src.core.map.tile_map import generate_random_map
+from src.core.map.tile_map import generate_tile_map
 from src.core.map.collision_map import generate_collision_map
+from src.world_generation.map_generator import MapGenerator
 
 
 def setup_logging(debug: bool) -> None:
@@ -23,8 +24,9 @@ def main() -> None:
     args = parser.parse_args()
 
     setup_logging(args.debug)
-    probs = {5: 0.5, 1: 0.3, 2: 0.15, 3: 0.05}
-    tile_map = generate_random_map(16, 16, probs)
+
+    regions_map = MapGenerator(64, 64).generate_map()
+    tile_map = generate_tile_map(64, 64, regions_map)
     collision_map = generate_collision_map(tile_map)
     game = Game(tile_map, collision_map, debug=args.debug)
     game.run()

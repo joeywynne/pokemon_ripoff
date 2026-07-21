@@ -1,10 +1,17 @@
 from src.core.map.grid_map import GridMap
 from src.core.map.tiles import TILE_REGISTRY, Tile
-import random
-import src.core.settings as settings
+from src.world_generation.biomes import BiomeType
+from src.world_generation.region_map import RegionMap
+from src.core import settings
 
 
 class TileMap(GridMap):
+
+    def __init__(self, width: int, height: int):
+        # Initialize the grid with default tile type (e.g., "GRASS")
+        default_tile_type = 1
+        grid = [[default_tile_type for _ in range(width)] for _ in range(height)]
+        super().__init__(grid, grid_size=settings.TILE_SIZE)
 
     def set_tile(self, x: int, y: int, tile_type: int):
         if tile_type in TILE_REGISTRY:
@@ -19,23 +26,25 @@ class TileMap(GridMap):
             raise IndexError("Tile coordinates out of bounds.")
 
 
-def generate_random_map(
-    width: int, height: int, tile_probabilities: dict[int, float]
-) -> TileMap:
-    """Generates a random map based on the provided tile probabilities."""
-    tiles = [
-        [
-            random.choices(
-                list(tile_probabilities.keys()), weights=tile_probabilities.values()
-            )[0]
-            for _ in range(width)
-        ]
-        for _ in range(height)
-    ]
-    # replace boundary tiles with Solid tiles
-    tiles[0] = [4 for _ in range(width)]
-    tiles[height - 1] = [4 for _ in range(width)]
-    for i in range(height):
-        tiles[i][0] = 4
-        tiles[i][-1] = 4
-    return TileMap(tiles, grid_size=settings.TILE_SIZE)
+def generate_tile_map(width: int, height: int, regions_map: RegionMap) -> TileMap:
+    """
+    Generates a tile map filled with the default tile type.
+    """
+    tile_map = TileMap(width, height)
+    for y in range(height):
+        for x in range(width):
+            region = regions_map.grid[y][x]
+            if region:
+                # Assign tile type based on the region's biome
+                if region.biome == BiomeType.FOREST:
+                    tile_map.set_tile(x, y, 1)
+                elif region.biome == BiomeType.GRASSLAND:
+                    tile_map.set_tile(x, y, 1)
+                elif region.biome == BiomeType.WATER:
+                    tile_map.set_tile(x, y, 2)
+                elif region.biome == BiomeType.URBAN:
+                    tile_map.set_tile(x, y, 5)
+            else:
+                # Default tile type if no region is found
+                tile_map.set_tile(x, y, 1)
+    return tile_map

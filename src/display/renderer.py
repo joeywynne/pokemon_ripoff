@@ -28,7 +28,7 @@ class Renderer:
         self.screen.fill(BLACK)
         camera.follow(player.get_rect(), player.velocity)
         # Draw map first, then entities on top so the player is visible.
-        self.map_renderer.draw(self.screen, camera)
+        self.map_renderer.draw(self.screen, camera, debug)
         self.entities_renderer.draw(self.screen, camera, player.current_target, debug)
 
         if player.throw_preview_points:

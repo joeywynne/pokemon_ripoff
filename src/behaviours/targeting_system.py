@@ -4,6 +4,7 @@ from typing import Protocol
 
 
 class TargetingProtocol(Protocol):
+
     def get_target(self, entity, nearby_entities) -> EntityPositionProtocol | None: ...
 
 
