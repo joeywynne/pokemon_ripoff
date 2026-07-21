@@ -8,11 +8,22 @@ Buddy pokemon movement
     - aggressive: attacks visible pokemon
     - defensive: no aggression
 
-Map:
-- Procedural generation
-- Voronoi regions and biomes
-- Beach, mountain, forest, city, lake etc.
-- Add river generation
+Procedural Worlds:
+- Voronoi regions / biomes
+- Apply region rules
+    - Grass next to water = Beach
+    - Water next to grass = Shore
+    - Water >2away from shore = deep water
+    - Trees surrounded by trees = dense wood
+- Populate regions:
+    - Forest = Trees and bushes
+    - Grass = Long Grass, bushes, flowers, solo trees
+    - Water = shallow or deep
+    - Urban - Buildings
+- Build features:
+    - Rivers
+    - Paths from Urban
+- Pokemon spawning rules
 
 Animate movement
 
