@@ -25,8 +25,8 @@ def main() -> None:
 
     setup_logging(args.debug)
 
-    regions_map = MapGenerator(64, 64).generate_map()
-    tile_map = generate_tile_map(64, 64, regions_map)
+    regions_map = MapGenerator(48, 48).generate_map()
+    tile_map = generate_tile_map(48, 48, regions_map)
     collision_map = generate_collision_map(tile_map)
     game = Game(tile_map, collision_map, debug=args.debug)
     game.run()
